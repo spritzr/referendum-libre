@@ -30,6 +30,30 @@ npx expo run:ios
 npx expo run:android
 ```
 
+### Video asset encoding
+
+Voting-flow videos must be Android-safe MP4s: H.264 **Constrained Baseline**, `yuv420p`, no B-frames, with the MP4 metadata moved to the front for progressive loading. This lighter Android encoding also plays on iOS, so do **not** keep separate iOS Main/High-profile variants unless there is a proven platform-specific issue.
+
+On Linux, install `ffmpeg` and encode each source clip like this:
+
+```bash
+ffmpeg -i input.mp4 -map 0:v:0 -an \
+  -vf "scale=trunc(iw/2)*2:trunc(ih/2)*2,format=yuv420p" \
+  -c:v libx264 -profile:v baseline -x264-params "bframes=0:ref=1" \
+  -crf 23 -preset slow -movflags +faststart \
+  assets/videos/videoN.mp4
+```
+
+Then verify the result before committing:
+
+```bash
+ffprobe -v error -select_streams v:0 \
+  -show_entries stream=codec_name,profile,pix_fmt,has_b_frames \
+  -of default=noprint_wrappers=1 assets/videos/videoN.mp4
+```
+
+Expected values are `codec_name=h264`, `profile=Constrained Baseline`, `pix_fmt=yuv420p`, and `has_b_frames=0`.
+
 ## Code Style
 
 ### Formatting
