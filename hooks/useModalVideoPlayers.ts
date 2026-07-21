@@ -76,13 +76,13 @@ export function useModalVideoPlayers() {
     }
   );
 
-  // Intro video — full-bleed clip that plays *above* the Step 4 "Démarrer
-  // l'analyse" content as a teaching screen. Same source for both platforms;
-  // Android uses a re-muxed .mp4 (H.264 Baseline, faststart) so Media3
-  // ExoPlayer takes the standard MP4 extractor path and hardware-decodes via
-  // MediaCodec on every device.
+  // Intro video — full-bleed teaching clip shown on its own step
+  // (StepIntroVideo) ahead of the "Démarrer l'analyse" content. Same source
+  // for both platforms; Android uses a re-muxed .mp4 (H.264 Baseline,
+  // faststart) so Media3 ExoPlayer takes the standard MP4 extractor path
+  // and hardware-decodes via MediaCodec on every device.
   const playerIntro = useVideoPlayer(
-    // Placeholder — the original Step 4 intro clip was removed (copyright).
+    // Placeholder — the original intro clip was removed (copyright).
     // TODO: replace assets/videos/intro-placeholder.mp4 with a licensed intro.
     require('@/assets/videos/intro-placeholder.mp4'),
     player => {
@@ -132,28 +132,30 @@ export function useModalVideoPlayers() {
         safePlay(player3);
         break;
       case 4:
+        // StepIntroVideo — its own step now (previously a sub-state hidden
+        // inside step 4/StepDocumentScanStart). Only the intro plays here;
+        // StepDocumentScanStart's own clip starts on step 5 instead.
         safePause(player3);
-        safePlay(player1);
-        // Step 4 has an iOS-only intro phase that plays the intro video
-        // ahead of the existing card content. Kick it off in parallel so
-        // the user sees motion the instant the slide arrives.
         safePlay(playerIntro);
         break;
       case 5:
-        safePause(player1);
         safePause(playerIntro);
+        safePlay(player1);
         break;
       case 6:
-        safePlay(player4);
+        safePause(player1);
         break;
       case 7:
+        safePlay(player4);
+        break;
+      case 8:
         safePause(player4);
         safePlay(player5);
         break;
-      case 9:
+      case 10:
         safePlay(player3);
         break;
-      case 10:
+      case 11:
         safePause(player3);
         break;
     }

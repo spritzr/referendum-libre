@@ -35,6 +35,7 @@ import type { PassportData } from '@/modules/e-document';
 import StepIntroConsent from '@/components/voting-modal/StepIntroConsent';
 import StepEligibilityCheck from '@/components/voting-modal/StepEligibilityCheck';
 import StepAnonymousVoteExplainer from '@/components/voting-modal/StepAnonymousVoteExplainer';
+import StepIntroVideo from '@/components/voting-modal/StepIntroVideo';
 import StepDocumentScanStart from '@/components/voting-modal/StepDocumentScanStart';
 import StepMRZScan from '@/components/voting-modal/StepMRZScan';
 import StepNFCRead from '@/components/voting-modal/StepNFCRead';
@@ -62,15 +63,16 @@ const FLOW_STEPS = [
   StepIntroConsent, // 1
   StepEligibilityCheck, // 2
   StepAnonymousVoteExplainer, // 3
-  StepDocumentScanStart, // 4
-  StepMRZScan, // 5
-  StepNFCRead, // 6
-  StepBlockchainVerify, // 7
-  StepReadyToVote, // 8
-  // StepVoteChoice / StepVoteChoiceError branch on 9
-  StepVoteConfirm, // 10
-  StepProofSubmission, // 11
-  // StepVoteSuccess / StepVoteError branch on 12
+  StepIntroVideo, // 4
+  StepDocumentScanStart, // 5
+  StepMRZScan, // 6
+  StepNFCRead, // 7
+  StepBlockchainVerify, // 8
+  StepReadyToVote, // 9
+  // StepVoteChoice / StepVoteChoiceError branch on 10
+  StepVoteConfirm, // 11
+  StepProofSubmission, // 12
+  // StepVoteSuccess / StepVoteError branch on 13
 ] as const;
 
 export default function VotingFlowScreen() {
@@ -182,11 +184,11 @@ export default function VotingFlowScreen() {
   }, [proposalIdParam, network]);
 
   // Init Rarime + FreedomTool + load proposal. Deferred until after the NFC
-  // scan (Step 6) so that Rarime's native Rust/ZK warmup doesn't contend with
-  // IsoDep during PACE. Step 7 reads rarimeRef.current defensively and will
+  // scan (Step 7) so that Rarime's native Rust/ZK warmup doesn't contend with
+  // IsoDep during PACE. Step 8 reads rarimeRef.current defensively and will
   // wait for init to complete.
   useEffect(() => {
-    if (currentStep < 7) return;
+    if (currentStep < 8) return;
     // Wait for handleNFCSuccess's async block to finish writing the
     // per-passport BJJ key into the legacy SecureStore slot. Without this
     // gate, the line below that calls `getOrCreatePrivateKey()` can read
@@ -254,7 +256,7 @@ export default function VotingFlowScreen() {
 
         // Cache-first: the home screen already fetched & cached this
         // proposal. Using it here cuts ~2–3 s off the post-NFC wait (that's
-        // the getProposalInfo() roundtrip blocking Step 7 verification).
+        // the getProposalInfo() roundtrip blocking Step 8 verification).
         const cached = await findCachedProposal(network, targetProposalId);
         if (cached) {
           console.log('[FreedomTool] Proposal loaded from cache:', cached.title);
@@ -296,17 +298,17 @@ export default function VotingFlowScreen() {
       setNFCData(null);
       // Critical: clear the manual-input modal flag too. If the user backed
       // out of the flow while the modal was open, this would otherwise stay
-      // `true` and keep Step 5's camera disabled on re-entry (Step 5's
+      // `true` and keep Step 6's camera disabled on re-entry (Step 6's
       // isActive is gated on `!isManualInputVisible`).
       setIsManualInputVisible(false);
       // Re-arm the per-passport key gate so the init useEffect waits for
       // the next NFC scan + DB lookup before constructing Rarime.
       setPassportKeyReady(false);
-      // Re-arm Step 7's verification-handled latch and clear the passport
+      // Re-arm Step 8's verification-handled latch and clear the passport
       // scan from the previous attempt. Without these resets, a user who
       // exits + re-enters the flow (crash recovery, "try again",
       // backgrounding during proof generation) hits the latch at line ~464
-      // and Step 7 silently no-ops; the stale passport also stays
+      // and Step 8 silently no-ops; the stale passport also stays
       // observable via `passportRef.current` until the next NFC scan
       // overwrites it.
       verificationHandledRef.current = false;
@@ -325,12 +327,12 @@ export default function VotingFlowScreen() {
     }, [pauseAll, slideAnim, progressOpacity1, progressOpacity2, progressOpacity3])
   );
 
-  // Keep the JS thread idle while the NFC scan runs on Step 6. Reader mode on
+  // Keep the JS thread idle while the NFC scan runs on Step 7. Reader mode on
   // Android dispatches APDUs on a background thread, but sendEvent() bubbles
   // back to JS — heavy renders here back up the bridge and can starve the
   // IsoDep session on the very first APDU.
   useEffect(() => {
-    if (Platform.OS === 'android' && currentStep === 6) {
+    if (Platform.OS === 'android' && currentStep === 7) {
       pauseAll();
     }
   }, [currentStep, pauseAll]);
@@ -405,8 +407,8 @@ export default function VotingFlowScreen() {
           // Multiple passports on the same phone each get their own identity;
           // the same passport rescanned recovers its existing key. We also
           // mirror the result into the legacy single-key SecureStore slot so
-          // every downstream call site (Rarime init, Step11 mainnet flow,
-          // diagnostic screens) keeps reading from `getOrCreatePrivateKey()`
+          // every downstream call site (Rarime init, StepProofSubmission's
+          // mainnet flow, diagnostic screens) keeps reading from `getOrCreatePrivateKey()`
           // unchanged. See utils/passport-key-db.ts for the DB shape and
           // utils/identity.ts::getOrCreateKeyForPassport for the migration.
           try {
@@ -473,16 +475,16 @@ export default function VotingFlowScreen() {
   );
 
   const handleGoBackToMRZScan = useCallback(() => {
-    console.log('[flow] step → 5 (back-to-mrz)');
-    setCurrentStep(5);
+    console.log('[flow] step → 6 (back-to-mrz)');
+    setCurrentStep(6);
     setMRZData(null);
     Animated.timing(slideAnim, {
-      toValue: -4 * containerWidth,
+      toValue: -5 * containerWidth,
       duration: 300,
       easing: Easing.out(Easing.cubic),
       useNativeDriver: true,
     }).start();
-    handleStepChange(5);
+    handleStepChange(6);
   }, [slideAnim, containerWidth, handleStepChange]);
 
   const handleManualFill = useCallback(() => {
@@ -506,26 +508,26 @@ export default function VotingFlowScreen() {
     if (verificationHandledRef.current) return;
     verificationHandledRef.current = true;
     setVerificationResult('success');
-    // Move to step 8 (voting screen) after a brief delay
+    // Move to step 9 (voting screen) after a brief delay
     setTimeout(() => {
-      console.log('[flow] step → 8 (verification-success)');
-      setCurrentStep(8);
+      console.log('[flow] step → 9 (verification-success)');
+      setCurrentStep(9);
       Animated.timing(slideAnim, {
-        toValue: -7 * containerWidth,
+        toValue: -8 * containerWidth,
         duration: 300,
         easing: Easing.out(Easing.cubic),
         useNativeDriver: true,
       }).start();
-      handleStepChange(8);
+      handleStepChange(9);
     }, 1500);
   }, [slideAnim, containerWidth, handleStepChange]);
 
   const handleVerificationError = useCallback(
     (_message?: string, fatal?: boolean, error?: unknown) => {
       // Fatal errors (e.g. "passport already registered with another key")
-      // cannot be retried. Keep the user on Step 7 with its own contextual
+      // cannot be retried. Keep the user on Step 8 with its own contextual
       // error display — do NOT trigger the generic StepVoteChoiceError overlay
-      // ("Une erreur est survenue") or advance to Step 8, both of which
+      // ("Une erreur est survenue") or advance to Step 9, both of which
       // would hide the specific explanation. The user closes the modal via
       // the top-right X to exit.
       if (fatal) return;
@@ -537,48 +539,48 @@ export default function VotingFlowScreen() {
   );
 
   const handleVoteSuccess = useCallback(() => {
-    console.log('[flow] step → 9 (step8-vote-now)');
-    setCurrentStep(9);
+    console.log('[flow] step → 10 (step9-vote-now)');
+    setCurrentStep(10);
     Animated.timing(slideAnim, {
-      toValue: -8 * containerWidth,
+      toValue: -9 * containerWidth,
       duration: 300,
       easing: Easing.out(Easing.cubic),
       useNativeDriver: true,
     }).start();
-    handleStepChange(9);
+    handleStepChange(10);
   }, [slideAnim, containerWidth, handleStepChange]);
 
   const handleVoteSelect = useCallback(
     (answerIndex: number) => {
       setSelectedVote(answerIndex);
-      console.log('[flow] step → 10 (vote-selected)');
-      setCurrentStep(10);
+      console.log('[flow] step → 11 (vote-selected)');
+      setCurrentStep(11);
       Animated.timing(slideAnim, {
-        toValue: -9 * containerWidth,
+        toValue: -10 * containerWidth,
         duration: 300,
         easing: Easing.out(Easing.cubic),
         useNativeDriver: true,
       }).start();
-      handleStepChange(10);
+      handleStepChange(11);
     },
     [slideAnim, containerWidth, handleStepChange]
   );
 
   const handleStep9Confirm = useCallback(() => {
-    console.log('[flow] step → 11 (vote-confirmed)');
-    setCurrentStep(11);
+    console.log('[flow] step → 12 (vote-confirmed)');
+    setCurrentStep(12);
     Animated.timing(slideAnim, {
-      toValue: -10 * containerWidth,
+      toValue: -11 * containerWidth,
       duration: 300,
       easing: Easing.out(Easing.cubic),
       useNativeDriver: true,
     }).start();
-    handleStepChange(11);
+    handleStepChange(12);
   }, [slideAnim, containerWidth, handleStepChange]);
 
   const handleClose = useCallback(() => {
     // Dev-only stack trace: lets us see WHICH caller closed the screen
-    // (Step12 auto-advance vs explicit Fermer tap vs router-back gesture).
+    // (StepVoteSuccess/StepVoteError auto-advance vs explicit Fermer tap vs router-back gesture).
     // Gated to release builds out of the error-report ring buffer — every
     // close path was emitting a multi-line trace that crowded out actual
     // diagnostics.
@@ -616,15 +618,15 @@ export default function VotingFlowScreen() {
       // refresh once tx propagation completes (the immediate focus-time
       // refetch races ahead of L2 confirmation otherwise).
       markVoteJustCast();
-      console.log('[flow] step → 12 (vote-submitted)');
-      setCurrentStep(12);
+      console.log('[flow] step → 13 (vote-submitted)');
+      setCurrentStep(13);
       Animated.timing(slideAnim, {
-        toValue: -11 * containerWidth,
+        toValue: -12 * containerWidth,
         duration: 300,
         easing: Easing.out(Easing.cubic),
         useNativeDriver: true,
       }).start();
-      handleStepChange(12);
+      handleStepChange(13);
     },
     [slideAnim, containerWidth, handleStepChange]
   );
@@ -636,15 +638,15 @@ export default function VotingFlowScreen() {
       setVoteErrorReason(reason || null);
       setVoteError(error ?? new Error(reason ?? 'Unknown vote error'));
       setVoteSubmissionResult('error');
-      console.log('[flow] step → 13 (vote-error)');
-      setCurrentStep(13);
+      console.log('[flow] step → 14 (vote-error)');
+      setCurrentStep(14);
       Animated.timing(slideAnim, {
-        toValue: -12 * containerWidth,
+        toValue: -13 * containerWidth,
         duration: 300,
         easing: Easing.out(Easing.cubic),
         useNativeDriver: true,
       }).start();
-      handleStepChange(13);
+      handleStepChange(14);
     },
     [slideAnim, containerWidth, handleStepChange]
   );
@@ -724,9 +726,10 @@ export default function VotingFlowScreen() {
             currentStep < 4 && {
               backgroundColor: Platform.OS === 'ios' ? colors.cardBackground : colors.background,
             },
-            // Step 4 only: height-bound the slide to the sheet (not the taller
-            // Step 5 camera mounted alongside it) so the intro video's "Passer"
-            // button stays on-screen. Steps 1–3 and 5+ keep content-sized layout.
+            // Step 4 (intro video) only: height-bound the slide to the sheet
+            // (not the taller Step 6 camera mounted alongside it) so the
+            // intro video's "Passer" button stays on-screen. Steps 1–3 and
+            // 5+ keep content-sized layout.
             currentStep === 4 && { flex: 1 },
           ]}
           onLayout={(e) => setContainerWidth(e.nativeEvent.layout.width)}
@@ -734,16 +737,16 @@ export default function VotingFlowScreen() {
           <Animated.View
             style={[
               modalStyles.slidingContainer,
-              // Match slidingWrapper: fill height on step 4 only so its slide
-              // stretches vertically and the intro "Passer" button stays
-              // on-screen.
+              // Match slidingWrapper: fill height on step 4 (intro video)
+              // only so its slide stretches vertically and the intro
+              // "Passer" button stays on-screen.
               currentStep === 4 && { flex: 1 },
               { transform: [{ translateX: slideAnim }] },
             ]}
           >
             {/* Only mount steps within ±1 of the current index. Placeholders keep
                 slide-animation offsets stable. Keeps the JS thread idle during
-                the NFC scan (Step 6) so reader-mode sendEvent() calls don't
+                the NFC scan (Step 7) so reader-mode sendEvent() calls don't
                 back-pressure IsoDep. */}
             {(() => {
               const idx = currentStep - 1;
@@ -783,24 +786,33 @@ export default function VotingFlowScreen() {
                   spacer('s3')
                 ),
                 show(3) ? (
-                  <StepDocumentScanStart
+                  <StepIntroVideo
                     key="s4"
-                    player={player1}
-                    introPlayer={playerIntro}
+                    player={playerIntro}
                     containerWidth={containerWidth}
-                    onStartAnalysis={handleNext}
-                    isPassportFlow={isPassportFlow}
+                    onSkip={handleNext}
                   />
                 ) : (
                   spacer('s4')
                 ),
                 show(4) ? (
-                  <StepMRZScan
+                  <StepDocumentScanStart
                     key="s5"
+                    player={player1}
+                    containerWidth={containerWidth}
+                    onStartAnalysis={handleNext}
+                    isPassportFlow={isPassportFlow}
+                  />
+                ) : (
+                  spacer('s5')
+                ),
+                show(5) ? (
+                  <StepMRZScan
+                    key="s6"
                     containerWidth={containerWidth}
                     // Kill the camera while the manual-entry modal is open so
                     // the preview doesn't sit on top of the keyboard.
-                    isActive={currentStep === 5 && !isManualInputVisible}
+                    isActive={currentStep === 6 && !isManualInputVisible}
                     onMRZScanned={handleMRZScanned}
                     onManualFill={handleManualFill}
                     isPassportFlow={isPassportFlow}
@@ -810,11 +822,11 @@ export default function VotingFlowScreen() {
                     allowedCitizenships={proposalInfo?.criteria.citizenshipWhitelist}
                   />
                 ) : (
-                  spacer('s5')
+                  spacer('s6')
                 ),
-                show(5) ? (
+                show(6) ? (
                   <StepNFCRead
-                    key="s6"
+                    key="s7"
                     containerWidth={containerWidth}
                     player={player4}
                     mrzData={mrzData}
@@ -823,14 +835,14 @@ export default function VotingFlowScreen() {
                     isPassportFlow={isPassportFlow}
                   />
                 ) : (
-                  spacer('s6')
+                  spacer('s7')
                 ),
-                show(6) ? (
+                show(7) ? (
                   <StepBlockchainVerify
-                    key="s7"
+                    key="s8"
                     containerWidth={containerWidth}
                     player={player5}
-                    isActive={currentStep === 7}
+                    isActive={currentStep === 8}
                     nfcData={nfcData}
                     onSuccess={handleVerificationSuccess}
                     onError={handleVerificationError}
@@ -841,11 +853,11 @@ export default function VotingFlowScreen() {
                     network={network}
                   />
                 ) : (
-                  spacer('s7')
+                  spacer('s8')
                 ),
-                show(7) ? (
+                show(8) ? (
                   <StepReadyToVote
-                    key="s8"
+                    key="s9"
                     containerWidth={containerWidth}
                     verificationResult={verificationResult}
                     voteSubmissionResult={voteSubmissionResult}
@@ -853,22 +865,22 @@ export default function VotingFlowScreen() {
                     onClose={handleClose}
                   />
                 ) : (
-                  spacer('s8')
+                  spacer('s9')
                 ),
-                show(8) ? (
+                show(9) ? (
                   <StepVoteChoice
-                    key="s9v"
+                    key="s10v"
                     containerWidth={containerWidth}
                     onVoteSelect={handleVoteSelect}
                     onCancel={handleStep9Cancel}
                     proposalInfo={proposalInfo ?? undefined}
                   />
                 ) : (
-                  spacer('s9v')
+                  spacer('s10v')
                 ),
-                show(9) ? (
+                show(10) ? (
                   <StepVoteConfirm
-                    key="s10"
+                    key="s11"
                     containerWidth={containerWidth}
                     player={player3}
                     selectedVote={selectedVote}
@@ -877,13 +889,13 @@ export default function VotingFlowScreen() {
                     onConfirm={handleStep9Confirm}
                   />
                 ) : (
-                  spacer('s10')
+                  spacer('s11')
                 ),
-                show(10) ? (
+                show(11) ? (
                   <StepProofSubmission
-                    key="s11"
+                    key="s12"
                     containerWidth={containerWidth}
-                    isActive={currentStep === 11}
+                    isActive={currentStep === 12}
                     onSuccess={handleStep11Success}
                     onError={handleStep11Error}
                     freedomTool={freedomToolRef.current ?? undefined}
@@ -894,29 +906,29 @@ export default function VotingFlowScreen() {
                     network={network}
                   />
                 ) : (
-                  spacer('s11')
+                  spacer('s12')
                 ),
-                show(11) ? (
+                show(12) ? (
                   <StepVoteSuccess
-                    key="s12s"
+                    key="s13s"
                     containerWidth={containerWidth}
                     voteIdentifier={voteTxId ?? undefined}
                     confirmed={voteConfirmed}
                     onViewResults={handleClose}
                   />
                 ) : (
-                  spacer('s12s')
+                  spacer('s13s')
                 ),
-                show(12) ? (
+                show(13) ? (
                   <StepVoteError
-                    key="s12e"
+                    key="s13e"
                     containerWidth={containerWidth}
                     onGoHome={handleClose}
                     errorReason={voteErrorReason}
                     error={voteError}
                   />
                 ) : (
-                  spacer('s12e')
+                  spacer('s13e')
                 ),
               ];
             })()}
