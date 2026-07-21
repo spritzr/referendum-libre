@@ -6,7 +6,7 @@ import { useColors } from '@/constants/theme';
 import { useTranslation } from 'react-i18next';
 import { CAP_SMALL } from '@/utils/font-scale-cap';
 
-interface Step1Props {
+interface StepIntroConsentProps {
   player: any;
   containerWidth: number;
   /** Available slide-area height; caps the iOS ScrollView so content scrolls
@@ -18,7 +18,7 @@ interface Step1Props {
   isPassportFlow?: boolean;
 }
 
-const Step1: React.FC<Step1Props> = ({
+const StepIntroConsent: React.FC<StepIntroConsentProps> = ({
   player,
   containerWidth,
   slideAreaHeight,
@@ -97,4 +97,4 @@ const Step1: React.FC<Step1Props> = ({
   );
 };
 
-export default Step1;
+export default StepIntroConsent;

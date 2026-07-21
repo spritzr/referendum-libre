@@ -93,6 +93,9 @@ export function useModalVideoPlayers() {
     }
   );
 
+  // `nextStep` numbers below correspond to the positions documented in
+  // `FLOW_STEPS` (app/voting-flow.tsx) — e.g. case 4 targets whatever
+  // component currently sits at position 4, not a file named "Step4".
   const handleStepChange = useCallback((nextStep: number) => {
     // On Android, add small delay to let player initialize before playing
     const playDelay = isAndroid ? 100 : 0;

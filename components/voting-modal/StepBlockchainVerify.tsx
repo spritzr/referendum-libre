@@ -57,7 +57,7 @@ interface NFCData {
   aaSignature?: Uint8Array | string;
 }
 
-interface Step7Props {
+interface StepBlockchainVerifyProps {
   containerWidth: number;
   player: any;
   isActive?: boolean;
@@ -83,7 +83,7 @@ interface Step7Props {
   network?: Network;
 }
 
-const Step7: React.FC<Step7Props> = ({
+const StepBlockchainVerify: React.FC<StepBlockchainVerifyProps> = ({
   containerWidth,
   player,
   isActive,
@@ -160,7 +160,7 @@ const Step7: React.FC<Step7Props> = ({
       // (no rarime/passport refs). Log it and mark it blocking so the user
       // stays on Step 7 with the explanatory message.
       console.warn(
-        `[Step7] missing-data timeout (30s) — refs never arrived (rarime=${!!rarime}, passport=${!!passport})`,
+        `[StepBlockchainVerify] missing-data timeout (30s) — refs never arrived (rarime=${!!rarime}, passport=${!!passport})`,
       );
       setErrorMessage(msg);
       onError?.(msg, true);
@@ -184,22 +184,22 @@ const Step7: React.FC<Step7Props> = ({
         // Step 1: Check document registration status
         const mrzInfo = passport.getMRZData();
         // No docNo / birthDate — both are PII (and the doc-num is also half of the BAC key).
-        console.log(`[Step7] MRZ loaded — nationality: ${mrzInfo.issuingCountry}`);
-        console.log(`[Step7] DG1 length: ${passport.dataGroup1.length} (95=TD1 ID card, 93=TD3 passport)`);
-        console.log(`[Step7] SOD length: ${passport.sod.length} bytes; DG15 present: ${passport.dataGroup15 ? `yes (${passport.dataGroup15.length}B)` : 'no'}`);
+        console.log(`[StepBlockchainVerify] MRZ loaded — nationality: ${mrzInfo.issuingCountry}`);
+        console.log(`[StepBlockchainVerify] DG1 length: ${passport.dataGroup1.length} (95=TD1 ID card, 93=TD3 passport)`);
+        console.log(`[StepBlockchainVerify] SOD length: ${passport.sod.length} bytes; DG15 present: ${passport.dataGroup15 ? `yes (${passport.dataGroup15.length}B)` : 'no'}`);
         try {
           const sodHashOid = passport.extractDGHashAlgo();
           const sodSigOid = passport.getSignatureAlgorithm();
-          console.log(`[Step7] SOD DG hash OID: ${sodHashOid}, signature OID: ${sodSigOid}`);
+          console.log(`[StepBlockchainVerify] SOD DG hash OID: ${sodHashOid}, signature OID: ${sodSigOid}`);
         } catch (e: any) {
-          console.error('[Step7] SOD algo extraction failed:', e?.message ?? e);
+          console.error('[StepBlockchainVerify] SOD algo extraction failed:', e?.message ?? e);
         }
         setStatusText(t('voting.step7CheckingStatus'));
         const status = await withRetry(
           () => rarime.getDocumentStatus(passport),
           { label: 'getDocumentStatus' }
         );
-        console.log('[Step7] Document status:', status);
+        console.log('[StepBlockchainVerify] Document status:', status);
 
         // Phase A.1 bail-out probe: for TD3 passports, log the resolved
         // registerIdentity_<suite> name before the lite-register attempt
@@ -212,10 +212,10 @@ const Step7: React.FC<Step7Props> = ({
         if (passport.dataGroup1.length === 93) {
           try {
             const { name, suite } = (passport as any).extractCircuitSuite();
-            console.log(`[Step7][PhaseA.1] TD3 suite resolved: ${name}`);
-            console.log(`[Step7][PhaseA.1] suite details: sigId=${suite.signatureType.staticId} hash=${suite.passportHashType} doc=${suite.documentType} ec=${suite.ecChunkNumber} ecPos=${suite.ecDigestPosition} dg1Pos=${suite.dg1DigestPositionShift} aa=${suite.aaType ? 'present' : 'NA'}`);
+            console.log(`[StepBlockchainVerify][PhaseA.1] TD3 suite resolved: ${name}`);
+            console.log(`[StepBlockchainVerify][PhaseA.1] suite details: sigId=${suite.signatureType.staticId} hash=${suite.passportHashType} doc=${suite.documentType} ec=${suite.ecChunkNumber} ecPos=${suite.ecDigestPosition} dg1Pos=${suite.dg1DigestPositionShift} aa=${suite.aaType ? 'present' : 'NA'}`);
           } catch (probeErr: any) {
-            console.error(`[Step7][PhaseA.1] suite resolver failed: ${probeErr?.message || probeErr}`);
+            console.error(`[StepBlockchainVerify][PhaseA.1] suite resolver failed: ${probeErr?.message || probeErr}`);
           }
         }
 
@@ -276,11 +276,11 @@ const Step7: React.FC<Step7Props> = ({
         const needsRegistration = status === DocumentStatus.NotRegistered;
 
         if (needsRegistration) {
-          console.log(`[Step7] registering identity (status=${status}, network=${network})`);
+          console.log(`[StepBlockchainVerify] registering identity (status=${status}, network=${network})`);
           setStatusText(t('voting.step7Registering'));
 
           if (!nfcData?.dg1Bytes || !nfcData?.sodBytes) {
-            throw new Error('Step7: nfcData missing dg1/sod bytes');
+            throw new Error('StepBlockchainVerify: nfcData missing dg1/sod bytes');
           }
 
           const isTd3 = passport.dataGroup1.length === 93;
@@ -373,12 +373,12 @@ const Step7: React.FC<Step7Props> = ({
               const isMissingCsca = msg.startsWith('[CSCA_MISSING]');
               if (!isMissingCsca) throw e;
 
-              console.log('[Step7][mainnet] CSCA missing — bootstrapping via registerCertificate');
+              console.log('[StepBlockchainVerify][mainnet] CSCA missing — bootstrapping via registerCertificate');
               setStatusText(t('voting.step7Registering'));
               const { registerCscaForSlave } = await import('@/utils/csca-bootstrap');
               const { txHash: cscaTxHash, dispatcherName } =
                 await registerCscaForSlave(eDoc.sod.slaveCertificate);
-              console.log(`[Step7][mainnet] CSCA registration tx: ${cscaTxHash} (${dispatcherName})`);
+              console.log(`[StepBlockchainVerify][mainnet] CSCA registration tx: ${cscaTxHash} (${dispatcherName})`);
 
               // Wait for the slave-cert SMT to reflect the new CSCA.
               // We don't track the tx state directly (the relayer didn't
@@ -411,11 +411,11 @@ const Step7: React.FC<Step7Props> = ({
                   }
                   if (probe.existence === true) { landed = true; break; }
                 } catch (probeErr: any) {
-                  console.log('[Step7][mainnet] SMT probe err:', probeErr?.message ?? probeErr);
+                  console.log('[StepBlockchainVerify][mainnet] SMT probe err:', probeErr?.message ?? probeErr);
                 }
               }
               if (!landed) {
-                console.warn('[Step7][mainnet] bootstrap tx not visible after 30 s — proceeding anyway');
+                console.warn('[StepBlockchainVerify][mainnet] bootstrap tx not visible after 30 s — proceeding anyway');
               }
 
               // Retry proof generation. If the tx landed, the slave-cert
@@ -436,7 +436,7 @@ const Step7: React.FC<Step7Props> = ({
               aaSignature: new Uint8Array(),
               ecSizeInBits: eDoc.sod.encapsulatedContent.length * 8,
             });
-            console.log(`[Step7][mainnet] registerViaNoir tx submitted: ${txHash}`);
+            console.log(`[StepBlockchainVerify][mainnet] registerViaNoir tx submitted: ${txHash}`);
           } else {
             // ----- LIGHT REGISTRATOR PATH -----------------------------
             // Covers everything except TD3 mainnet: TD1 testnet, TD1
@@ -455,7 +455,7 @@ const Step7: React.FC<Step7Props> = ({
               () => rarime.registerIdentity(passport),
               { label },
             );
-            console.log(`[Step7][${network}] light register submitted (${isTd3 ? 'TD3' : 'TD1'})`);
+            console.log(`[StepBlockchainVerify][${network}] light register submitted (${isTd3 ? 'TD3' : 'TD1'})`);
           }
 
           // Wait for the registration tx to be mined + indexed in the
@@ -468,7 +468,7 @@ const Step7: React.FC<Step7Props> = ({
           // confusing dead-end for what was actually a successful
           // registration. Mirrors the CSCA-bootstrap poll above.
           if (network === 'mainnet') {
-            console.log('[Step7][mainnet] waiting for registration to land in SMT…');
+            console.log('[StepBlockchainVerify][mainnet] waiting for registration to land in SMT…');
             setStatusText(t('voting.step7Confirming'));
             const POLL_INTERVAL_MS = 2_000;
             const POLL_TIMEOUT_MS = 60_000;
@@ -478,24 +478,24 @@ const Step7: React.FC<Step7Props> = ({
               // Abort if Step 7 deactivated (user cancelled / navigated away)
               // so we don't keep polling and fire callbacks on an inactive step.
               if (!isActiveRef.current) {
-                console.log('[Step7][mainnet] step deactivated mid-poll — aborting confirmation');
+                console.log('[StepBlockchainVerify][mainnet] step deactivated mid-poll — aborting confirmation');
                 return;
               }
               try {
                 const smtProof = await rarime.getSMTProof(passport);
                 if (smtProof.existence) {
                   confirmed = true;
-                  console.log(`[Step7][mainnet] SMT confirmed in ${Date.now() - tConfirmStart}ms`);
+                  console.log(`[StepBlockchainVerify][mainnet] SMT confirmed in ${Date.now() - tConfirmStart}ms`);
                   break;
                 }
               } catch (e: any) {
-                console.log('[Step7][mainnet] SMT poll err:', e?.message ?? e);
+                console.log('[StepBlockchainVerify][mainnet] SMT poll err:', e?.message ?? e);
               }
               await new Promise(r => setTimeout(r, POLL_INTERVAL_MS));
             }
             if (!confirmed) {
               throw new Error(
-                `[Step7] Registration confirmation timed out after ${Math.round((Date.now() - tConfirmStart) / 1000)}s. ` +
+                `[StepBlockchainVerify] Registration confirmation timed out after ${Math.round((Date.now() - tConfirmStart) / 1000)}s. ` +
                   'Please retry the vote in a moment.',
               );
             }
@@ -503,18 +503,18 @@ const Step7: React.FC<Step7Props> = ({
         }
 
         if (!isActiveRef.current) {
-          console.log('[Step7] step inactive at completion — skipping onSuccess');
+          console.log('[StepBlockchainVerify] step inactive at completion — skipping onSuccess');
           return;
         }
         hasCalledCallback.current = true;
-        console.log('[Step7] Verification complete — calling onSuccess');
+        console.log('[StepBlockchainVerify] Verification complete — calling onSuccess');
         setStatusText(t('voting.step7Verified'));
         onSuccess?.();
       } catch (err: any) {
-        console.error('[Step7] Verification error:', err);
+        console.error('[StepBlockchainVerify] Verification error:', err);
         hasCalledCallback.current = true;
         if (!isActiveRef.current) {
-          console.log('[Step7] step inactive at error — skipping onError');
+          console.log('[StepBlockchainVerify] step inactive at error — skipping onError');
           return;
         }
         const msg: string = err?.message ?? '';
@@ -644,4 +644,4 @@ const Step7: React.FC<Step7Props> = ({
   );
 };
 
-export default Step7;
+export default StepBlockchainVerify;

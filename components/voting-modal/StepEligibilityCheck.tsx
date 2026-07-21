@@ -6,15 +6,23 @@ import { useColors } from '@/constants/theme';
 import { useTranslation } from 'react-i18next';
 import { CAP_SMALL } from '@/utils/font-scale-cap';
 
-interface Step3Props {
+interface StepEligibilityCheckProps {
   player: any;
   containerWidth: number;
   slideAreaHeight?: number;
   onLayout?: (event: LayoutChangeEvent) => void;
+  isPassportFlow?: boolean;
 }
 
-const Step3: React.FC<Step3Props> = ({ player, containerWidth, slideAreaHeight, onLayout }) => {
+const StepEligibilityCheck: React.FC<StepEligibilityCheckProps> = ({
+  player,
+  containerWidth,
+  slideAreaHeight,
+  onLayout,
+  isPassportFlow = false,
+}) => {
   const { t } = useTranslation();
+  const docSfx = isPassportFlow ? 'passport' : 'idCard';
   const colors = useColors();
   const modalStyles = createModalStyles(colors);
   const stepSpecificStyles = createStepSpecificStyles(colors);
@@ -31,13 +39,13 @@ const Step3: React.FC<Step3Props> = ({ player, containerWidth, slideAreaHeight, 
         <View style={modalStyles.mediaContainer}>
           {Platform.OS === 'android' ? (
             <Image
-              source={require('@/assets/images/poster-ballot.png')}
-              style={stepSpecificStyles.ballotImage}
+              source={require('@/assets/images/poster-phone.png')}
+              style={stepSpecificStyles.phoneImage}
               resizeMode="contain"
             />
           ) : (
             <VideoView
-              style={stepSpecificStyles.ballotImage}
+              style={stepSpecificStyles.phoneImage}
               player={player}
               contentFit="contain"
               nativeControls={false}
@@ -51,15 +59,15 @@ const Step3: React.FC<Step3Props> = ({ player, containerWidth, slideAreaHeight, 
             <View style={modalStyles.stepHeader}>
               <View style={modalStyles.numberCircle}>
                 <Text style={modalStyles.numberText} maxFontSizeMultiplier={CAP_SMALL}>
-                  3
+                  2
                 </Text>
               </View>
               <Text style={modalStyles.stepTitle} maxFontSizeMultiplier={CAP_SMALL}>
-                {t('voting.step3Title')}
+                {t('voting.step2Title')}
               </Text>
             </View>
             <Text style={modalStyles.stepDescription} maxFontSizeMultiplier={CAP_SMALL}>
-              {t('voting.step3Description')}
+              {t(`voting.step2Description_${docSfx}`)}
             </Text>
           </View>
         </View>
@@ -68,4 +76,4 @@ const Step3: React.FC<Step3Props> = ({ player, containerWidth, slideAreaHeight, 
   );
 };
 
-export default Step3;
+export default StepEligibilityCheck;

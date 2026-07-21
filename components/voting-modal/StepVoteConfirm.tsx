@@ -6,7 +6,7 @@ import { useColors } from '@/constants/theme';
 import type { ProposalInfo } from '@rarimo/rarime-rn-sdk';
 import { useTranslation } from 'react-i18next';
 
-interface Step10Props {
+interface StepVoteConfirmProps {
   containerWidth: number;
   player: any;
   onCancel?: () => void;
@@ -16,7 +16,7 @@ interface Step10Props {
   proposalInfo?: ProposalInfo;
 }
 
-const Step10: React.FC<Step10Props> = ({ containerWidth, player, onCancel, onConfirm, onLayout, selectedVote = 0, proposalInfo }) => {
+const StepVoteConfirm: React.FC<StepVoteConfirmProps> = ({ containerWidth, player, onCancel, onConfirm, onLayout, selectedVote = 0, proposalInfo }) => {
   const { t } = useTranslation();
   const colors = useColors();
   const modalStyles = createModalStyles(colors);
@@ -28,7 +28,7 @@ const Step10: React.FC<Step10Props> = ({ containerWidth, player, onCancel, onCon
   useEffect(() => {
     if (proposalInfo) {
       // No variant / index — anonymous voting (see Step9Vote comment).
-      console.log(`[Step10] Confirming vote for proposal #${proposalInfo.id}`);
+      console.log(`[StepVoteConfirm] Confirming vote for proposal #${proposalInfo.id}`);
     }
   }, [selectedVote, proposalInfo]);
 
@@ -82,4 +82,4 @@ const Step10: React.FC<Step10Props> = ({ containerWidth, player, onCancel, onCon
   );
 };
 
-export default Step10;
+export default StepVoteConfirm;

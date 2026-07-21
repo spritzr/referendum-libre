@@ -6,7 +6,7 @@ import { createModalStyles, createStepSpecificStyles } from './styles';
 import { useColors, Typography } from '@/constants/theme';
 import { useTranslation } from 'react-i18next';
 
-interface Step12SuccessProps {
+interface StepVoteSuccessProps {
   /** false = tx submitted but not yet confirmed on-chain (timeout). Shows a
    * neutral "awaiting confirmation" title/description instead of definitive
    * success. Defaults to true. */
@@ -23,7 +23,7 @@ interface Step12SuccessProps {
 // minHeight on both platforms.
 const SLIDE_MIN_HEIGHT = Math.round(Dimensions.get('window').height * 0.75);
 
-const Step12Success: React.FC<Step12SuccessProps> = ({ containerWidth, voteIdentifier, confirmed = true, onViewResults, onLayout }) => {
+const StepVoteSuccess: React.FC<StepVoteSuccessProps> = ({ containerWidth, voteIdentifier, confirmed = true, onViewResults, onLayout }) => {
   const { t } = useTranslation();
   const colors = useColors();
   const modalStyles = createModalStyles(colors);
@@ -171,4 +171,4 @@ const Step12Success: React.FC<Step12SuccessProps> = ({ containerWidth, voteIdent
   );
 };
 
-export default Step12Success;
+export default StepVoteSuccess;

@@ -5,7 +5,7 @@ import { useColors } from '@/constants/theme';
 import type { ProposalInfo } from '@rarimo/rarime-rn-sdk';
 import { useTranslation } from 'react-i18next';
 
-interface Step9VoteProps {
+interface StepVoteChoiceProps {
   containerWidth: number;
   onVoteSubmit?: (answerIndex: number) => void;
   onCancel?: () => void;
@@ -14,7 +14,7 @@ interface Step9VoteProps {
   proposalInfo?: ProposalInfo;
 }
 
-const Step9Vote: React.FC<Step9VoteProps> = ({ containerWidth, onVoteSubmit, onCancel, onLayout, onVoteSelect, proposalInfo }) => {
+const StepVoteChoice: React.FC<StepVoteChoiceProps> = ({ containerWidth, onVoteSubmit, onCancel, onLayout, onVoteSelect, proposalInfo }) => {
   const { t } = useTranslation();
   const colors = useColors();
   const stepSpecificStyles = createStepSpecificStyles(colors);
@@ -136,4 +136,4 @@ const Step9Vote: React.FC<Step9VoteProps> = ({ containerWidth, onVoteSubmit, onC
   );
 };
 
-export default Step9Vote;
+export default StepVoteChoice;

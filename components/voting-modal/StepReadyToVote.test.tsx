@@ -17,7 +17,7 @@ jest.mock('react-native-mmkv', () => ({
   },
 }));
 
-import Step8 from './Step8';
+import StepReadyToVote from './StepReadyToVote';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 
 // The "Vote now" button must only advance the flow when Step 7 actually
@@ -26,7 +26,7 @@ import { ThemeProvider } from '@/contexts/ThemeContext';
 // and NO registration — Step 11 then dead-ends on "Unknown vote error".
 // Whatever the (still unidentified) jump path is, this guard makes it
 // harmless: an unverified user cannot advance past Step 8.
-describe('Step8 vote-now guard', () => {
+describe('StepReadyToVote vote-now guard', () => {
   const press = (ui: React.ReactElement) => {
     const r = render(<ThemeProvider>{ui}</ThemeProvider>);
     // i18n fr: "Votez maintenant"; fall back to the raw key if i18n isn't
@@ -37,7 +37,7 @@ describe('Step8 vote-now guard', () => {
 
   it('fires onVoteSuccess when verification succeeded', () => {
     const onVoteSuccess = jest.fn();
-    press(<Step8 containerWidth={300} verificationResult="success" onVoteSuccess={onVoteSuccess} />);
+    press(<StepReadyToVote containerWidth={300} verificationResult="success" onVoteSuccess={onVoteSuccess} />);
     expect(onVoteSuccess).toHaveBeenCalledTimes(1);
   });
 
@@ -46,7 +46,7 @@ describe('Step8 vote-now guard', () => {
     (vr) => {
       const onVoteSuccess = jest.fn();
       press(
-        <Step8
+        <StepReadyToVote
           containerWidth={300}
           verificationResult={vr as any}
           onVoteSuccess={onVoteSuccess}

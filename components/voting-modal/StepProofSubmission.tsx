@@ -20,7 +20,7 @@ import { isStorageFullError } from '@/utils/storage-errors';
 // Use a concrete minHeight on both platforms instead.
 const SLIDE_MIN_HEIGHT = Math.round(Dimensions.get('window').height * 0.75);
 
-interface Step11Props {
+interface StepProofSubmissionProps {
   containerWidth: number;
   isActive?: boolean;
   /** `confirmed` reflects the on-chain receipt: true = mined with status 1,
@@ -51,7 +51,7 @@ interface Step11Props {
   network?: Network;
 }
 
-const Step11: React.FC<Step11Props> = ({
+const StepProofSubmission: React.FC<StepProofSubmissionProps> = ({
   containerWidth,
   isActive,
   onSuccess,
@@ -114,7 +114,7 @@ const Step11: React.FC<Step11Props> = ({
       // was previously silent) and pass the localized reason through so
       // Step12Error shows "scannez d'abord votre document" instead of the
       // meaningless "Unknown vote error".
-      console.warn('[Step11] missing-data timeout (15s) — rarime/passport/proposal refs never arrived');
+      console.warn('[StepProofSubmission] missing-data timeout (15s) — rarime/passport/proposal refs never arrived');
       setStatusText(msg);
       onError?.(msg);
     }, 15000);
@@ -146,7 +146,7 @@ const Step11: React.FC<Step11Props> = ({
           const rpcUrl = getFreedomToolConfig(network).api.votingRpcUrl;
           const outcome = await waitForVoteReceipt(new JsonRpcProvider(rpcUrl), txHash);
           if (outcome === 'reverted') {
-            console.warn('[Step11] vote tx reverted on-chain:', txHash);
+            console.warn('[StepProofSubmission] vote tx reverted on-chain:', txHash);
             onError?.(t('voting.voteNotRegistered'));
             return;
           }
@@ -154,7 +154,7 @@ const Step11: React.FC<Step11Props> = ({
         } catch (confirmErr: any) {
           // Couldn't read the receipt (RPC down). Don't claim failure on a tx
           // that may well have succeeded — show optimistic + unconfirmed.
-          console.warn('[Step11] receipt confirmation failed:', confirmErr?.message ?? confirmErr);
+          console.warn('[StepProofSubmission] receipt confirmation failed:', confirmErr?.message ?? confirmErr);
           onSuccess?.(txHash, false);
         }
       };
@@ -190,7 +190,7 @@ const Step11: React.FC<Step11Props> = ({
           const profileKeyHex = RarimeUtils.getProfileKey(sk);
 
           // answerIndex omitted — anonymous vote (see Step9Vote comment).
-          console.log(`[Step11][mainnet] casting vote on proposal #${proposal.id}`);
+          console.log(`[StepProofSubmission][mainnet] casting vote on proposal #${proposal.id}`);
           setStatusText(t('voting.step11GeneratingProof'));
 
           const { txId } = await castMainnetVote({
@@ -213,7 +213,7 @@ const Step11: React.FC<Step11Props> = ({
               }
             },
           });
-          console.log('[Step11][mainnet] vote tx id:', txId);
+          console.log('[StepProofSubmission][mainnet] vote tx id:', txId);
           await confirmAndFinish(txId);
           return;
         }
@@ -234,7 +234,7 @@ const Step11: React.FC<Step11Props> = ({
         setStatusText(t('voting.step11Preparing'));
         const alreadyVoted = await ft.isAlreadyVoted(proposal, r);
         if (alreadyVoted) {
-          console.log('[FreedomTool] Step11: Already voted on this proposal');
+          console.log('[FreedomTool] StepProofSubmission: Already voted on this proposal');
           hasCalledCallback.current = true;
           setStatusText(t(`voting.step9ErrorDescription_${docSfx}`));
           onError?.(t(`voting.step9ErrorDescription_${docSfx}`));
@@ -255,7 +255,7 @@ const Step11: React.FC<Step11Props> = ({
             }
           });
         } catch (dlErr: any) {
-          console.error('[FreedomTool] Step11: Circuit preload failed:', dlErr);
+          console.error('[FreedomTool] StepProofSubmission: Circuit preload failed:', dlErr);
           hasCalledCallback.current = true;
           const msg = t('voting.step11DownloadFailed');
           setStatusText(msg);
@@ -266,8 +266,8 @@ const Step11: React.FC<Step11Props> = ({
         setStatusText(t('voting.step11GeneratingProof'));
         const mrzData = p.getMRZData();
         const citizenshipHex = BigInt("0x" + Buffer.from(mrzData.issuingCountry).toString("hex")).toString();
-        console.log(`[FreedomTool] Step11: Submitting vote...`);
-        console.log(`[FreedomTool] Step11: proposal=#${proposal.id} "${proposal.title}"`);
+        console.log(`[FreedomTool] StepProofSubmission: Submitting vote...`);
+        console.log(`[FreedomTool] StepProofSubmission: proposal=#${proposal.id} "${proposal.title}"`);
         // answerIndex / variant intentionally NOT logged — anonymous vote.
         // SECURITY: `issuingCountry` is a 3-letter country code (too short
         // for the digit-length filter); the redaction labels catch
@@ -277,10 +277,10 @@ const Step11: React.FC<Step11Props> = ({
         // sendVoteContract are properties of the proposal, not the
         // voter, and are safe to keep.
         if (__DEV__) {
-          console.log(`[FreedomTool] Step11: citizenshipMask=${citizenshipHex} (${mrzData.issuingCountry})`);
+          console.log(`[FreedomTool] StepProofSubmission: citizenshipMask=${citizenshipHex} (${mrzData.issuingCountry})`);
         }
-        console.log(`[FreedomTool] Step11: citizenshipWhitelist=[${proposal.criteria.citizenshipWhitelist.map(String).join(', ')}]`);
-        console.log(`[FreedomTool] Step11: selector=${proposal.criteria.selector}, sendVoteContract=${proposal.sendVoteContractAddress}`);
+        console.log(`[FreedomTool] StepProofSubmission: citizenshipWhitelist=[${proposal.criteria.citizenshipWhitelist.map(String).join(', ')}]`);
+        console.log(`[FreedomTool] StepProofSubmission: selector=${proposal.criteria.selector}, sendVoteContract=${proposal.sendVoteContractAddress}`);
 
         // Pre-flight eligibility via the SDK's own check. This looks at voting
         // period and already-voted — it does NOT compare passport.issueTimestamp
@@ -290,7 +290,7 @@ const Step11: React.FC<Step11Props> = ({
         try {
           await ft.verify(proposal, p, r);
         } catch (vErr: any) {
-          console.warn('[Step11] SDK verify() rejected:', vErr?.message);
+          console.warn('[StepProofSubmission] SDK verify() rejected:', vErr?.message);
           throw vErr;
         }
 
@@ -307,11 +307,11 @@ const Step11: React.FC<Step11Props> = ({
           passport: p,
         });
 
-        console.log('[FreedomTool] Step11: Vote TX hash:', txHash);
+        console.log('[FreedomTool] StepProofSubmission: Vote TX hash:', txHash);
         await confirmAndFinish(txHash);
       } catch (err: any) {
-        console.error('[FreedomTool] Step11: Vote error:', err);
-        console.error('[FreedomTool] Step11: Error details:', JSON.stringify({ message: err?.message, code: err?.code, data: err?.data, status: err?.status }, null, 2));
+        console.error('[FreedomTool] StepProofSubmission: Vote error:', err);
+        console.error('[FreedomTool] StepProofSubmission: Error details:', JSON.stringify({ message: err?.message, code: err?.code, data: err?.data, status: err?.status }, null, 2));
         hasCalledCallback.current = true;
         const msg = err?.message || '';
         let errorMsg: string;
@@ -400,4 +400,4 @@ const Step11: React.FC<Step11Props> = ({
   );
 };
 
-export default Step11;
+export default StepProofSubmission;

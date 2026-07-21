@@ -6,7 +6,7 @@ import { createModalStyles, createStepSpecificStyles } from './styles';
 import { useColors } from '@/constants/theme';
 import { useTranslation } from 'react-i18next';
 
-interface Step4Props {
+interface StepDocumentScanStartProps {
   player: any;
   // Intro clip that plays *before* the "Démarrer l'analyse" content.
   // Optional so the test renders stay green.
@@ -17,7 +17,7 @@ interface Step4Props {
   isPassportFlow?: boolean;
 }
 
-const Step4: React.FC<Step4Props> = ({ player, introPlayer, containerWidth, onStartAnalysis, onLayout, isPassportFlow = false }) => {
+const StepDocumentScanStart: React.FC<StepDocumentScanStartProps> = ({ player, introPlayer, containerWidth, onStartAnalysis, onLayout, isPassportFlow = false }) => {
   const { t } = useTranslation();
   const docSfx = isPassportFlow ? 'passport' : 'idCard';
   const colors = useColors();
@@ -31,23 +31,23 @@ const Step4: React.FC<Step4Props> = ({ player, introPlayer, containerWidth, onSt
   const [showIntro, setShowIntro] = useState(true);
 
   const handleStartAnalysis = async () => {
-    console.log('🔘 Step4: Start analysis pressed, hasPermission:', hasPermission);
+    console.log('🔘 StepDocumentScanStart: Start analysis pressed, hasPermission:', hasPermission);
 
     // Request camera permission before proceeding
     if (!hasPermission) {
-      console.log('📸 Step4: Requesting camera permission...');
+      console.log('📸 StepDocumentScanStart: Requesting camera permission...');
       const granted = await requestPermission();
-      console.log('📸 Step4: Permission result:', granted);
+      console.log('📸 StepDocumentScanStart: Permission result:', granted);
 
       if (!granted) {
         // Permission denied - stay on this step
-        console.log('❌ Step4: Camera permission denied');
+        console.log('❌ StepDocumentScanStart: Camera permission denied');
         return;
       }
     }
 
     // Permission granted or already had it - proceed to next step
-    console.log('✅ Step4: Permission OK, proceeding to Step 5');
+    console.log('✅ StepDocumentScanStart: Permission OK, proceeding to Step 5');
     onStartAnalysis?.();
   };
 
@@ -112,4 +112,4 @@ const Step4: React.FC<Step4Props> = ({ player, introPlayer, containerWidth, onSt
   );
 };
 
-export default Step4;
+export default StepDocumentScanStart;

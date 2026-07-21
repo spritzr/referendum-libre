@@ -6,7 +6,7 @@ import { useColors } from '@/constants/theme';
 import { useTranslation } from 'react-i18next';
 import { ErrorReportButton } from '@/components/ErrorReportButton';
 
-interface Step12ErrorProps {
+interface StepVoteErrorProps {
   containerWidth: number;
   onGoHome?: () => void;
   onLayout?: (event: LayoutChangeEvent) => void;
@@ -23,7 +23,7 @@ interface Step12ErrorProps {
 // button all stack around y=0).
 const SLIDE_MIN_HEIGHT = Math.round(Dimensions.get('window').height * 0.75);
 
-const Step12Error: React.FC<Step12ErrorProps> = ({ containerWidth, onGoHome, onLayout, errorReason, error }) => {
+const StepVoteError: React.FC<StepVoteErrorProps> = ({ containerWidth, onGoHome, onLayout, errorReason, error }) => {
   const { t } = useTranslation();
   const colors = useColors();
   const modalStyles = createModalStyles(colors);
@@ -69,4 +69,4 @@ const Step12Error: React.FC<Step12ErrorProps> = ({ containerWidth, onGoHome, onL
   );
 };
 
-export default Step12Error;
+export default StepVoteError;

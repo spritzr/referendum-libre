@@ -15,7 +15,7 @@ import { loadDevExamplePassportData } from '@/utils/dev-example-passport';
 // hides itself.
 const DEV_EXAMPLE_PASSPORT_DATA = loadDevExamplePassportData();
 
-interface Step6Props {
+interface StepNFCReadProps {
   containerWidth: number;
   player: any;
   mrzData?: {
@@ -34,7 +34,7 @@ interface Step6Props {
   isPassportFlow?: boolean;
 }
 
-const Step6: React.FC<Step6Props> = ({ containerWidth, player, mrzData, onAnalyze, onNFCSuccess, onNFCError, onGoBack, onLayout, isPassportFlow = false }) => {
+const StepNFCRead: React.FC<StepNFCReadProps> = ({ containerWidth, player, mrzData, onAnalyze, onNFCSuccess, onNFCError, onGoBack, onLayout, isPassportFlow = false }) => {
   const { t } = useTranslation();
   const docSfx = isPassportFlow ? 'passport' : 'idCard';
   const { devMode } = useDevMode();
@@ -99,7 +99,7 @@ const Step6: React.FC<Step6Props> = ({ containerWidth, player, mrzData, onAnalyz
           }),
           EDocumentModuleListener(EDocumentModuleEvents.DebugLog, (event: unknown) => {
             const { message } = event as { message: string };
-            console.log('[Step6/Native]', message);
+            console.log('[StepNFCRead/Native]', message);
             setNativeLogs((prev) => [...prev.slice(-40), message]);
           }),
         ];
@@ -149,7 +149,7 @@ const Step6: React.FC<Step6Props> = ({ containerWidth, player, mrzData, onAnalyz
     // Operational only — no PII. mrzData contains documentNumber + DOB
     // which are the BAC key inputs; logging them would leak both to
     // logcat / Metro stdout.
-    console.log('[Step6] handleAnalyzePress called, mrzData present:', !!mrzData);
+    console.log('[StepNFCRead] handleAnalyzePress called, mrzData present:', !!mrzData);
     if (!mrzData) {
       setScanStatus(t('voting.step6MissingMrz'));
       return;
@@ -157,7 +157,7 @@ const Step6: React.FC<Step6Props> = ({ containerWidth, player, mrzData, onAnalyz
 
     // Android-only: pre-check that NFC is enabled. The native scan path
     // throws IllegalStateException with a French-only message when it's off,
-    // which surfaces as a cryptic Step6 error after the user already went
+    // which surfaces as a cryptic StepNFCRead error after the user already went
     // through MRZ + camera. Catching it here lets us guide them to the
     // system NFC toggle and auto-retry when they return.
     if (Platform.OS === 'android') {
@@ -168,7 +168,7 @@ const Step6: React.FC<Step6Props> = ({ containerWidth, player, mrzData, onAnalyz
       } catch (e) {
         // Couldn't determine state (e.g., no NFC hardware) — let the native
         // module's own error path surface a clearer message downstream.
-        console.warn('[Step6] NFC pre-check failed:', e);
+        console.warn('[StepNFCRead] NFC pre-check failed:', e);
       }
       if (isOff) {
         Alert.alert(
@@ -202,14 +202,14 @@ const Step6: React.FC<Step6Props> = ({ containerWidth, player, mrzData, onAnalyz
       setScanStatus(t('voting.step6Init'));
       setNativeLogs([]);
 
-      console.log('[Step6] Importing e-document module...');
+      console.log('[StepNFCRead] Importing e-document module...');
       const eDocModule = await import('@/modules/e-document');
       const { scanDocument } = eDocModule;
-      console.log('[Step6] scanDocument imported, type:', typeof scanDocument);
+      console.log('[StepNFCRead] scanDocument imported, type:', typeof scanDocument);
 
       // Generate random challenge for Active Authentication
       const challenge = getRandomValues(new Uint8Array(32));
-      console.log('[Step6] Challenge generated, length:', challenge.length);
+      console.log('[StepNFCRead] Challenge generated, length:', challenge.length);
 
       // On Android, ensure at least 5s have elapsed since Step 6 mounted so the
       // camera2 session from Step 5 is fully torn down before NFC starts. On
@@ -228,7 +228,7 @@ const Step6: React.FC<Step6Props> = ({ containerWidth, player, mrzData, onAnalyz
       setScanStatus(t(`voting.step6Now_${docSfx}`));
       // BAC-key inputs (documentNumber, birthDate, expiryDate) intentionally
       // omitted — logging them would leak the user's doc number + DOB.
-      console.log(`[Step6] Starting scanDocument type=${isPassportFlow ? 'P' : 'I'}`);
+      console.log(`[StepNFCRead] Starting scanDocument type=${isPassportFlow ? 'P' : 'I'}`);
 
       let timeoutId: ReturnType<typeof setTimeout> | undefined;
       const timeoutPromise = new Promise<never>((_, reject) => {
@@ -250,7 +250,7 @@ const Step6: React.FC<Step6Props> = ({ containerWidth, player, mrzData, onAnalyz
       const result = await Promise.race([scanPromise, timeoutPromise]).finally(() => {
         clearTimeout(timeoutId);
       });
-      console.log('[Step6] Scan result received, keys:', Object.keys(result as any));
+      console.log('[StepNFCRead] Scan result received, keys:', Object.keys(result as any));
 
       // Doc-type post-scan check. The NFC layer's wrong-doc heuristic above
       // catches the case where the chip rejects the wrong protocol (e.g.
@@ -277,7 +277,7 @@ const Step6: React.FC<Step6Props> = ({ containerWidth, player, mrzData, onAnalyz
           // Genuine wrong-document swap (passport MRZ on an ID-card flow or vice
           // versa) → show the "wrong document" banner + restart-with-correct-doc.
           console.warn(
-            `[Step6] doc-type mismatch: flow=${isPassportFlow ? 'passport' : 'idCard'} but chip dg1Len=${dg1Len}`,
+            `[StepNFCRead] doc-type mismatch: flow=${isPassportFlow ? 'passport' : 'idCard'} but chip dg1Len=${dg1Len}`,
           );
           setPassportDetected(true);
           setScanStatus('');
@@ -286,7 +286,7 @@ const Step6: React.FC<Step6Props> = ({ containerWidth, player, mrzData, onAnalyz
           // case — surface a generic read error and keep the normal retry CTA
           // (don't set passportDetected, which hides the analyze/retry button).
           console.warn(
-            `[Step6] unexpected DG1 length: expected=${expectedDg1Len} got=${dg1Len}`,
+            `[StepNFCRead] unexpected DG1 length: expected=${expectedDg1Len} got=${dg1Len}`,
           );
           setScanStatus(t('voting.step6ReadError'));
         }
@@ -303,9 +303,9 @@ const Step6: React.FC<Step6Props> = ({ containerWidth, player, mrzData, onAnalyz
         setTimeout(() => { onNFCSuccess(result); }, 500);
       }
     } catch (error: any) {
-      console.error('[Step6] NFC scan error:', error);
+      console.error('[StepNFCRead] NFC scan error:', error);
       const errorDetails = JSON.stringify({ message: error.message, code: error.code, name: error.name, stack: error.stack?.substring(0, 300) });
-      console.error('[Step6] Error details:', errorDetails);
+      console.error('[StepNFCRead] Error details:', errorDetails);
       setDebugError(`${error.name || 'Error'}: ${error.message || 'unknown'}\n\nCode: ${error.code || 'none'}\n\nInfo: ${JSON.stringify(error.userInfo || error.nativeError || {})}\n\nStack: ${error.stack?.substring(0, 200) || 'none'}`);
 
       if (error.message === 'InvalidMRZKey' || error.code === 'InvalidMRZKey') {
@@ -628,4 +628,4 @@ const Step6: React.FC<Step6Props> = ({ containerWidth, player, mrzData, onAnalyz
   );
 };
 
-export default Step6;
+export default StepNFCRead;

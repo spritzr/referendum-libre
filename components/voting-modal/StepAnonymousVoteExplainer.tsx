@@ -6,23 +6,15 @@ import { useColors } from '@/constants/theme';
 import { useTranslation } from 'react-i18next';
 import { CAP_SMALL } from '@/utils/font-scale-cap';
 
-interface Step2Props {
+interface StepAnonymousVoteExplainerProps {
   player: any;
   containerWidth: number;
   slideAreaHeight?: number;
   onLayout?: (event: LayoutChangeEvent) => void;
-  isPassportFlow?: boolean;
 }
 
-const Step2: React.FC<Step2Props> = ({
-  player,
-  containerWidth,
-  slideAreaHeight,
-  onLayout,
-  isPassportFlow = false,
-}) => {
+const StepAnonymousVoteExplainer: React.FC<StepAnonymousVoteExplainerProps> = ({ player, containerWidth, slideAreaHeight, onLayout }) => {
   const { t } = useTranslation();
-  const docSfx = isPassportFlow ? 'passport' : 'idCard';
   const colors = useColors();
   const modalStyles = createModalStyles(colors);
   const stepSpecificStyles = createStepSpecificStyles(colors);
@@ -39,13 +31,13 @@ const Step2: React.FC<Step2Props> = ({
         <View style={modalStyles.mediaContainer}>
           {Platform.OS === 'android' ? (
             <Image
-              source={require('@/assets/images/poster-phone.png')}
-              style={stepSpecificStyles.phoneImage}
+              source={require('@/assets/images/poster-ballot.png')}
+              style={stepSpecificStyles.ballotImage}
               resizeMode="contain"
             />
           ) : (
             <VideoView
-              style={stepSpecificStyles.phoneImage}
+              style={stepSpecificStyles.ballotImage}
               player={player}
               contentFit="contain"
               nativeControls={false}
@@ -59,15 +51,15 @@ const Step2: React.FC<Step2Props> = ({
             <View style={modalStyles.stepHeader}>
               <View style={modalStyles.numberCircle}>
                 <Text style={modalStyles.numberText} maxFontSizeMultiplier={CAP_SMALL}>
-                  2
+                  3
                 </Text>
               </View>
               <Text style={modalStyles.stepTitle} maxFontSizeMultiplier={CAP_SMALL}>
-                {t('voting.step2Title')}
+                {t('voting.step3Title')}
               </Text>
             </View>
             <Text style={modalStyles.stepDescription} maxFontSizeMultiplier={CAP_SMALL}>
-              {t(`voting.step2Description_${docSfx}`)}
+              {t('voting.step3Description')}
             </Text>
           </View>
         </View>
@@ -76,4 +68,4 @@ const Step2: React.FC<Step2Props> = ({
   );
 };
 
-export default Step2;
+export default StepAnonymousVoteExplainer;

@@ -5,7 +5,7 @@ import { createModalStyles, createStepSpecificStyles } from './styles';
 import { useColors } from '@/constants/theme';
 import { useTranslation } from 'react-i18next';
 
-interface Step8Props {
+interface StepReadyToVoteProps {
   containerWidth: number;
   verificationResult?: 'success' | 'error' | null;
   voteSubmissionResult?: 'success' | 'error' | null;
@@ -15,7 +15,7 @@ interface Step8Props {
   onLayout?: (event: LayoutChangeEvent) => void;
 }
 
-const Step8: React.FC<Step8Props> = ({
+const StepReadyToVote: React.FC<StepReadyToVoteProps> = ({
   containerWidth,
   verificationResult,
   voteSubmissionResult,
@@ -39,7 +39,7 @@ const Step8: React.FC<Step8Props> = ({
   const handleVote = () => {
     if (verificationResult !== 'success') {
       console.warn(
-        `[Step8] Vote-now tapped without verified registration (verificationResult=${String(verificationResult)}) — ignoring`,
+        `[StepReadyToVote] Vote-now tapped without verified registration (verificationResult=${String(verificationResult)}) — ignoring`,
       );
       return;
     }
@@ -74,4 +74,4 @@ const Step8: React.FC<Step8Props> = ({
   );
 };
 
-export default Step8;
+export default StepReadyToVote;

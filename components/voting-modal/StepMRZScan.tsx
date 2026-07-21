@@ -16,7 +16,7 @@ import { loadDevExampleMrz } from '@/utils/dev-example-passport';
 
 const DEV_EXAMPLE_MRZ = loadDevExampleMrz();
 
-interface Step5Props {
+interface StepMRZScanProps {
   containerWidth: number;
   isActive?: boolean;
   onMRZScanned?: (data: {
@@ -40,7 +40,7 @@ interface Step5Props {
   allowedCitizenships?: readonly bigint[];
 }
 
-const Step5: React.FC<Step5Props> = ({ containerWidth, isActive, onMRZScanned, onManualFill, onLayout, isPassportFlow = false, allowedCitizenships }) => {
+const StepMRZScan: React.FC<StepMRZScanProps> = ({ containerWidth, isActive, onMRZScanned, onManualFill, onLayout, isPassportFlow = false, allowedCitizenships }) => {
   // Dev-mode toggle: bypasses the MRZ-level underage / expired guards so
   // QA can scan otherwise-ineligible documents and test the downstream
   // NFC + registration + voting paths. Turn it on with 7 taps on the
@@ -82,7 +82,7 @@ const Step5: React.FC<Step5Props> = ({ containerWidth, isActive, onMRZScanned, o
     if (!isActive || hasScanned) return;
     const timer = setTimeout(() => {
       if (!ocrProducedResultsRef.current && !hasScanned) {
-        console.log('[Step5] No OCR output after 8s — flagging OCR as unavailable (likely degoogled device)');
+        console.log('[StepMRZScan] No OCR output after 8s — flagging OCR as unavailable (likely degoogled device)');
         setOcrUnavailable(true);
       }
     }, 8000);
@@ -183,7 +183,7 @@ const Step5: React.FC<Step5Props> = ({ containerWidth, isActive, onMRZScanned, o
 
     // Operational only — no PII. The MRZ is the BAC key for the NFC chip;
     // logging it would leak the user's document number + DOB to logcat.
-    console.log(`[Step5] MRZ detected (nationality=${mrz.nationality}, docLen=${mrz.documentNumber.length})`);
+    console.log(`[StepMRZScan] MRZ detected (nationality=${mrz.nationality}, docLen=${mrz.documentNumber.length})`);
 
     // Pre-NFC eligibility gate: same age + expiry policy as the manual
     // entry sheet (utils/mrzDate). Stays in scan state so OCR keeps
@@ -199,18 +199,18 @@ const Step5: React.FC<Step5Props> = ({ containerWidth, isActive, onMRZScanned, o
     const expiry = parseMRZDate(mrz.dateOfExpiry, 'expiry');
     if (checkBirthDate(birth) === 'underage') {
       if (devMode) {
-        console.log('[Step5][devMode] bypassing underage check');
+        console.log('[StepMRZScan][devMode] bypassing underage check');
       } else {
-        console.log('[Step5] Card holder is under 18 — blocking');
+        console.log('[StepMRZScan] Card holder is under 18 — blocking');
         setScanProgress('underage');
         return;
       }
     }
     if (checkExpiryDate(expiry) === 'expired') {
       if (devMode) {
-        console.log('[Step5][devMode] bypassing expired check');
+        console.log('[StepMRZScan][devMode] bypassing expired check');
       } else {
-        console.log('[Step5] Card is expired — blocking');
+        console.log('[StepMRZScan] Card is expired — blocking');
         setScanProgress('expired');
         return;
       }
@@ -223,9 +223,9 @@ const Step5: React.FC<Step5Props> = ({ containerWidth, isActive, onMRZScanned, o
     // short-circuits to true.
     if (!isCitizenshipAllowed(mrz.nationality, allowedCitizenships)) {
       if (devMode) {
-        console.log(`[Step5][devMode] bypassing wrong-country check (mrz=${mrz.nationality})`);
+        console.log(`[StepMRZScan][devMode] bypassing wrong-country check (mrz=${mrz.nationality})`);
       } else {
-        console.log(`[Step5] Wrong country — blocking (mrz=${mrz.nationality})`);
+        console.log(`[StepMRZScan] Wrong country — blocking (mrz=${mrz.nationality})`);
         setRejectedCountry(mrz.nationality);
         setScanProgress('wrong_country');
         return;
@@ -247,7 +247,7 @@ const Step5: React.FC<Step5Props> = ({ containerWidth, isActive, onMRZScanned, o
         expiryDate: convertToMRZFormat(convertMRZDate(mrz.dateOfExpiry)),
       };
       // No PII in the log — see "MRZ detected" comment above.
-      console.log('[Step5] Sending MRZ to next step');
+      console.log('[StepMRZScan] Sending MRZ to next step');
       // Hold on the green success reticle for ~800ms so the user sees
       // the success state before the parent slides Step 5 off-screen.
       // Without this, setScanProgress('success') and onMRZScanned fire
@@ -290,7 +290,7 @@ const Step5: React.FC<Step5Props> = ({ containerWidth, isActive, onMRZScanned, o
   }, [scanText, onMRZDetected, hasScanned]);
 
   if (!hasPermission) {
-    console.log('❌ Step5: Rendering NO PERMISSION screen');
+    console.log('❌ StepMRZScan: Rendering NO PERMISSION screen');
     return (
       <View style={[{ width: containerWidth }]} onLayout={onLayout}>
         <View style={stepSpecificStyles.step5Container}>
@@ -313,7 +313,7 @@ const Step5: React.FC<Step5Props> = ({ containerWidth, isActive, onMRZScanned, o
   }
 
   if (!device) {
-    console.log('❌ Step5: Rendering NO DEVICE screen');
+    console.log('❌ StepMRZScan: Rendering NO DEVICE screen');
     return (
       <View style={[{ width: containerWidth }]} onLayout={onLayout}>
         <View style={stepSpecificStyles.step5Container}>
@@ -335,7 +335,7 @@ const Step5: React.FC<Step5Props> = ({ containerWidth, isActive, onMRZScanned, o
     );
   }
 
-  console.log('✅ Step5: Rendering CAMERA');
+  console.log('✅ StepMRZScan: Rendering CAMERA');
 
   return (
     <View style={[{ width: containerWidth }]} onLayout={onLayout}>
@@ -523,4 +523,4 @@ const Step5: React.FC<Step5Props> = ({ containerWidth, isActive, onMRZScanned, o
   );
 };
 
-export default Step5;
+export default StepMRZScan;
