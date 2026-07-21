@@ -24,11 +24,31 @@ config.resolver.extraNodeModules = {
 // throw "Unable to resolve module" without this.
 config.resolver.assetExts = [...config.resolver.assetExts, 'zkey', 'dat', 'pem'];
 
+const expoGoMocks =
+  process.env.EXPO_GO_MOCKS === '1' || process.env.EXPO_PUBLIC_EXPO_GO_MOCKS === '1';
+const expoGoMockPath = 'mocks/expo-go.js';
+const expoGoMockModules = new Set([
+  'react-native-nfc-manager',
+  'react-native-mmkv',
+  'react-native-vision-camera',
+  'react-native-vision-camera-text-recognition',
+  'react-native-worklets-core',
+  '@rarimo/rarime-rn-sdk',
+  '@rarimo/rarime-rn-sdk/build/helpers/contracts',
+  '@/modules/e-document',
+  '@modules/rapidsnark-wrp',
+  '@modules/witnesscalculator/src/WitnesscalculatorModule',
+]);
+
 // Force resolution of packages that don't have React Native exports.
 // @iden3/js-crypto only ships browser ESM — point Metro at that bundle so the
 // SDK (which imports it transitively from RarimePassport / Rarime.ts) works
 // without an "Unable to resolve module" error at app start.
 config.resolver.resolveRequest = (context, moduleName, platform) => {
+  if (expoGoMocks && expoGoMockModules.has(moduleName)) {
+    return { filePath: path.resolve(__dirname, expoGoMockPath), type: 'sourceFile' };
+  }
+
   if (moduleName === '@iden3/js-crypto') {
     return {
       filePath: path.resolve(__dirname, 'node_modules/@iden3/js-crypto/dist/browser/esm/index.js'),
