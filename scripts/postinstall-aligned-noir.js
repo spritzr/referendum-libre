@@ -4,15 +4,15 @@
  *
  * Runs from TWO places — both must stay wired:
  *
- *   1. `npm postinstall` (package.json) — the load-bearing one. Any
- *      `npm ci`/`npm install` restores the SDK package pristine, undoing a
+ *   1. `postinstall` (package.json) — the load-bearing one. Any
+ *      `pnpm install` restores the SDK package pristine, undoing a
  *      previous swap. Split CI jobs (android-release.yml: prebuild job ≠
- *      build job, each runs its own `npm ci`) ship the ORIGINAL 4 KB aar if
+ *      build job, each runs its own install) ship the ORIGINAL 4 KB aar if
  *      the swap only happens at prebuild — that's exactly the regression the
  *      check-16k-alignment gate caught on the v1.0 release run.
  *
  *   2. plugins/withAlignedNoir.js (expo prebuild) — belt-and-suspenders for
- *      flows that bypass our postinstall (e.g. `npm ci --ignore-scripts`).
+ *      flows that bypass our postinstall (e.g. `pnpm install --ignore-scripts`).
  *
  * Idempotent: compares sha256 and skips when already swapped, so running it
  * any number of times in any order is safe.
@@ -43,7 +43,7 @@ function injectAlignedNoir(projectRoot, logTag) {
     return;
   }
   if (!fs.existsSync(sdk)) {
-    console.warn(`${tag} SDK aar not found at ${SDK_AAR_REL} — SKIPPING (run npm ci first).`);
+    console.warn(`${tag} SDK aar not found at ${SDK_AAR_REL} — SKIPPING (run pnpm install first).`);
     return;
   }
 
@@ -52,6 +52,11 @@ function injectAlignedNoir(projectRoot, logTag) {
     return;
   }
 
+  // Under pnpm, files in node_modules are hard links into the (global)
+  // content-addressable store. Unlink before writing so the swap creates a
+  // fresh inode instead of mutating the shared store copy in place — which
+  // would corrupt the store for every other checkout on the machine.
+  fs.rmSync(sdk, { force: true });
   fs.copyFileSync(aligned, sdk);
   console.log(
     `${tag} Replaced SDK noir.aar with the 16 KB-aligned build ` +

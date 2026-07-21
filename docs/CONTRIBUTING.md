@@ -7,7 +7,8 @@ Thank you for your interest in contributing! This document provides guidelines f
 ### Prerequisites
 
 - Node.js 20+
-- Expo SDK 54 (local CLI via `npx expo` — no global install)
+- pnpm 10.x via Corepack (`corepack enable` if `pnpm` is unavailable)
+- Expo SDK 54 (local CLI via `pnpm expo` — no global install)
 - iOS: Xcode 16+, CocoaPods
 - Android: Android Studio, NDK 27.1.12297006
 
@@ -19,16 +20,24 @@ git clone https://github.com/referendum-libre/referendum-libre-react-native.git
 cd referendum-libre-react-native
 
 # Install dependencies
-npm install
+pnpm install
 
 # Generate native projects
-npx expo prebuild
+pnpm expo prebuild
 
 # Start development
-npx expo run:ios
+pnpm ios
 # or
-npx expo run:android
+pnpm android
 ```
+
+### Package manager
+
+Use `pnpm` for installs and scripts. It is faster for repeated worktree setup because pnpm reuses a global content-addressable store instead of copying every package per checkout. Project pnpm settings live in `pnpm-workspace.yaml`; `enableGlobalVirtualStore: true` there enables pnpm's global virtual store so repeated installs across git worktrees can link `node_modules` faster.
+
+- Do not add or update `package-lock.json` or `yarn.lock`.
+- Keep `pnpm-lock.yaml` in sync when dependencies change.
+- Prefer `pnpm <script>` for package scripts and `pnpm expo ...` for the local Expo CLI.
 
 ## Code Style
 
@@ -37,7 +46,7 @@ npx expo run:android
 We use Prettier for code formatting. Run before committing:
 
 ```bash
-npm run format
+pnpm format
 ```
 
 ### Linting
@@ -45,7 +54,7 @@ npm run format
 We use ESLint for code quality. Check for issues with:
 
 ```bash
-npm run lint
+pnpm lint
 ```
 
 ### TypeScript
@@ -105,7 +114,7 @@ Examples:
 1. Fork the repository (or branch directly if you have write access)
 2. Create a feature branch off **`develop`**: `git checkout develop && git pull && git checkout -b feature/<short-name>`
 3. Make your changes
-4. Run `npm run lint`, `npm run format`, `npm test`, and `npx tsc --noEmit`
+4. Run `pnpm lint`, `pnpm format`, `pnpm test`, and `pnpm exec tsc --noEmit`
 5. Test on both iOS and Android if possible
 6. Open a PR **against `develop`**, not `master`. PRs targeting `master`
    will be redirected — only maintainers merge into `master`.
@@ -143,10 +152,10 @@ secrets) is documented in the header of
 
 ```bash
 # Run tests
-npm test
+pnpm test
 
 # Run tests in watch mode
-npm run test:watch
+pnpm test:watch
 ```
 
 ## Project Structure

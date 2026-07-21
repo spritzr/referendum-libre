@@ -28,13 +28,13 @@ commits touch exactly:
 
 - `app.config.ts` → `version: 'X.Y.Z'`
 - `package.json` → `"version": "X.Y.Z"`
-- `package-lock.json` → mirrors the `package.json` version (run `npm install`
+- `pnpm-lock.yaml` → mirrors the `package.json` version (run `pnpm install`
   to update it, don't hand-edit)
 
 Notes:
 
 - **Android `versionCode` / `versionName`** are *generated* from
-  `app.config.ts` at `npx expo prebuild` time (`android/` is gitignored), so
+  `app.config.ts` at `pnpm expo prebuild` time (`android/` is gitignored), so
   there's nothing to hand-edit there. `versionName` = `app.config` `version`.
 - **`runtimeVersion: { policy: 'appVersion' }`** ties the OTA runtime to the
   app version, so a native bump starts a fresh OTA channel.

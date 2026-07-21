@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, LayoutChangeEvent, Platform, Image } from
 import { VideoView } from 'expo-video';
 import { createModalStyles, createStepSpecificStyles } from './styles';
 import { useColors } from '@/constants/theme';
-import type { ProposalInfo } from '@rarimo/rarime-rn-sdk';
+import type { ProposalInfo } from '@/utils/rarime-types';
 import { useTranslation } from 'react-i18next';
 
 interface Step10Props {

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Image, LayoutChangeEvent, Modal } from 'react-native';
 import { createStepSpecificStyles } from './styles';
 import { useColors } from '@/constants/theme';
-import type { ProposalInfo } from '@rarimo/rarime-rn-sdk';
+import type { ProposalInfo } from '@/utils/rarime-types';
 import { useTranslation } from 'react-i18next';
 
 interface Step9VoteProps {

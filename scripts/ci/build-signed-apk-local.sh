@@ -82,12 +82,12 @@ echo "Keystore password verified."
 
 echo
 echo "==> Building withNfc plugin"
-(cd plugins/withNfc.plugin && npm install --no-audit --no-fund --ignore-scripts >/dev/null 2>&1 && npx tsc)
+pnpm exec tsc --project plugins/withNfc.plugin
 
 echo
 echo "==> Running expo prebuild (--clean) — regenerates android/"
 EXPO_NO_TELEMETRY=1 EXPO_NO_CAPABILITY_SYNC=1 \
-  npx expo prebuild --platform android --clean --no-install
+  pnpm expo prebuild --platform android --clean --no-install
 
 echo
 echo "==> Injecting release signing config into android/app/build.gradle"

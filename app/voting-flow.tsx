@@ -5,7 +5,8 @@ import { Stack, useRouter, useFocusEffect, useLocalSearchParams } from 'expo-rou
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useColors, useTheme } from '@/constants/theme';
 import { Svg, Path } from 'react-native-svg';
-import type { Rarime, RarimePassport, FreedomTool, ProposalInfo } from '@rarimo/rarime-rn-sdk';
+import type { Rarime, RarimePassport, FreedomTool } from '@rarimo/rarime-rn-sdk';
+import type { ProposalInfo } from '@/utils/rarime-types';
 import {
   getRarimeConfig,
   getFreedomToolConfig,

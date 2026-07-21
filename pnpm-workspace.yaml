@@ -1,0 +1,16 @@
+# Single-package project — this file exists to hold pnpm settings.
+
+# Experimental (pnpm >= 10.12): share the virtual store (the linked
+# node_modules layout, not just the downloaded tarballs) across checkouts, so
+# installs in new git worktrees mostly just relink.
+enableGlobalVirtualStore: true
+
+# Skipping these build scripts is deliberate (silences the pnpm install
+# warning):
+# - react-native-nitro-modules: postinstall is `bun build || exit 0` — a no-op
+#   unless bun is installed; the published package already ships lib/.
+# - unrs-resolver: postinstall is a napi fallback check; the platform binary
+#   ships via optionalDependencies (@unrs/resolver-binding-*).
+ignoredBuiltDependencies:
+  - react-native-nitro-modules
+  - unrs-resolver

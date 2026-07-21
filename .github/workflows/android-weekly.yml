@@ -45,11 +45,15 @@ jobs:
         with:
           ref: develop
 
+      - name: Setup pnpm
+        # Version comes from the `packageManager` field in package.json.
+        uses: pnpm/action-setup@v4
+
       - name: Setup Node 20
         uses: actions/setup-node@v5
         with:
           node-version: 20
-          cache: npm
+          cache: pnpm
 
       - name: Setup Java 17
         uses: actions/setup-java@v5
@@ -68,7 +72,7 @@ jobs:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', 'package-lock.json') }}
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', 'pnpm-lock.yaml') }}
           restore-keys: gradle-${{ runner.os }}-
 
       - name: Free disk space
@@ -78,22 +82,21 @@ jobs:
         run: bash scripts/ci/free-disk-space.sh
 
       - name: Install JS dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
         # postinstall runs patch-package automatically.
 
       - name: Build withNfc plugin
-        run: |
-          cd plugins/withNfc.plugin
-          npm install --no-audit --no-fund --ignore-scripts
-          npx tsc
+        # The plugin has no package.json of its own; its self-contained
+        # tsconfig compiles against the root install.
+        run: pnpm exec tsc --project plugins/withNfc.plugin
 
       - name: Expo prebuild (android)
         # --clean wipes any stale android/ dir so plugins re-apply cleanly.
-        # `npx expo` picks up the local expo-cli shipped in node_modules.
+        # `pnpm expo` picks up the local expo-cli shipped in node_modules.
         env:
           EXPO_NO_TELEMETRY: '1'
           EXPO_NO_CAPABILITY_SYNC: '1'
-        run: npx expo prebuild --platform android --clean --no-install
+        run: pnpm expo prebuild --platform android --clean --no-install
 
       - name: Bump Gradle JVM heap for D8 dex-merge
         # D8 OOMs on this repo's combined Noir + Groth16 + RN/Hermes class

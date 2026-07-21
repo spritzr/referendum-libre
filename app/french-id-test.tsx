@@ -33,7 +33,7 @@ import {
   DocumentStatus,
   FreedomTool,
 } from "@rarimo/rarime-rn-sdk";
-import type { ProposalInfo } from "@rarimo/rarime-rn-sdk";
+import type { ProposalInfo } from "@/utils/rarime-types";
 import * as SecureStore from "expo-secure-store";
 import { Buffer } from "buffer";
 import { Svg, Path } from "react-native-svg";

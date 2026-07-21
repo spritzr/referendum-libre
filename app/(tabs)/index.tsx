@@ -8,7 +8,7 @@ import { Svg, Path } from 'react-native-svg';
 import * as WebBrowser from 'expo-web-browser';
 import { useRouter, useFocusEffect } from 'expo-router';
 import { getFreedomToolConfig } from '@/constants/rarime-config';
-import type { ProposalInfo } from '@rarimo/rarime-rn-sdk';
+import type { ProposalInfo } from '@/utils/rarime-types';
 import { useTranslation } from 'react-i18next';
 import { useDevMode } from '@/contexts/DevModeContext';
 import { useNetwork } from '@/contexts/NetworkContext';

@@ -26,7 +26,7 @@ name: Android Release (signed APK)
 #
 # Split into two jobs so:
 #   1. Each gets a fresh 90-minute runner budget (180 min total ceiling).
-#   2. A flaky npm install / prebuild doesn't waste a long gradle run.
+#   2. A flaky pnpm install / prebuild doesn't waste a long gradle run.
 #   3. The expensive gradle step (assembleRelease) is the only thing in
 #      the `build` job, making it easy to retry just that job from the UI.
 #
@@ -62,7 +62,7 @@ permissions:
 
 jobs:
   # ===========================================================================
-  # Job 1: prebuild — checkout, validate tag, npm ci, expo prebuild, sign-patch.
+  # Job 1: prebuild — checkout, validate tag, pnpm install, expo prebuild, sign-patch.
   # Uploads the prepared android/ tree as an artifact for the build job.
   # ===========================================================================
   prebuild:
@@ -109,11 +109,15 @@ jobs:
             exit 1
           fi
 
+      - name: Setup pnpm
+        # Version comes from the `packageManager` field in package.json.
+        uses: pnpm/action-setup@v4
+
       - name: Setup Node 20
         uses: actions/setup-node@v5
         with:
           node-version: 20
-          cache: npm
+          cache: pnpm
 
       - name: Setup Java 17
         # Needed here too because `expo prebuild` resolves gradle-version
@@ -124,19 +128,18 @@ jobs:
           java-version: 17
 
       - name: Install JS dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Build withNfc plugin
-        run: |
-          cd plugins/withNfc.plugin
-          npm install --no-audit --no-fund --ignore-scripts
-          npx tsc
+        # The plugin has no package.json of its own; its self-contained
+        # tsconfig compiles against the root install.
+        run: pnpm exec tsc --project plugins/withNfc.plugin
 
       - name: Expo prebuild (android)
         env:
           EXPO_NO_TELEMETRY: '1'
           EXPO_NO_CAPABILITY_SYNC: '1'
-        run: npx expo prebuild --platform android --clean --no-install
+        run: pnpm expo prebuild --platform android --clean --no-install
 
       - name: Inject release signing config
         # Patches android/app/build.gradle to read REFCIT_RELEASE_* env vars.
@@ -184,6 +187,9 @@ jobs:
         with:
           ref: ${{ needs.prebuild.outputs.tag }}
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
       - name: Setup Node 20
         # Required because Gradle's React Native plugin shells out to node
         # during assembleRelease to bundle the JS. Without node on PATH the
@@ -191,7 +197,7 @@ jobs:
         uses: actions/setup-node@v5
         with:
           node-version: 20
-          cache: npm
+          cache: pnpm
 
       - name: Setup Java 17
         uses: actions/setup-java@v5
@@ -224,8 +230,8 @@ jobs:
 
       - name: Install JS dependencies
         # gradle's React Native plugin reads node_modules at assemble time.
-        # setup-node's `cache: npm` makes this fast (~30s on cache hit).
-        run: npm ci
+        # setup-node's `cache: pnpm` makes this fast on cache hit.
+        run: pnpm install --frozen-lockfile
 
       - name: Download prebuild artifact
         uses: actions/download-artifact@v7

@@ -22,7 +22,7 @@ import { Worklets } from "react-native-worklets-core";
 import { parse } from "mrz";
 import { getRandomValues } from "expo-crypto";
 import { Rarime, RarimePassport, RarimeUtils, DocumentStatus, FreedomTool } from "@rarimo/rarime-rn-sdk";
-import type { ProposalInfo } from "@rarimo/rarime-rn-sdk";
+import type { ProposalInfo } from "@/utils/rarime-types";
 import * as SecureStore from "expo-secure-store";
 import { Buffer } from "buffer";
 import { RARIME_TESTNET_CONFIG, PRIVATE_KEY_STORAGE_KEY, FREEDOM_TOOL_CONFIG } from "@/constants/rarime-config";

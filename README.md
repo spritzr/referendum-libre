@@ -20,28 +20,29 @@ A React Native/Expo application for secure digital voting using passport NFC ver
 ## Prerequisites
 
 - **Node.js** 20+
-- **Expo** — no global CLI needed; the project uses the local CLI via `npx expo` (Expo SDK 54)
+- **pnpm** 10.x via Corepack (`corepack enable` if `pnpm` is unavailable)
+- **Expo** — no global CLI needed; the project uses the local CLI via `pnpm expo` (Expo SDK 54)
 - **iOS**: Xcode 16+, CocoaPods
 - **Android**: Android Studio, NDK 27.1.12297006
 
 ## Installation
 
 ```bash
-# Install dependencies (also runs patch-package + the aligned-noir postinstall)
-npm install
+# Install dependencies with pnpm (also runs patch-package + the aligned-noir postinstall)
+pnpm install
 
 # Generate native projects (android/ and ios/ are gitignored).
 # Use --clean after changing app.config.ts or the config plugins.
-npx expo prebuild
+pnpm expo prebuild
 
 # Run on iOS
-npx expo run:ios
+pnpm ios
 
 # Run on Android
-npx expo run:android
+pnpm android
 
 # Release build (Android, local — no EAS)
-ANDROID_HOME=$ANDROID_HOME npx expo run:android --variant release
+pnpm expo run:android --variant release
 ```
 
 ## Project Structure
@@ -66,16 +67,16 @@ referendum-libre-react-native/
 
 ```bash
 # Start Expo development server
-npm start
+pnpm start
 
 # Run linter
-npm run lint
+pnpm lint
 
 # Format code
-npm run format
+pnpm format
 
 # Run tests
-npm test
+pnpm test
 ```
 
 ## Documentation
@@ -99,7 +100,7 @@ Join us on Matrix to discuss development, ask questions, and help shape the proj
 
 ## Contributing
 
-See [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines.
+See [CONTRIBUTING.md](./docs/CONTRIBUTING.md) for guidelines.
 
 You can support with donations: 
 - XMR: 8AJcjG2wi9M98sAmCnwQp3FtQqeTNns1TM9qatAN149gguYNBorFDwjVgCZtGMCyNHAwM5kvD4sTw4NSr5JEMSEH69HFSYX 

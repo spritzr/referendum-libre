@@ -2,7 +2,7 @@
 // Extracted out of `app/(tabs)/index.tsx` so they can be unit-tested without
 // having to mount the screen.
 
-import type { ProposalInfo } from '@rarimo/rarime-rn-sdk';
+import type { ProposalInfo } from '@/utils/rarime-types';
 
 export type VoteTotals = {
   percents: number[];

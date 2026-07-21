@@ -13,7 +13,7 @@
  */
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import type { ProposalInfo } from '@rarimo/rarime-rn-sdk';
+import type { ProposalInfo } from '@/utils/rarime-types';
 import type { Network } from '@/constants/rarime-config';
 
 const PROPOSALS_CACHE_KEY_PREFIX = 'cached_proposals_v1';

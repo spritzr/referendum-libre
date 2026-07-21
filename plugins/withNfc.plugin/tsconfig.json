@@ -1,6 +1,16 @@
 {
-  "extends": "expo-module-scripts/tsconfig.plugin",
+  // Self-contained on purpose: this used to extend
+  // `expo-module-scripts/tsconfig.plugin`, which is not a direct dependency
+  // and is no longer reachable under pnpm's strict node_modules layout.
   "compilerOptions": {
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "target": "es2020",
+    "lib": ["es2020"],
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "declaration": true,
     "outDir": "build",
     "rootDir": "src"
   },

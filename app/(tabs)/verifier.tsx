@@ -7,7 +7,7 @@ import { getFreedomToolConfig, getExplorerTxBaseUrl, type Network } from '@/cons
 import { classifyReceipt, type VoteTxStatus } from '@/utils/vote-confirmation';
 import { useNetwork } from '@/contexts/NetworkContext';
 import SettingsButton from '@/components/SettingsButton';
-import type { ProposalInfo } from '@rarimo/rarime-rn-sdk';
+import type { ProposalInfo } from '@/utils/rarime-types';
 
 // Function selector for the BioPassportVoting `vote(...)` wrapper on Mainnet
 // (TD3 Groth16 path). Computed from the ABI in utils/vote-calldata.ts:60-67;
