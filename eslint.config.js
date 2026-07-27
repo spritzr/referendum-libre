@@ -50,11 +50,22 @@ module.exports = [
   // process don't trigger `no-undef`. These files are run via `node`, not
   // bundled into the RN app, so they have access to the standard Node API.
   {
-    files: ['scripts/**/*.{js,mjs,cjs}'],
+    files: ['scripts/**/*.{js,mjs,cjs}', 'jest.setup.env.js'],
     languageOptions: {
       globals: {
         ...globals.node,
       },
+    },
+  },
+  // app.config.ts runs under plain Node at `expo prebuild`/`expo config`
+  // time — it's never bundled by Metro, so `expo/no-dynamic-env-var`
+  // (which exists to keep runtime env access statically inlinable) doesn't
+  // apply here. constants/*.ts (actual app runtime code) still needs
+  // static `process.env.FOO` access — see comments in those files.
+  {
+    files: ['app.config.ts'],
+    rules: {
+      'expo/no-dynamic-env-var': 'off',
     },
   },
   // TS/TSX-only rules. Must re-declare the @typescript-eslint plugin

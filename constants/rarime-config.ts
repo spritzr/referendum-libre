@@ -21,10 +21,12 @@
  * in Settings propagates without prop drilling.
  */
 
-function requireEnv(key: string): string {
-  const value = process.env[key];
+// Each process.env.EXPO_PUBLIC_* access below must stay a static string
+// literal (not a variable/helper) — Metro's `expo/no-dynamic-env-var` lint
+// rule requires that so it can statically inline these at bundle time.
+function required(name: string, value: string | undefined): string {
   if (!value) {
-    throw new Error(`Missing required env var ${key}. See .env / CONTRIBUTING.md.`);
+    throw new Error(`Missing required env var ${name}. See .env / CONTRIBUTING.md.`);
   }
   return value;
 }
@@ -55,7 +57,10 @@ export const FREEDOM_TOOL_TESTNET_CONFIG = {
   contracts: {
     // Per-fork: this app's proposal/voting contract on FreedomTool testnet.
     // See CONTRIBUTING.md ▸ "Forking for a new app".
-    proposalStateAddress: requireEnv('EXPO_PUBLIC_FREEDOM_TOOL_TESTNET_PROPOSAL_STATE_ADDRESS'),
+    proposalStateAddress: required(
+      'EXPO_PUBLIC_FREEDOM_TOOL_TESTNET_PROPOSAL_STATE_ADDRESS',
+      process.env.EXPO_PUBLIC_FREEDOM_TOOL_TESTNET_PROPOSAL_STATE_ADDRESS
+    ),
   },
   api: {
     ipfsUrl: 'https://ipfs.rarimo.com',
@@ -101,7 +106,10 @@ export const FREEDOM_TOOL_MAINNET_CONFIG = {
   contracts: {
     // Per-fork: this app's proposal/voting contract on FreedomTool mainnet.
     // See CONTRIBUTING.md ▸ "Forking for a new app".
-    proposalStateAddress: requireEnv('EXPO_PUBLIC_FREEDOM_TOOL_MAINNET_PROPOSAL_STATE_ADDRESS'),
+    proposalStateAddress: required(
+      'EXPO_PUBLIC_FREEDOM_TOOL_MAINNET_PROPOSAL_STATE_ADDRESS',
+      process.env.EXPO_PUBLIC_FREEDOM_TOOL_MAINNET_PROPOSAL_STATE_ADDRESS
+    ),
   },
   api: {
     ipfsUrl: 'https://ipfs.rarimo.com',
@@ -145,8 +153,14 @@ export const getExplorerTxBaseUrl = (network: Network) =>
  * Per-fork: see CONTRIBUTING.md ▸ "Forking for a new app". */
 export const getDefaultProposalId = (network: Network) =>
   network === 'mainnet'
-    ? requireEnv('EXPO_PUBLIC_DEFAULT_PROPOSAL_ID_MAINNET')
-    : requireEnv('EXPO_PUBLIC_DEFAULT_PROPOSAL_ID_TESTNET');
+    ? required(
+        'EXPO_PUBLIC_DEFAULT_PROPOSAL_ID_MAINNET',
+        process.env.EXPO_PUBLIC_DEFAULT_PROPOSAL_ID_MAINNET
+      )
+    : required(
+        'EXPO_PUBLIC_DEFAULT_PROPOSAL_ID_TESTNET',
+        process.env.EXPO_PUBLIC_DEFAULT_PROPOSAL_ID_TESTNET
+      );
 
 // Kept for legacy callers that still import the old name. New code should use
 // getDefaultProposalId(network).
