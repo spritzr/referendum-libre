@@ -21,6 +21,14 @@
  * in Settings propagates without prop drilling.
  */
 
+function requireEnv(key: string): string {
+  const value = process.env[key];
+  if (!value) {
+    throw new Error(`Missing required env var ${key}. See .env / CONTRIBUTING.md.`);
+  }
+  return value;
+}
+
 export type Network = 'testnet' | 'mainnet';
 
 /** Default for fresh installs. Switched to Mainnet on 2026-05-22 once the
@@ -34,8 +42,7 @@ export const DEFAULT_NETWORK: Network = 'mainnet';
 export const RARIME_TESTNET_CONFIG = {
   contractsConfiguration: {
     stateKeeperAddress: '0x12883d5F530AF7EC2adD7cEC29Cf84215efCf4D8',
-    registerSimpleContractAddress:
-      '0x1b6ae4b80F0f26DC53731D1d7aA31fc3996B513B',
+    registerSimpleContractAddress: '0x1b6ae4b80F0f26DC53731D1d7aA31fc3996B513B',
     poseidonSmtAddress: '0xb8bAac4C443097d697F87CC35C5d6B06dDe64D60',
   },
   apiConfiguration: {
@@ -46,7 +53,9 @@ export const RARIME_TESTNET_CONFIG = {
 
 export const FREEDOM_TOOL_TESTNET_CONFIG = {
   contracts: {
-    proposalStateAddress: '0x4C61d7454653720DAb9e26Ca25dc7B8a5cf7065b',
+    // Per-fork: this app's proposal/voting contract on FreedomTool testnet.
+    // See CONTRIBUTING.md ▸ "Forking for a new app".
+    proposalStateAddress: requireEnv('EXPO_PUBLIC_FREEDOM_TOOL_TESTNET_PROPOSAL_STATE_ADDRESS'),
   },
   api: {
     ipfsUrl: 'https://ipfs.rarimo.com',
@@ -71,8 +80,7 @@ export const RARIME_MAINNET_CONFIG = {
     // BaseConfig.kt::MainnetConfig.REGISTRATION_SIMPLE_CONTRACT_ADRRESS.
     // The heavy registerViaNoir path on Registration2 (0x11BB4B14AA…) is
     // separate and uses MAINNET_REGISTRATION_CONTRACT_ADDRESS below.
-    registerSimpleContractAddress:
-      '0x497D6957729d3a39D43843BD27E6cbD12310F273',
+    registerSimpleContractAddress: '0x497D6957729d3a39D43843BD27E6cbD12310F273',
     // RegistrationPoseidonSMT — used for SMT-based identity inclusion proofs
     // at vote time. CertificatesSMT (the CSCA tree) is separate (see below).
     poseidonSmtAddress: '0x479F84502Db545FA8d2275372E0582425204A879',
@@ -91,7 +99,9 @@ export const RARIME_MAINNET_CONFIG = {
 
 export const FREEDOM_TOOL_MAINNET_CONFIG = {
   contracts: {
-    proposalStateAddress: '0x9C4b84a940C9D3140a1F40859b3d4367DC8d099a',
+    // Per-fork: this app's proposal/voting contract on FreedomTool mainnet.
+    // See CONTRIBUTING.md ▸ "Forking for a new app".
+    proposalStateAddress: requireEnv('EXPO_PUBLIC_FREEDOM_TOOL_MAINNET_PROPOSAL_STATE_ADDRESS'),
   },
   api: {
     ipfsUrl: 'https://ipfs.rarimo.com',
@@ -110,10 +120,8 @@ export const FREEDOM_TOOL_MAINNET_CONFIG = {
 // On testnet we don't have a working heavy-path equivalent yet — the helper
 // throws on testnet rather than silently switching.
 // ---------------------------------------------------------------------------
-export const MAINNET_REGISTRATION_CONTRACT_ADDRESS =
-  '0x11BB4B14AA6e4b836580F3DBBa741dD89423B971'; // Registration2
-export const MAINNET_CERT_POSEIDON_SMT_ADDRESS =
-  '0xA8b350d699632569D5351B20ffC1b31202AcEDD8'; // CertificatesSMT (CSCA tree root)
+export const MAINNET_REGISTRATION_CONTRACT_ADDRESS = '0x11BB4B14AA6e4b836580F3DBBa741dD89423B971'; // Registration2
+export const MAINNET_CERT_POSEIDON_SMT_ADDRESS = '0xA8b350d699632569D5351B20ffC1b31202AcEDD8'; // CertificatesSMT (CSCA tree root)
 
 // ---------------------------------------------------------------------------
 // Per-network getters. These are the only things callers should reach for —
@@ -128,16 +136,17 @@ export const getFreedomToolConfig = (network: Network) =>
 /** Block explorer base URL for the active network — used to deep-link a tx
  * hash in the verifier tab and in success screens. */
 export const getExplorerTxBaseUrl = (network: Network) =>
-  network === 'mainnet'
-    ? 'https://scan.rarimo.com/tx/'
-    : 'https://scan.qtestnet.org/tx/';
+  network === 'mainnet' ? 'https://scan.rarimo.com/tx/' : 'https://scan.qtestnet.org/tx/';
 
 /** Default proposal to load on the home screen when no specific one is
  * requested. Mainnet & testnet maintain independent proposal-id spaces; the
  * testnet id `236` was the QA one, mainnet's value comes from the FreedomTool
- * deployment. Either side may be overridden by a deep link param. */
+ * deployment. Either side may be overridden by a deep link param.
+ * Per-fork: see CONTRIBUTING.md ▸ "Forking for a new app". */
 export const getDefaultProposalId = (network: Network) =>
-  network === 'mainnet' ? '1' : '236';
+  network === 'mainnet'
+    ? requireEnv('EXPO_PUBLIC_DEFAULT_PROPOSAL_ID_MAINNET')
+    : requireEnv('EXPO_PUBLIC_DEFAULT_PROPOSAL_ID_TESTNET');
 
 // Kept for legacy callers that still import the old name. New code should use
 // getDefaultProposalId(network).
@@ -159,7 +168,12 @@ export const PRIVATE_KEY_STORAGE_KEY = 'rarime_bjj_private_key';
  */
 export async function withRetry<T>(
   fn: () => Promise<T>,
-  { maxRetries = 2, delayMs = 3000, label = 'RPC call', onRetry }: {
+  {
+    maxRetries = 2,
+    delayMs = 3000,
+    label = 'RPC call',
+    onRetry,
+  }: {
     maxRetries?: number;
     delayMs?: number;
     label?: string;
@@ -174,7 +188,9 @@ export async function withRetry<T>(
       lastError = err;
       if (attempt < maxRetries) {
         console.warn(
-          `[withRetry] ${label} failed (attempt ${attempt + 1}/${maxRetries + 1}), retrying in ${delayMs}ms...`,
+          `[withRetry] ${label} failed (attempt ${attempt + 1}/${
+            maxRetries + 1
+          }), retrying in ${delayMs}ms...`,
           err
         );
         onRetry?.(attempt + 1, maxRetries + 1, err);
@@ -212,7 +228,10 @@ export function formatRpcError(err: unknown): string {
       return t('voting.errors.forbidden', 'Accès refusé par le serveur. Réessayez plus tard.');
     }
     if (msg.includes('revert') || msg.includes('invalid_proof')) {
-      return t('voting.errors.verificationFailed', 'La vérification a échoué. Veuillez rescanner votre carte et réessayer.');
+      return t(
+        'voting.errors.verificationFailed',
+        'La vérification a échoué. Veuillez rescanner votre carte et réessayer.'
+      );
     }
     return t('voting.errors.generic', 'Une erreur est survenue. Veuillez réessayer.');
   }

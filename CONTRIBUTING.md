@@ -139,6 +139,58 @@ The one-time signing-keystore setup (`keytool` recipe + required GitHub
 secrets) is documented in the header of
 `.github/workflows/android-release.yml`.
 
+## Forking for a new app
+
+This codebase is designed to be forked for other independent apps/referendums
+(different app identity, different FreedomTool proposal, different legal
+pages) without carrying Referendum Libre's own identity along, and without
+every future `git merge` from this template fighting over the same lines.
+
+All of the values that differ between forks live in **`.env`** at the repo
+root — committed, and intentionally **not secret** (bundle id, contract
+addresses, legal URLs — all of it ends up readable in the shipped app
+anyway). Real secrets (signing keys, App Store Connect credentials) stay in
+`.env.local`, which is gitignored — see `.env.local.example`.
+
+### One-time setup after forking
+
+1. Edit `.env` and replace every value (app name/slug/scheme, iOS bundle id,
+   Android package, FreedomTool proposal contract addresses, proposal-index
+   signing public key, legal/contact URLs). `.env.example` lists the full
+   set of keys with `__REPLACE_ME__` placeholders.
+2. Regenerate the proposal-index signing keypair:
+   `node scripts/generate-proposal-signing-key.mjs` — put the public key in
+   `.env` (`EXPO_PUBLIC_PROPOSAL_INDEX_PUBLIC_KEY_HEX`), put the private key
+   in this repo's `PROPOSAL_INDEX_SIGNING_KEY` GitHub Actions secret.
+3. Replace the app icon/splash assets under `assets/images/`.
+4. Generate a new Android upload keystore
+   (`scripts/ci/generate-upload-keystore.sh`) and set the four
+   `ANDROID_KEYSTORE_*`/`ANDROID_KEY_*` GitHub secrets — **do not reuse
+   Referendum Libre's keystore**, it can never be swapped once an app is
+   published under a given package name.
+5. Set up `.env.local` (copy from `.env.local.example`) with the new org's Apple
+   ID / App Store Connect credentials if you'll use `eas submit`.
+6. Review `constants/terms.ts` and `locales/*.json` for any hardcoded
+   Referendum Libre branding/copy.
+
+`app.config.ts` and the `constants/*.ts` files that read app identity from
+`.env` throw at startup if a required variable is missing, so a forgotten
+step surfaces immediately rather than silently shipping the wrong value.
+
+The Android release workflow (`android-release.yml`) additionally refuses to
+build a signed release if `.env` still contains the `__REPLACE_ME__`
+sentinel — see that file's placeholder convention below.
+
+### Placeholder convention
+
+This repo's own `.env` currently holds Referendum Libre's real values (this
+*is* that app) — there's nothing to replace here. When you fork, as step 1
+above, replace each value with the new app's own; if you'd rather stub a
+value out until it's ready, write `__REPLACE_ME__` as its value. The
+release workflow (`android-release.yml`) greps `.env` for that literal
+string and refuses to build a signed release while it's still present, so a
+half-configured fork can't accidentally ship.
+
 ## Testing
 
 ```bash

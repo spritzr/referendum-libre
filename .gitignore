@@ -47,7 +47,9 @@ Thumbs.db
 .idea/
 
 # local env files
-.env
+# .env is committed on purpose: it holds the per-fork app identity
+# (bundle id, contract addresses, URLs — see CONTRIBUTING.md). Only the
+# *.local variants (real secrets) are gitignored.
 .env*.local
 secrets/
 
