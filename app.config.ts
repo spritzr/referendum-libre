@@ -1,14 +1,28 @@
 import { ConfigContext, ExpoConfig } from '@expo/config';
 
+// Per-fork app identity, read from `.env` (committed, public — see
+// CONTRIBUTING.md ▸ "Forking for a new app"). Expo loads `.env`/`.env.local`
+// into process.env automatically before this file runs, so no dotenv setup
+// is needed here.
+function requireEnv(key: string): string {
+  const value = process.env[key];
+  if (!value) {
+    throw new Error(
+      `Missing required env var ${key}. Did you delete it from .env? See CONTRIBUTING.md.`
+    );
+  }
+  return value;
+}
+
 export default ({ config }: ConfigContext): ExpoConfig => {
   return {
     ...config,
-    name: 'Referendum Libre',
-    slug: 'referendum-libre',
+    name: requireEnv('APP_NAME'),
+    slug: requireEnv('APP_SLUG'),
     version: '1.0.0',
     orientation: 'portrait',
     icon: './assets/images/app-icon.png',
-    scheme: 'referendumlibre',
+    scheme: requireEnv('APP_SCHEME'),
     userInterfaceStyle: 'automatic',
     newArchEnabled: true,
     splash: {
@@ -18,7 +32,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     },
     ios: {
       supportsTablet: false,
-      bundleIdentifier: 'app.referendumcitoyen.fr',
+      bundleIdentifier: requireEnv('IOS_BUNDLE_IDENTIFIER'),
       deploymentTarget: '16.0',
       infoPlist: {
         ITSAppUsesNonExemptEncryption: false,
@@ -39,7 +53,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       },
     },
     android: {
-      package: 'fr.referendumcitoyen.app',
+      package: requireEnv('ANDROID_PACKAGE'),
       adaptiveIcon: {
         foregroundImage: './assets/images/app-icon-android.png',
         backgroundColor: '#ffffff',

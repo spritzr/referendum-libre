@@ -109,6 +109,19 @@ jobs:
             exit 1
           fi
 
+      - name: Verify .env has no unfilled template placeholders
+        # Guards against shipping a fork's release APK with Referendum
+        # Libre's own app identity (bundle id, FreedomTool contract, ...)
+        # because someone forgot to fill in `.env` after forking. See
+        # CONTRIBUTING.md ▸ "Forking for a new app".
+        run: |
+          set -euo pipefail
+          if grep -q '__REPLACE_ME__' .env; then
+            echo "::error::.env still contains __REPLACE_ME__ placeholders. Fill in the per-app values before cutting a release. See CONTRIBUTING.md."
+            grep -n '__REPLACE_ME__' .env
+            exit 1
+          fi
+
       - name: Setup Node 20
         uses: actions/setup-node@v5
         with:
