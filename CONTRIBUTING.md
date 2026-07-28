@@ -96,6 +96,7 @@ type(scope): description
 Types: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`
 
 Examples:
+
 - `feat(voting): add confirmation step`
 - `fix(nfc): handle timeout on slow devices`
 - `docs(readme): update installation instructions`
@@ -184,12 +185,39 @@ sentinel — see that file's placeholder convention below.
 ### Placeholder convention
 
 This repo's own `.env` currently holds Referendum Libre's real values (this
-*is* that app) — there's nothing to replace here. When you fork, as step 1
+_is_ that app) — there's nothing to replace here. When you fork, as step 1
 above, replace each value with the new app's own; if you'd rather stub a
 value out until it's ready, write `__REPLACE_ME__` as its value. The
 release workflow (`android-release.yml`) greps `.env` for that literal
 string and refuses to build a signed release while it's still present, so a
 half-configured fork can't accidentally ship.
+
+### Secret naming: same name, local vs CI
+
+Every real secret (signing keys, store credentials) has exactly **one
+canonical name**, regardless of which of the two places it's stored:
+
+- **Locally**: `.env.local` (gitignored — see `.env.local.example`).
+- **In CI**: a GitHub Actions secret with the _same name_.
+
+| Secret                                                                                                                | `.env.local`       | GitHub Actions secret | Used by                                       |
+| --------------------------------------------------------------------------------------------------------------------- | ------------------ | --------------------- | --------------------------------------------- |
+| `ANDROID_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS`, `ANDROID_KEY_PASSWORD`                   | not currently used | ✅                    | `android-release.yml` (signs the release APK) |
+| `EXPO_APPLE_ID`, `EXPO_APPLE_APP_SPECIFIC_PASSWORD` or `EXPO_ASC_API_KEY_PATH`/`EXPO_ASC_KEY_ID`/`EXPO_ASC_ISSUER_ID` | ✅                 | not currently used    | manual `eas submit` (no CI workflow yet)      |
+| `PROPOSAL_INDEX_SIGNING_KEY`                                                                                          | not currently used | ✅                    | `publish-proposal-index.yml`                  |
+
+Android release building and iOS submission each currently only run in one
+of the two places (Android: CI only; iOS: local only via `eas submit`) —
+that's a gap, not a design choice. If either grows a counterpart later (a
+local signed-APK build, or an iOS CI workflow), **reuse the exact same
+variable name** in the new location instead of inventing a different one.
+
+Note that `scripts/ci/build-signed-apk-local.sh` (the existing local
+equivalent of `android-release.yml`) does _not_ follow this convention
+today — it reads the keystore from a fixed path
+(`~/.android-signing-keystores/...`) and prompts for the password
+interactively, rather than reading `ANDROID_KEYSTORE_*`/`ANDROID_KEY_*`
+from `.env.local`. Worth aligning if/when this table's gaps get filled in.
 
 ## Testing
 
