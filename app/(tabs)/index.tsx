@@ -241,9 +241,7 @@ export default function AccueilScreen() {
   const { network } = useNetwork();
   const { extraEnabled, extraIds } = useExtraProposals();
   // Lock down the config for THIS render — capture once so all useCallbacks
-  // inside this render share the same network reference. When `network`
-  // flips, the whole component re-renders, ftRef is wiped, and the cache is
-  // re-read for the new network (see effect below).
+  // inside this render share the same network reference.
   const ftConfig = useMemo(() => getFreedomToolConfig(network), [network]);
 
   const [proposals, setProposals] = useState<ProposalInfo[]>([]);
@@ -255,7 +253,6 @@ export default function AccueilScreen() {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const oldestIdRef = useRef<number>(0);
-  const ftRef = useRef<any>(null);
 
   const PAGE_SIZE = 10;
 
@@ -264,26 +261,23 @@ export default function AccueilScreen() {
   // a stale list around.
   useEffect(() => { migrateLegacyCache(); }, []);
 
-  // Wipe the in-memory FreedomTool ref + visible proposals when the network
-  // flips. Without this, the user would see the previous network's proposals
-  // until the next refresh — and worse, voting-flow would pick a stale id
-  // from cache and submit it to the wrong contract.
+  // Wipe visible proposals when the network flips. Without this, the user
+  // would see the previous network's proposals until the next refresh — and
+  // worse, voting-flow would pick a stale id from cache and submit it to the
+  // wrong contract.
   useEffect(() => {
-    ftRef.current = null;
     setProposals([]);
     setIsLoading(true);
   }, [network]);
 
   const getFreedomTool = useCallback(async () => {
-    // Always build with the CURRENT ftConfig — caching via ftRef.current
-    // raced with the network-flip effect at mount time and left a stale
-    // testnet FreedomTool servicing mainnet proposal-id requests, returning
-    // testnet's #47 bytes for mainnet's #47 lookup. The instantiation is
-    // cheap so we accept the per-call rebuild.
+    // Always build with the CURRENT ftConfig — a prior version cached the
+    // instance across calls, which raced with the network-flip effect at
+    // mount time and left a stale testnet FreedomTool servicing mainnet
+    // proposal-id requests, returning testnet's #47 bytes for mainnet's #47
+    // lookup. The instantiation is cheap so we accept the per-call rebuild.
     const { FreedomTool } = await import('@rarimo/rarime-rn-sdk');
-    const ft = new FreedomTool(ftConfig);
-    ftRef.current = ft;
-    return ft;
+    return new FreedomTool(ftConfig);
   }, [ftConfig]);
 
   const fetchBatch = useCallback(async (startId: number, count: number) => {
