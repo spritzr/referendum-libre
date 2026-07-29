@@ -7,6 +7,7 @@ import { Svg, Path } from 'react-native-svg';
 import * as WebBrowser from 'expo-web-browser';
 import { useRouter, useFocusEffect } from 'expo-router';
 import { getFreedomToolConfig } from '@/constants/rarimo/config';
+import { createFreedomTool } from '@/constants/rarimo/freedom-tool';
 import type { ProposalInfo } from '@rarimo/rarime-rn-sdk';
 import { useTranslation } from 'react-i18next';
 import { useDevMode } from '@/contexts/DevModeContext';
@@ -270,15 +271,7 @@ export default function AccueilScreen() {
     setIsLoading(true);
   }, [network]);
 
-  const getFreedomTool = useCallback(async () => {
-    // Always build with the CURRENT ftConfig — a prior version cached the
-    // instance across calls, which raced with the network-flip effect at
-    // mount time and left a stale testnet FreedomTool servicing mainnet
-    // proposal-id requests, returning testnet's #47 bytes for mainnet's #47
-    // lookup. The instantiation is cheap so we accept the per-call rebuild.
-    const { FreedomTool } = await import('@rarimo/rarime-rn-sdk');
-    return new FreedomTool(ftConfig);
-  }, [ftConfig]);
+  const getFreedomTool = useCallback(() => createFreedomTool(network), [network]);
 
   const fetchBatch = useCallback(async (startId: number, count: number) => {
     const ft = await getFreedomTool();
