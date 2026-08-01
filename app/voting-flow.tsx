@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback, useEffect, useMemo } from 'react';
-import { View, Text, StyleSheet, Animated, Easing, Dimensions, TouchableOpacity, ScrollView, Platform } from 'react-native';
+import { View, Text, StyleSheet, Animated, TouchableOpacity, Platform } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { Stack, useRouter, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -66,7 +66,6 @@ export default function VotingFlowScreen() {
   // write returns the wrong profileKey and reports `REGISTERED_WITH_OTHER_PK`.
   const [passportKeyReady, setPassportKeyReady] = useState(false);
   const [isManualInputVisible, setIsManualInputVisible] = useState(false);
-  const [containerWidth, setContainerWidth] = useState(Dimensions.get('window').width);
   // Height available for the slide area (measured from topSection). Steps 1–3
   // cap their ScrollView at this on iOS so content stays its natural size and
   // only scrolls once it overflows.
@@ -92,7 +91,6 @@ export default function VotingFlowScreen() {
   const freedomToolRef = useRef<FreedomTool | null>(null);
   const passportRef = useRef<RarimePassport | null>(null);
 
-  const slideAnim = useRef(new Animated.Value(0)).current;
   const progressOpacity1 = useRef(new Animated.Value(1)).current;
   const progressOpacity2 = useRef(new Animated.Value(0.25)).current;
   const progressOpacity3 = useRef(new Animated.Value(0.25)).current;
@@ -262,7 +260,6 @@ export default function VotingFlowScreen() {
       passportRef.current = null;
 
       // Reset animations
-      slideAnim.setValue(0);
       progressOpacity1.setValue(1);
       progressOpacity2.setValue(0.25);
       progressOpacity3.setValue(0.25);
@@ -271,7 +268,7 @@ export default function VotingFlowScreen() {
         // Cleanup when screen loses focus
         pauseAll();
       };
-    }, [pauseAll, slideAnim, progressOpacity1, progressOpacity2, progressOpacity3])
+    }, [pauseAll, progressOpacity1, progressOpacity2, progressOpacity3])
   );
 
   // Keep the JS thread idle while the NFC scan runs on Step 6. Reader mode on
@@ -284,23 +281,19 @@ export default function VotingFlowScreen() {
     }
   }, [currentStep, pauseAll]);
 
+  // Step-transition audit trail: the #54 step-skip reports (2026-06-11/12)
+  // showed users reaching the vote screens with no visible path in the logs.
+  // Every transition now logs its source so the 5-min error-report tail can
+  // name the jumper outright.
+  const goToStep = useCallback((newStep: number, source: string) => {
+    console.log(`[flow] step → ${newStep} (${source})`);
+    setCurrentStep(newStep);
+    handleStepChange(newStep);
+  }, [handleStepChange]);
+
   const handleNext = useCallback(() => {
     const newStep = currentStep + 1;
-    // Step-transition audit trail: the #54 step-skip reports (2026-06-11/12)
-    // showed users reaching the vote screens with no visible path in the
-    // logs. Every transition now logs its source so the 5-min error-report
-    // tail can name the jumper outright.
-    console.log(`[flow] step ${currentStep} → ${newStep} (next)`);
-    setCurrentStep(newStep);
-
-    Animated.timing(slideAnim, {
-      toValue: -(newStep - 1) * containerWidth,
-      duration: 300,
-      easing: Easing.out(Easing.cubic),
-      useNativeDriver: true,
-    }).start();
-
-    handleStepChange(newStep);
+    goToStep(newStep, 'next');
 
     // Light the Nth bar when entering step N. Bar 1 is already lit at init
     // (so step 1 → 1 bar, step 2 → 2 bars, step 3 → 3 bars). Step 4 hides the
@@ -310,7 +303,7 @@ export default function VotingFlowScreen() {
     } else if (newStep === 3) {
       Animated.timing(progressOpacity3, { toValue: 1, duration: 200, useNativeDriver: true }).start();
     }
-  }, [currentStep, slideAnim, containerWidth, handleStepChange, progressOpacity1, progressOpacity2, progressOpacity3]);
+  }, [currentStep, goToStep, progressOpacity2, progressOpacity3]);
 
   const handleMRZScanned = useCallback((data: { documentNumber: string; birthDate: string; expiryDate: string }) => {
     setMRZData(data);
@@ -400,17 +393,9 @@ export default function VotingFlowScreen() {
   }, [handleNext]);
 
   const handleGoBackToMRZScan = useCallback(() => {
-    console.log('[flow] step → 5 (back-to-mrz)');
-    setCurrentStep(5);
     setMRZData(null);
-    Animated.timing(slideAnim, {
-      toValue: -4 * containerWidth,
-      duration: 300,
-      easing: Easing.out(Easing.cubic),
-      useNativeDriver: true,
-    }).start();
-    handleStepChange(5);
-  }, [slideAnim, containerWidth, handleStepChange]);
+    goToStep(5, 'back-to-mrz');
+  }, [goToStep]);
 
   const handleManualFill = useCallback(() => {
     setIsManualInputVisible(true);
@@ -431,18 +416,8 @@ export default function VotingFlowScreen() {
     verificationHandledRef.current = true;
     setVerificationResult('success');
     // Move to step 8 (voting screen) after a brief delay
-    setTimeout(() => {
-      console.log('[flow] step → 8 (verification-success)');
-      setCurrentStep(8);
-      Animated.timing(slideAnim, {
-        toValue: -7 * containerWidth,
-        duration: 300,
-        easing: Easing.out(Easing.cubic),
-        useNativeDriver: true,
-      }).start();
-      handleStepChange(8);
-    }, 1500);
-  }, [slideAnim, containerWidth, handleStepChange]);
+    setTimeout(() => goToStep(8, 'verification-success'), 1500);
+  }, [goToStep]);
 
   const handleVerificationError = useCallback((_message?: string, fatal?: boolean, error?: unknown) => {
     // Fatal errors (e.g. "passport already registered with another key")
@@ -458,41 +433,17 @@ export default function VotingFlowScreen() {
   }, [handleNext]);
 
   const handleVoteSuccess = useCallback(() => {
-    console.log('[flow] step → 9 (step8-vote-now)');
-    setCurrentStep(9);
-    Animated.timing(slideAnim, {
-      toValue: -8 * containerWidth,
-      duration: 300,
-      easing: Easing.out(Easing.cubic),
-      useNativeDriver: true,
-    }).start();
-    handleStepChange(9);
-  }, [slideAnim, containerWidth, handleStepChange]);
+    goToStep(9, 'step8-vote-now');
+  }, [goToStep]);
 
   const handleVoteSelect = useCallback((answerIndex: number) => {
     setSelectedVote(answerIndex);
-    console.log('[flow] step → 10 (vote-selected)');
-    setCurrentStep(10);
-    Animated.timing(slideAnim, {
-      toValue: -9 * containerWidth,
-      duration: 300,
-      easing: Easing.out(Easing.cubic),
-      useNativeDriver: true,
-    }).start();
-    handleStepChange(10);
-  }, [slideAnim, containerWidth, handleStepChange]);
+    goToStep(10, 'vote-selected');
+  }, [goToStep]);
 
   const handleStep9Confirm = useCallback(() => {
-    console.log('[flow] step → 11 (vote-confirmed)');
-    setCurrentStep(11);
-    Animated.timing(slideAnim, {
-      toValue: -10 * containerWidth,
-      duration: 300,
-      easing: Easing.out(Easing.cubic),
-      useNativeDriver: true,
-    }).start();
-    handleStepChange(11);
-  }, [slideAnim, containerWidth, handleStepChange]);
+    goToStep(11, 'vote-confirmed');
+  }, [goToStep]);
 
   const handleClose = useCallback(() => {
     // Dev-only stack trace: lets us see WHICH caller closed the screen
@@ -533,16 +484,8 @@ export default function VotingFlowScreen() {
     // refresh once tx propagation completes (the immediate focus-time
     // refetch races ahead of L2 confirmation otherwise).
     markVoteJustCast();
-    console.log('[flow] step → 12 (vote-submitted)');
-    setCurrentStep(12);
-    Animated.timing(slideAnim, {
-      toValue: -11 * containerWidth,
-      duration: 300,
-      easing: Easing.out(Easing.cubic),
-      useNativeDriver: true,
-    }).start();
-    handleStepChange(12);
-  }, [slideAnim, containerWidth, handleStepChange]);
+    goToStep(12, 'vote-submitted');
+  }, [goToStep]);
 
   const [voteErrorReason, setVoteErrorReason] = useState<string | null>(null);
   const [voteError, setVoteError] = useState<unknown>(null);
@@ -550,16 +493,8 @@ export default function VotingFlowScreen() {
     setVoteErrorReason(reason || null);
     setVoteError(error ?? new Error(reason ?? 'Unknown vote error'));
     setVoteSubmissionResult('error');
-    console.log('[flow] step → 13 (vote-error)');
-    setCurrentStep(13);
-    Animated.timing(slideAnim, {
-      toValue: -12 * containerWidth,
-      duration: 300,
-      easing: Easing.out(Easing.cubic),
-      useNativeDriver: true,
-    }).start();
-    handleStepChange(13);
-  }, [slideAnim, containerWidth, handleStepChange]);
+    goToStep(13, 'vote-error');
+  }, [goToStep]);
 
   const styles = useMemo(() => createStyles(colors), [colors]);
 
@@ -625,10 +560,9 @@ export default function VotingFlowScreen() {
           </View>
         )}
 
-        {/* Sliding Container */}
+        {/* Step content — exactly one step mounted at a time. */}
         <View
           style={[
-            modalStyles.slidingWrapper,
             // Steps 1–3 use a tinted backdrop on Android (colors.background =
             // #EDEFF9). On iOS we keep the entire modal sheet white
             // (cardBackground) so the bottom-sheet feels like one continuous
@@ -636,155 +570,106 @@ export default function VotingFlowScreen() {
             currentStep < 4 && {
               backgroundColor: Platform.OS === 'ios' ? colors.cardBackground : colors.background,
             },
-            // Step 4 only: height-bound the slide to the sheet (not the taller
-            // Step 5 camera mounted alongside it) so the intro video's "Passer"
-            // button stays on-screen. Steps 1–3 and 5+ keep content-sized layout.
+            // Step 4 only: height-bound to the sheet (not the taller Step 5
+            // camera that follows it) so the intro video's "Passer" button
+            // stays on-screen. Steps 1–3 and 5+ keep content-sized layout.
             currentStep === 4 && { flex: 1 },
           ]}
-          onLayout={(e) => setContainerWidth(e.nativeEvent.layout.width)}
         >
-          <Animated.View
-            style={[
-              modalStyles.slidingContainer,
-              // Match slidingWrapper: fill height on step 4 only so its slide
-              // stretches vertically and the intro "Passer" button stays
-              // on-screen.
-              currentStep === 4 && { flex: 1 },
-              { transform: [{ translateX: slideAnim }] },
-            ]}
-          >
-            {/* Only mount steps within ±1 of the current index. Placeholders keep
-                slide-animation offsets stable. Keeps the JS thread idle during
-                the NFC scan (Step 6) so reader-mode sendEvent() calls don't
-                back-pressure IsoDep. */}
-            {(() => {
-              const idx = currentStep - 1;
-              const show = (i: number) => Math.abs(i - idx) <= 1;
-              const spacer = (key: string) => (
-                <View key={key} style={{ width: containerWidth }} />
-              );
-              return [
-                show(0) ? <Step1 key="s1" player={player1} containerWidth={containerWidth} slideAreaHeight={slideAreaHeight} isPassportFlow={isPassportFlow} /> : spacer('s1'),
-                show(1) ? <Step2 key="s2" player={player2} containerWidth={containerWidth} slideAreaHeight={slideAreaHeight} isPassportFlow={isPassportFlow} /> : spacer('s2'),
-                show(2) ? <Step3 key="s3" player={player3} containerWidth={containerWidth} slideAreaHeight={slideAreaHeight} /> : spacer('s3'),
-                show(3) ? <Step4 key="s4" player={player1} introPlayer={playerIntro} containerWidth={containerWidth} onStartAnalysis={handleNext} isPassportFlow={isPassportFlow} /> : spacer('s4'),
-                show(4) ? (
-                  <Step5
-                    key="s5"
-                    containerWidth={containerWidth}
-                    // Kill the camera while the manual-entry modal is open so
-                    // the preview doesn't sit on top of the keyboard.
-                    isActive={currentStep === 5 && !isManualInputVisible}
-                    onMRZScanned={handleMRZScanned}
-                    onManualFill={handleManualFill}
-                    isPassportFlow={isPassportFlow}
-                    // Gate MRZ-extracted nationality against the proposal's
-                    // citizenship whitelist (empty / undefined → open to
-                    // all countries).
-                    allowedCitizenships={proposalInfo?.criteria.citizenshipWhitelist}
-                  />
-                ) : spacer('s5'),
-                show(5) ? (
-                  <Step6
-                    key="s6"
-                    containerWidth={containerWidth}
-                    player={player4}
-                    mrzData={mrzData}
-                    onNFCSuccess={handleNFCSuccess}
-                    onGoBack={handleGoBackToMRZScan}
-                    isPassportFlow={isPassportFlow}
-                  />
-                ) : spacer('s6'),
-                show(6) ? (
-                  <Step7
-                    key="s7"
-                    containerWidth={containerWidth}
-                    player={player5}
-                    isActive={currentStep === 7}
-                    nfcData={nfcData}
-                    onSuccess={handleVerificationSuccess}
-                    onError={handleVerificationError}
-                    onFatalError={handleFatalVerificationError}
-                    rarime={rarimeRef.current ?? undefined}
-                    passport={passportRef.current ?? undefined}
-                    freedomTool={freedomToolRef.current ?? undefined}
-                    network={network}
-                  />
-                ) : spacer('s7'),
-                show(7) ? (
-                  <Step8
-                    key="s8"
-                    containerWidth={containerWidth}
-                    verificationResult={verificationResult}
-                    voteSubmissionResult={voteSubmissionResult}
-                    onVoteSuccess={handleVoteSuccess}
-                    onClose={handleClose}
-                  />
-                ) : spacer('s8'),
-                show(8) ? (
-                  <Step9Vote
-                    key="s9v"
-                    containerWidth={containerWidth}
-                    onVoteSelect={handleVoteSelect}
-                    onCancel={handleStep9Cancel}
-                    proposalInfo={proposalInfo ?? undefined}
-                  />
-                ) : spacer('s9v'),
-                show(9) ? (
-                  <Step10
-                    key="s10"
-                    containerWidth={containerWidth}
-                    player={player3}
-                    selectedVote={selectedVote}
-                    proposalInfo={proposalInfo ?? undefined}
-                    onCancel={handleStep9Cancel}
-                    onConfirm={handleStep9Confirm}
-                  />
-                ) : spacer('s10'),
-                show(10) ? (
-                  <Step11
-                    key="s11"
-                    containerWidth={containerWidth}
-                    isActive={currentStep === 11}
-                    onSuccess={handleStep11Success}
-                    onError={handleStep11Error}
-                    freedomTool={freedomToolRef.current ?? undefined}
-                    rarime={rarimeRef.current ?? undefined}
-                    passport={passportRef.current ?? undefined}
-                    proposalInfo={proposalInfo ?? undefined}
-                    answerIndex={selectedVote}
-                    network={network}
-                  />
-                ) : spacer('s11'),
-                show(11) ? (
-                  <Step12Success
-                    key="s12s"
-                    containerWidth={containerWidth}
-                    voteIdentifier={voteTxId ?? undefined}
-                    confirmed={voteConfirmed}
-                    onViewResults={handleClose}
-                  />
-                ) : spacer('s12s'),
-                show(12) ? (
-                  <Step12Error
-                    key="s12e"
-                    containerWidth={containerWidth}
-                    onGoHome={handleClose}
-                    errorReason={voteErrorReason}
-                    error={voteError}
-                  />
-                ) : spacer('s12e'),
-              ];
-            })()}
-            {verificationResult === 'error' && (
-              <Step9Error
-                containerWidth={containerWidth}
-                onGoHome={handleClose}
-                isPassportFlow={isPassportFlow}
-                error={verificationError}
-              />
-            )}
-          </Animated.View>
+          {verificationResult === 'error' ? (
+            <Step9Error
+              onGoHome={handleClose}
+              isPassportFlow={isPassportFlow}
+              error={verificationError}
+            />
+          ) : currentStep === 1 ? (
+            <Step1 player={player1} slideAreaHeight={slideAreaHeight} isPassportFlow={isPassportFlow} />
+          ) : currentStep === 2 ? (
+            <Step2 player={player2} slideAreaHeight={slideAreaHeight} isPassportFlow={isPassportFlow} />
+          ) : currentStep === 3 ? (
+            <Step3 player={player3} slideAreaHeight={slideAreaHeight} />
+          ) : currentStep === 4 ? (
+            <Step4 player={player1} introPlayer={playerIntro} onStartAnalysis={handleNext} isPassportFlow={isPassportFlow} />
+          ) : currentStep === 5 ? (
+            <Step5
+              // Kill the camera while the manual-entry modal is open so
+              // the preview doesn't sit on top of the keyboard.
+              isActive={!isManualInputVisible}
+              onMRZScanned={handleMRZScanned}
+              onManualFill={handleManualFill}
+              isPassportFlow={isPassportFlow}
+              // Gate MRZ-extracted nationality against the proposal's
+              // citizenship whitelist (empty / undefined → open to all
+              // countries).
+              allowedCitizenships={proposalInfo?.criteria.citizenshipWhitelist}
+            />
+          ) : currentStep === 6 ? (
+            <Step6
+              player={player4}
+              mrzData={mrzData}
+              onNFCSuccess={handleNFCSuccess}
+              onGoBack={handleGoBackToMRZScan}
+              isPassportFlow={isPassportFlow}
+            />
+          ) : currentStep === 7 ? (
+            <Step7
+              player={player5}
+              isActive
+              nfcData={nfcData}
+              onSuccess={handleVerificationSuccess}
+              onError={handleVerificationError}
+              onFatalError={handleFatalVerificationError}
+              rarime={rarimeRef.current ?? undefined}
+              passport={passportRef.current ?? undefined}
+              freedomTool={freedomToolRef.current ?? undefined}
+              network={network}
+            />
+          ) : currentStep === 8 ? (
+            <Step8
+              verificationResult={verificationResult}
+              voteSubmissionResult={voteSubmissionResult}
+              onVoteSuccess={handleVoteSuccess}
+              onClose={handleClose}
+            />
+          ) : currentStep === 9 ? (
+            <Step9Vote
+              onVoteSelect={handleVoteSelect}
+              onCancel={handleStep9Cancel}
+              proposalInfo={proposalInfo ?? undefined}
+            />
+          ) : currentStep === 10 ? (
+            <Step10
+              player={player3}
+              selectedVote={selectedVote}
+              proposalInfo={proposalInfo ?? undefined}
+              onCancel={handleStep9Cancel}
+              onConfirm={handleStep9Confirm}
+            />
+          ) : currentStep === 11 ? (
+            <Step11
+              isActive
+              onSuccess={handleStep11Success}
+              onError={handleStep11Error}
+              freedomTool={freedomToolRef.current ?? undefined}
+              rarime={rarimeRef.current ?? undefined}
+              passport={passportRef.current ?? undefined}
+              proposalInfo={proposalInfo ?? undefined}
+              answerIndex={selectedVote}
+              network={network}
+            />
+          ) : currentStep === 12 ? (
+            <Step12Success
+              voteIdentifier={voteTxId ?? undefined}
+              confirmed={voteConfirmed}
+              onViewResults={handleClose}
+            />
+          ) : currentStep === 13 ? (
+            <Step12Error
+              onGoHome={handleClose}
+              errorReason={voteErrorReason}
+              error={voteError}
+            />
+          ) : null}
         </View>
       </View>
 
@@ -844,9 +729,8 @@ const createStyles = (colors: FlowColors) =>
       backgroundColor: colors.cardBackground,
     },
     topSection: {
-      // flex: 1 so the slidingWrapper inside (also flex: 1 on Android) can fill
-      // all the vertical space above the nav bar — keeps the slide area
-      // consistent across steps 1–3 regardless of which slides are mounted.
+      // Fill all vertical space above the nav bar so the step content area
+      // stays consistent across steps 1–3.
       flex: 1,
       backgroundColor: colors.cardBackground,
     },
