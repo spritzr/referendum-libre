@@ -36,21 +36,21 @@ const StepVoteConfirm: React.FC<StepVoteConfirmProps> = ({ player, onCancel, onC
 
   return (
     <View style={[{ width: '100%' }]} onLayout={onLayout}>
-      <View style={stepSpecificStyles.step10Container}>
-        <View style={stepSpecificStyles.step10Content}>
-          <Text style={stepSpecificStyles.step10Title}>
+      <View style={stepSpecificStyles.stepVoteConfirmContainer}>
+        <View style={stepSpecificStyles.stepVoteConfirmContent}>
+          <Text style={stepSpecificStyles.stepVoteConfirmTitle}>
             {t('voting.step10Confirm', { vote: getVoteText() })}
           </Text>
 
           {Platform.OS === 'android' ? (
             <Image
               source={require('@/assets/images/poster-ballot.png')}
-              style={stepSpecificStyles.step10BallotVideo}
+              style={stepSpecificStyles.stepVoteConfirmBallotVideo}
               resizeMode="cover"
             />
           ) : (
             <VideoView
-              style={stepSpecificStyles.step10BallotVideo}
+              style={stepSpecificStyles.stepVoteConfirmBallotVideo}
               player={player}
               contentFit="cover"
               nativeControls={false}
@@ -59,21 +59,21 @@ const StepVoteConfirm: React.FC<StepVoteConfirmProps> = ({ player, onCancel, onC
           )}
         </View>
 
-        <View style={stepSpecificStyles.step10ButtonContainer}>
+        <View style={stepSpecificStyles.stepVoteConfirmButtonContainer}>
           <TouchableOpacity
-            style={stepSpecificStyles.step10CancelButton}
+            style={stepSpecificStyles.stepVoteConfirmCancelButton}
             activeOpacity={0.8}
             onPress={onCancel || (() => console.log('Cancel'))}
           >
-            <Text style={stepSpecificStyles.step10CancelButtonText}>{t('common.cancel')}</Text>
+            <Text style={stepSpecificStyles.stepVoteConfirmCancelButtonText}>{t('common.cancel')}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={stepSpecificStyles.step10ConfirmButton}
+            style={stepSpecificStyles.stepVoteConfirmConfirmButton}
             activeOpacity={0.8}
             onPress={onConfirm || (() => console.log('Confirm vote'))}
           >
-            <Text style={stepSpecificStyles.step10ConfirmButtonText}>{getButtonText()}</Text>
+            <Text style={stepSpecificStyles.stepVoteConfirmConfirmButtonText}>{getButtonText()}</Text>
           </TouchableOpacity>
         </View>
       </View>

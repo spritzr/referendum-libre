@@ -56,30 +56,30 @@ const StepVoteChoice: React.FC<StepVoteChoiceProps> = ({ onVoteSubmit, onCancel,
   return (
     <>
     <View style={[{ width: '100%' }]} onLayout={onLayout}>
-      <View style={stepSpecificStyles.step9VoteContainer}>
-        <Text style={stepSpecificStyles.step9VoteTitle}>
+      <View style={stepSpecificStyles.stepVoteChoiceContainer}>
+        <Text style={stepSpecificStyles.stepVoteChoiceTitle}>
           {questionTitle}
         </Text>
 
-        <View style={stepSpecificStyles.step9VoteOptionsContainer}>
+        <View style={stepSpecificStyles.stepVoteChoiceOptionsContainer}>
           {variants.map((variant, idx) => (
             <TouchableOpacity
               key={idx}
-              style={stepSpecificStyles.step9VoteOptionButton}
+              style={stepSpecificStyles.stepVoteChoiceOptionButton}
               activeOpacity={0.8}
               onPress={() => handleVoteSelect(idx)}
             >
-              <Text style={stepSpecificStyles.step9VoteOptionButtonText}>{variant}</Text>
+              <Text style={stepSpecificStyles.stepVoteChoiceOptionButtonText}>{variant}</Text>
             </TouchableOpacity>
           ))}
         </View>
 
         <TouchableOpacity
-          style={stepSpecificStyles.step9VoteCancelButtonFullWidth}
+          style={stepSpecificStyles.stepVoteChoiceCancelButtonFullWidth}
           activeOpacity={0.8}
           onPress={onCancel}
         >
-          <Text style={stepSpecificStyles.step9VoteCancelButtonText}>{t('common.cancel')}</Text>
+          <Text style={stepSpecificStyles.stepVoteChoiceCancelButtonText}>{t('common.cancel')}</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -98,32 +98,32 @@ const StepVoteChoice: React.FC<StepVoteChoiceProps> = ({ onVoteSubmit, onCancel,
         alignItems: 'center',
         padding: 24,
       }}>
-        <View style={stepSpecificStyles.step9VoteConfirmationCard}>
-          <Text style={stepSpecificStyles.step9VoteTitle}>
+        <View style={stepSpecificStyles.stepVoteChoiceConfirmationCard}>
+          <Text style={stepSpecificStyles.stepVoteChoiceTitle}>
             {t('voting.step9Confirm', { vote: getVoteText().toUpperCase() })}
           </Text>
 
           <Image
             source={require('@/assets/images/poster-ballot.png')}
-            style={stepSpecificStyles.step9VoteImage}
+            style={stepSpecificStyles.stepVoteChoiceImage}
             resizeMode="contain"
           />
 
-          <View style={stepSpecificStyles.step9VoteButtonRow}>
+          <View style={stepSpecificStyles.stepVoteChoiceButtonRow}>
             <TouchableOpacity
-              style={stepSpecificStyles.step9VoteCancelButton}
+              style={stepSpecificStyles.stepVoteChoiceCancelButton}
               activeOpacity={0.8}
               onPress={handleCancelConfirmation}
             >
-              <Text style={stepSpecificStyles.step9VoteCancelButtonText}>{t('common.cancel')}</Text>
+              <Text style={stepSpecificStyles.stepVoteChoiceCancelButtonText}>{t('common.cancel')}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={stepSpecificStyles.step9VoteConfirmButton}
+              style={stepSpecificStyles.stepVoteChoiceConfirmButton}
               activeOpacity={0.8}
               onPress={handleConfirm}
             >
-              <Text style={stepSpecificStyles.step9VoteConfirmButtonText}>
+              <Text style={stepSpecificStyles.stepVoteChoiceConfirmButtonText}>
                 {t('voting.step9VoteAction', { vote: getVoteText() })}
               </Text>
             </TouchableOpacity>

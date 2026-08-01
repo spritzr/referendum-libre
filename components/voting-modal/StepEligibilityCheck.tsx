@@ -38,12 +38,12 @@ const StepEligibilityCheck: React.FC<StepEligibilityCheckProps> = ({
           {Platform.OS === 'android' ? (
             <Image
               source={require('@/assets/images/poster-phone.png')}
-              style={stepSpecificStyles.phoneImage}
+              style={stepSpecificStyles.stepEligibilityCheckImage}
               resizeMode="contain"
             />
           ) : (
             <VideoView
-              style={stepSpecificStyles.phoneImage}
+              style={stepSpecificStyles.stepEligibilityCheckImage}
               player={player}
               contentFit="contain"
               nativeControls={false}

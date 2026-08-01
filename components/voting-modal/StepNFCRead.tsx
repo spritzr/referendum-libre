@@ -386,10 +386,10 @@ const StepNFCRead: React.FC<StepNFCReadProps> = ({ player, mrzData, onAnalyze, o
 
   return (
     <View style={[{ width: '100%' }]} onLayout={onLayout}>
-      <View style={stepSpecificStyles.step6Container}>
-        <Text style={stepSpecificStyles.step6Title}>{t(`voting.step6Title_${docSfx}`)}</Text>
+      <View style={stepSpecificStyles.stepNFCReadContainer}>
+        <Text style={stepSpecificStyles.stepNFCReadTitle}>{t(`voting.step6Title_${docSfx}`)}</Text>
 
-        <View style={stepSpecificStyles.step6ImageContainer}>
+        <View style={stepSpecificStyles.stepNFCReadImageContainer}>
           {Platform.OS === 'android' ? (
             <Image
               // poster-phone-over-passport.png is currently a placeholder
@@ -398,12 +398,12 @@ const StepNFCRead: React.FC<StepNFCReadProps> = ({ player, mrzData, onAnalyze, o
               source={isPassportFlow
                 ? require('@/assets/images/poster-phone-over-passport.png')
                 : require('@/assets/images/poster-phone-over-card.png')}
-              style={stepSpecificStyles.step6Image}
+              style={stepSpecificStyles.stepNFCReadImage}
               resizeMode="contain"
             />
           ) : (
             <VideoView
-              style={stepSpecificStyles.step6Image}
+              style={stepSpecificStyles.stepNFCReadImage}
               player={player}
               contentFit="contain"
               nativeControls={false}
@@ -579,7 +579,7 @@ const StepNFCRead: React.FC<StepNFCReadProps> = ({ player, mrzData, onAnalyze, o
           </View>
         )}
 
-        <View style={stepSpecificStyles.step6ButtonContainer}>
+        <View style={stepSpecificStyles.stepNFCReadButtonContainer}>
           {/* Hide the analyze/retry button when a doc-type mismatch is
               detected — retrying the NFC scan with the same MRZ would just
               hit InvalidMRZKey or re-scan the same wrong chip. The only
@@ -589,12 +589,12 @@ const StepNFCRead: React.FC<StepNFCReadProps> = ({ player, mrzData, onAnalyze, o
               document type. */}
           {!passportDetected && (
             <TouchableOpacity
-              style={[stepSpecificStyles.step6Button, isScanning && { opacity: 0.5 }]}
+              style={[stepSpecificStyles.stepNFCReadButton, isScanning && { opacity: 0.5 }]}
               activeOpacity={0.8}
               onPress={() => { setShowRetry(false); setPassportDetected(false); setDebugError(null); setScanStep(0); setScanStatus(''); handleAnalyzePress(); }}
               disabled={isScanning}
             >
-              <Text style={stepSpecificStyles.step6ButtonText}>
+              <Text style={stepSpecificStyles.stepNFCReadButtonText}>
                 {isScanning ? t('voting.step6Scanning') : showRetry ? t('common.retry') : t('common.analyze')}
               </Text>
             </TouchableOpacity>

@@ -75,7 +75,7 @@ const StepProofSubmission: React.FC<StepProofSubmissionProps> = ({
   // so we don't drop the freedomTool requirement prematurely.
   const isTd3Doc = !!passport && passport.dataGroup1.length === 93;
   // Used to suffix doc-type-aware translation keys (step11MissingData,
-  // step9ErrorDescription). When `passport` hasn't loaded yet, fall back to
+  // stepVoteChoiceErrorDescription). When `passport` hasn't loaded yet, fall back to
   // the ID-card variant — the strings only show up after the user has
   // entered Step 11 so passport is virtually always populated by then.
   const docSfx = isTd3Doc ? 'passport' : 'idCard';
@@ -377,10 +377,10 @@ const StepProofSubmission: React.FC<StepProofSubmissionProps> = ({
 
   return (
     <View style={[{ width: '100%', minHeight: SLIDE_MIN_HEIGHT }]} onLayout={onLayout}>
-      <View style={stepSpecificStyles.step11Container}>
+      <View style={stepSpecificStyles.stepProofSubmissionContainer}>
         <LottieView
           source={require('@/assets/animations/loading.json')}
-          style={stepSpecificStyles.step11Loading}
+          style={stepSpecificStyles.stepProofSubmissionLoading}
           autoPlay
           loop
         />

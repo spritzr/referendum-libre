@@ -136,15 +136,15 @@ export const createModalStyles = (colors: ReturnType<typeof useColors>) => Style
 const ANDROID_SLIDE_IMAGE = 100;
 
 export const createStepSpecificStyles = (colors: ReturnType<typeof useColors>) => StyleSheet.create({
-  cardVideo: {
+  stepIntroConsentVideo: {
     width: Platform.OS === 'android' ? ANDROID_SLIDE_IMAGE : Spacing.modal.stepVideoSize,
     height: Platform.OS === 'android' ? ANDROID_SLIDE_IMAGE : Spacing.modal.stepVideoSize,
   },
-  phoneImage: {
+  stepEligibilityCheckImage: {
     width: Platform.OS === 'android' ? ANDROID_SLIDE_IMAGE : Spacing.modal.stepVideoSize,
     height: Platform.OS === 'android' ? ANDROID_SLIDE_IMAGE : Spacing.modal.stepVideoSize,
   },
-  ballotImage: {
+  stepAnonymousVoteExplainerImage: {
     width: Platform.OS === 'android' ? ANDROID_SLIDE_IMAGE : Spacing.modal.stepVideoSize,
     height: Platform.OS === 'android' ? ANDROID_SLIDE_IMAGE : Spacing.modal.stepVideoSize,
   },
@@ -178,20 +178,20 @@ export const createStepSpecificStyles = (colors: ReturnType<typeof useColors>) =
     color: colors.buttonText,
     textAlign: 'center',
   },
-  step4Container: {
-    padding: Spacing.modal.step4Padding,
+  stepDocumentScanStartContainer: {
+    padding: Spacing.modal.stepDocumentScanStartPadding,
     paddingBottom: 40,
-    gap: Spacing.modal.step4Gap,
+    gap: Spacing.modal.stepDocumentScanStartGap,
     alignItems: 'center',
     width: '100%',
     backgroundColor: colors.cardBackground,
   },
-  step4Content: {
-    gap: Spacing.modal.step4ContentGap,
+  stepDocumentScanStartContent: {
+    gap: Spacing.modal.stepDocumentScanStartContentGap,
     alignItems: 'flex-start',
     width: '100%',
   },
-  step4Title: {
+  stepDocumentScanStartTitle: {
     fontFamily: Typography.fontFamily.bold,
     fontSize: Typography.fontSize.h1,
     lineHeight: Typography.lineHeight.h1,
@@ -200,17 +200,17 @@ export const createStepSpecificStyles = (colors: ReturnType<typeof useColors>) =
     textAlign: 'center',
     width: '100%',
   },
-  step4Video: {
+  stepDocumentScanStartVideo: {
     width: Spacing.modal.stepVideoSize,
     height: Spacing.modal.stepVideoSize,
   },
-  step4Button: {
-    paddingVertical: Spacing.modal.step4ButtonPaddingVertical,
+  stepDocumentScanStartButton: {
+    paddingVertical: Spacing.modal.stepDocumentScanStartButtonPaddingVertical,
     backgroundColor: colors.secondary,
     alignItems: 'center',
     width: '100%',
   },
-  step4ButtonText: {
+  stepDocumentScanStartButtonText: {
     fontFamily: Typography.fontFamily.bold,
     fontSize: Typography.fontSize.button,
     lineHeight: Typography.lineHeight.button,
@@ -218,8 +218,8 @@ export const createStepSpecificStyles = (colors: ReturnType<typeof useColors>) =
     color: colors.buttonText,
     textAlign: 'center',
   },
-  step5Container: {
-    paddingTop: Spacing.modal.step5Padding,
+  stepMRZScanContainer: {
+    paddingTop: Spacing.modal.stepMRZScanPadding,
     paddingBottom: 32,
     paddingHorizontal: 0,
     gap: 16,
@@ -227,7 +227,7 @@ export const createStepSpecificStyles = (colors: ReturnType<typeof useColors>) =
     width: '100%',
     backgroundColor: colors.cardBackground,
   },
-  step5Title: {
+  stepMRZScanTitle: {
     fontFamily: Typography.fontFamily.bold,
     fontSize: Typography.fontSize.h1,
     lineHeight: Typography.lineHeight.h1,
@@ -236,12 +236,12 @@ export const createStepSpecificStyles = (colors: ReturnType<typeof useColors>) =
     textAlign: 'center',
     width: '100%',
   },
-  step5Camera: {
+  stepMRZScanCamera: {
     width: '100%',
-    height: Spacing.modal.step5CameraHeight,
+    height: Spacing.modal.stepMRZScanCameraHeight,
     overflow: 'visible',
   },
-  step5CameraOverlay: {
+  stepMRZScanCameraOverlay: {
     position: 'absolute',
     top: 0,
     left: 0,
@@ -250,45 +250,45 @@ export const createStepSpecificStyles = (colors: ReturnType<typeof useColors>) =
     justifyContent: 'center',
     alignItems: 'center',
   },
-  step5ScanArea: {
+  stepMRZScanScanArea: {
     width: '80%',
     height: 80,
     justifyContent: 'flex-end',
     paddingBottom: 8,
   },
-  step5InstructionContainer: {
+  stepMRZScanInstructionContainer: {
     position: 'absolute',
     bottom: 20,
     left: 0,
     right: 0,
     paddingHorizontal: 16,
   },
-  step5CornerTopLeft: {
+  stepMRZScanCornerTopLeft: {
     position: 'absolute',
     top: 0,
     left: 0,
   },
-  step5CornerTopRight: {
+  stepMRZScanCornerTopRight: {
     position: 'absolute',
     top: 0,
     right: 0,
   },
-  step5CornerBottomLeft: {
+  stepMRZScanCornerBottomLeft: {
     position: 'absolute',
     bottom: 0,
     left: 0,
   },
-  step5CornerBottomRight: {
+  stepMRZScanCornerBottomRight: {
     position: 'absolute',
     bottom: 0,
     right: 0,
   },
-  step5MrzContainer: {
+  stepMRZScanMrzContainer: {
     width: '100%',
     alignItems: 'center',
     gap: 2,
   },
-  step5MrzText: {
+  stepMRZScanMrzText: {
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     fontSize: 10,
     fontWeight: '700',
@@ -296,13 +296,13 @@ export const createStepSpecificStyles = (colors: ReturnType<typeof useColors>) =
     letterSpacing: 0.5,
     opacity: 1,
   },
-  step5InstructionText: {
+  stepMRZScanInstructionText: {
     fontFamily: Typography.fontFamily.medium,
     fontSize: Typography.fontSize.body,
     color: colors.buttonText,
     textAlign: 'center',
   },
-  step5Button: {
+  stepMRZScanButton: {
     paddingVertical: 16,
     marginHorizontal: 24,
     marginBottom: 16,
@@ -311,7 +311,7 @@ export const createStepSpecificStyles = (colors: ReturnType<typeof useColors>) =
     alignItems: 'center',
     width: 'auto',
   },
-  step5ButtonText: {
+  stepMRZScanButtonText: {
     fontFamily: Typography.fontFamily.bold,
     fontSize: Typography.fontSize.button,
     lineHeight: Typography.lineHeight.button,
@@ -319,15 +319,15 @@ export const createStepSpecificStyles = (colors: ReturnType<typeof useColors>) =
     color: colors.text,
     textAlign: 'center',
   },
-  step6Container: {
-    paddingVertical: Spacing.modal.step6Padding,
+  stepNFCReadContainer: {
+    paddingVertical: Spacing.modal.stepNFCReadPadding,
     paddingHorizontal: 0,
-    gap: Spacing.modal.step6Gap,
+    gap: Spacing.modal.stepNFCReadGap,
     alignItems: 'center',
     width: '100%',
     backgroundColor: colors.cardBackground,
   },
-  step6Title: {
+  stepNFCReadTitle: {
     fontFamily: Typography.fontFamily.bold,
     fontSize: Typography.fontSize.h1,
     lineHeight: Typography.lineHeight.h1,
@@ -336,26 +336,26 @@ export const createStepSpecificStyles = (colors: ReturnType<typeof useColors>) =
     textAlign: 'center',
     width: '100%',
   },
-  step6ImageContainer: {
+  stepNFCReadImageContainer: {
     width: '100%',
     alignItems: 'center',
   },
-  step6Image: {
+  stepNFCReadImage: {
     width: Spacing.modal.stepVideoSize,
     height: Spacing.modal.stepVideoSize,
     backgroundColor: colors.cardBackground,
   },
-  step6ButtonContainer: {
-    paddingHorizontal: Spacing.modal.step6ButtonPaddingHorizontal,
+  stepNFCReadButtonContainer: {
+    paddingHorizontal: Spacing.modal.stepNFCReadButtonPaddingHorizontal,
     width: '100%',
   },
-  step6Button: {
-    paddingVertical: Spacing.modal.step6ButtonPaddingVertical,
+  stepNFCReadButton: {
+    paddingVertical: Spacing.modal.stepNFCReadButtonPaddingVertical,
     backgroundColor: colors.secondary,
     alignItems: 'center',
     width: '100%',
   },
-  step6ButtonText: {
+  stepNFCReadButtonText: {
     fontFamily: Typography.fontFamily.bold,
     fontSize: Typography.fontSize.button,
     lineHeight: Typography.lineHeight.button,
@@ -363,14 +363,14 @@ export const createStepSpecificStyles = (colors: ReturnType<typeof useColors>) =
     color: colors.buttonText,
     textAlign: 'center',
   },
-  step7Container: {
-    padding: Spacing.modal.step7Padding,
-    gap: Spacing.modal.step7Gap,
+  stepBlockchainVerifyContainer: {
+    padding: Spacing.modal.stepBlockchainVerifyPadding,
+    gap: Spacing.modal.stepBlockchainVerifyGap,
     alignItems: 'center',
     width: '100%',
     backgroundColor: colors.cardBackground,
   },
-  step7Title: {
+  stepBlockchainVerifyTitle: {
     fontFamily: Typography.fontFamily.bold,
     fontSize: Typography.fontSize.h1,
     lineHeight: Typography.lineHeight.h1,
@@ -379,11 +379,11 @@ export const createStepSpecificStyles = (colors: ReturnType<typeof useColors>) =
     textAlign: 'center',
     width: '100%',
   },
-  step7Image: {
+  stepBlockchainVerifyImage: {
     width: Spacing.modal.stepVideoSize,
     height: Spacing.modal.stepVideoSize,
   },
-  step7Description: {
+  stepBlockchainVerifyDescription: {
     fontFamily: Typography.fontFamily.medium,
     fontWeight: Typography.fontWeight.medium,
     fontSize: Typography.fontSize.body,
@@ -393,19 +393,19 @@ export const createStepSpecificStyles = (colors: ReturnType<typeof useColors>) =
     textAlign: 'center',
     width: '100%',
   },
-  step8Container: {
-    padding: Spacing.modal.step8Padding,
-    gap: Spacing.modal.step8Gap,
+  stepReadyToVoteContainer: {
+    padding: Spacing.modal.stepReadyToVotePadding,
+    gap: Spacing.modal.stepReadyToVoteGap,
     alignItems: 'center',
     width: '100%',
     backgroundColor: colors.cardBackground,
   },
-  step8Content: {
-    gap: Spacing.modal.step8ContentGap,
+  stepReadyToVoteContent: {
+    gap: Spacing.modal.stepReadyToVoteContentGap,
     alignItems: 'center',
     width: '100%',
   },
-  step8Title: {
+  stepReadyToVoteTitle: {
     fontFamily: Typography.fontFamily.bold,
     fontSize: Typography.fontSize.h1,
     lineHeight: Typography.lineHeight.h1,
@@ -414,17 +414,17 @@ export const createStepSpecificStyles = (colors: ReturnType<typeof useColors>) =
     textAlign: 'center',
     width: '100%',
   },
-  step8SuccessAnimation: {
-    width: Spacing.modal.step8SuccessSize,
-    height: Spacing.modal.step8SuccessSize,
+  stepReadyToVoteSuccessAnimation: {
+    width: Spacing.modal.stepReadyToVoteSuccessSize,
+    height: Spacing.modal.stepReadyToVoteSuccessSize,
   },
-  step8Button: {
-    paddingVertical: Spacing.modal.step8ButtonPaddingVertical,
+  stepReadyToVoteButton: {
+    paddingVertical: Spacing.modal.stepReadyToVoteButtonPaddingVertical,
     backgroundColor: colors.secondary,
     alignItems: 'center',
     width: '100%',
   },
-  step8ButtonText: {
+  stepReadyToVoteButtonText: {
     fontFamily: Typography.fontFamily.bold,
     fontSize: Typography.fontSize.button,
     lineHeight: Typography.lineHeight.button,
@@ -432,7 +432,7 @@ export const createStepSpecificStyles = (colors: ReturnType<typeof useColors>) =
     color: colors.buttonText,
     textAlign: 'center',
   },
-  step9VoteContainer: {
+  stepVoteChoiceContainer: {
     padding: 24,
     gap: 16,
     justifyContent: 'space-between',
@@ -440,7 +440,7 @@ export const createStepSpecificStyles = (colors: ReturnType<typeof useColors>) =
     width: '100%',
     backgroundColor: colors.cardBackground,
   },
-  step9VoteConfirmationCard: {
+  stepVoteChoiceConfirmationCard: {
     padding: 32,
     gap: 24,
     justifyContent: 'space-between',
@@ -449,7 +449,7 @@ export const createStepSpecificStyles = (colors: ReturnType<typeof useColors>) =
     backgroundColor: colors.white,
     borderRadius: 24,
   },
-  step9VoteTitle: {
+  stepVoteChoiceTitle: {
     fontFamily: Typography.fontFamily.bold,
     fontSize: 24,
     lineHeight: 31,
@@ -458,23 +458,23 @@ export const createStepSpecificStyles = (colors: ReturnType<typeof useColors>) =
     textAlign: 'center',
     width: '100%',
   },
-  step9VoteImage: {
+  stepVoteChoiceImage: {
     width: 175,
     height: 175,
   },
-  step9VoteButtonRow: {
+  stepVoteChoiceButtonRow: {
     flexDirection: 'row',
     gap: 24,
     width: '100%',
   },
-  step9VoteCancelButton: {
+  stepVoteChoiceCancelButton: {
     flex: 1,
     paddingVertical: 14,
     backgroundColor: colors.white,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  step9VoteCancelButtonText: {
+  stepVoteChoiceCancelButtonText: {
     fontFamily: Typography.fontFamily.bold,
     fontSize: 20,
     lineHeight: 26,
@@ -482,14 +482,14 @@ export const createStepSpecificStyles = (colors: ReturnType<typeof useColors>) =
     color: colors.secondary,
     textAlign: 'center',
   },
-  step9VoteConfirmButton: {
+  stepVoteChoiceConfirmButton: {
     flex: 1,
     paddingVertical: 14,
     backgroundColor: colors.secondary,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  step9VoteConfirmButtonText: {
+  stepVoteChoiceConfirmButtonText: {
     fontFamily: Typography.fontFamily.bold,
     fontSize: 20,
     lineHeight: 26,
@@ -497,19 +497,19 @@ export const createStepSpecificStyles = (colors: ReturnType<typeof useColors>) =
     color: colors.buttonText,
     textAlign: 'center',
   },
-  step9VoteOptionsContainer: {
+  stepVoteChoiceOptionsContainer: {
     flexDirection: 'column',
     gap: 16,
     width: '100%',
   },
-  step9VoteOptionButton: {
+  stepVoteChoiceOptionButton: {
     paddingVertical: 16,
     backgroundColor: colors.secondary,
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
   },
-  step9VoteOptionButtonText: {
+  stepVoteChoiceOptionButtonText: {
     fontFamily: Typography.fontFamily.bold,
     fontSize: 20,
     lineHeight: 26,
@@ -517,7 +517,7 @@ export const createStepSpecificStyles = (colors: ReturnType<typeof useColors>) =
     color: colors.buttonText,
     textAlign: 'center',
   },
-  step9VoteCancelButtonFullWidth: {
+  stepVoteChoiceCancelButtonFullWidth: {
     paddingVertical: 14,
     backgroundColor: colors.white,
     borderWidth: 1,
@@ -526,19 +526,19 @@ export const createStepSpecificStyles = (colors: ReturnType<typeof useColors>) =
     justifyContent: 'center',
     width: '100%',
   },
-  step9ErrorContainer: {
-    padding: Spacing.modal.step9ErrorPadding,
-    gap: Spacing.modal.step9ErrorGap,
+  stepVoteChoiceErrorContainer: {
+    padding: Spacing.modal.stepVoteChoiceErrorPadding,
+    gap: Spacing.modal.stepVoteChoiceErrorGap,
     alignItems: 'center',
     width: '100%',
     backgroundColor: colors.cardBackground,
   },
-  step9ErrorContent: {
-    gap: Spacing.modal.step9ErrorContentGap,
+  stepVoteChoiceErrorContent: {
+    gap: Spacing.modal.stepVoteChoiceErrorContentGap,
     alignItems: 'center',
     width: '100%',
   },
-  step9ErrorTitle: {
+  stepVoteChoiceErrorTitle: {
     fontFamily: Typography.fontFamily.bold,
     fontSize: Typography.fontSize.h1,
     lineHeight: Typography.lineHeight.h1,
@@ -547,7 +547,7 @@ export const createStepSpecificStyles = (colors: ReturnType<typeof useColors>) =
     textAlign: 'center',
     width: '100%',
   },
-  step9ErrorDescription: {
+  stepVoteChoiceErrorDescription: {
     fontFamily: Typography.fontFamily.medium,
     fontWeight: Typography.fontWeight.medium,
     fontSize: Typography.fontSize.body,
@@ -557,17 +557,17 @@ export const createStepSpecificStyles = (colors: ReturnType<typeof useColors>) =
     textAlign: 'center',
     width: '100%',
   },
-  step9ErrorAnimation: {
-    width: Spacing.modal.step9ErrorAnimationSize,
-    height: Spacing.modal.step9ErrorAnimationSize,
+  stepVoteChoiceErrorAnimation: {
+    width: Spacing.modal.stepVoteChoiceErrorAnimationSize,
+    height: Spacing.modal.stepVoteChoiceErrorAnimationSize,
   },
-  step9ErrorButton: {
-    paddingVertical: Spacing.modal.step9ErrorButtonPaddingVertical,
+  stepVoteChoiceErrorButton: {
+    paddingVertical: Spacing.modal.stepVoteChoiceErrorButtonPaddingVertical,
     backgroundColor: colors.secondary,
     alignItems: 'center',
     width: '100%',
   },
-  step9ErrorButtonText: {
+  stepVoteChoiceErrorButtonText: {
     fontFamily: Typography.fontFamily.bold,
     fontSize: Typography.fontSize.button,
     lineHeight: Typography.lineHeight.button,
@@ -575,19 +575,19 @@ export const createStepSpecificStyles = (colors: ReturnType<typeof useColors>) =
     color: colors.buttonText,
     textAlign: 'center',
   },
-  step10Container: {
-    padding: Spacing.modal.step10Padding,
-    gap: Spacing.modal.step10Gap,
+  stepVoteConfirmContainer: {
+    padding: Spacing.modal.stepVoteConfirmPadding,
+    gap: Spacing.modal.stepVoteConfirmGap,
     alignItems: 'center',
     width: '100%',
     backgroundColor: colors.cardBackground,
   },
-  step10Content: {
-    gap: Spacing.modal.step10ContentGap,
+  stepVoteConfirmContent: {
+    gap: Spacing.modal.stepVoteConfirmContentGap,
     alignItems: 'center',
     width: '100%',
   },
-  step10Title: {
+  stepVoteConfirmTitle: {
     fontFamily: Typography.fontFamily.bold,
     fontSize: Typography.fontSize.h1,
     lineHeight: Typography.lineHeight.h1,
@@ -596,22 +596,22 @@ export const createStepSpecificStyles = (colors: ReturnType<typeof useColors>) =
     textAlign: 'center',
     width: '100%',
   },
-  step10BallotVideo: {
+  stepVoteConfirmBallotVideo: {
     width: Spacing.modal.stepVideoSize,
     height: Spacing.modal.stepVideoSize,
   },
-  step10ButtonContainer: {
+  stepVoteConfirmButtonContainer: {
     flexDirection: 'row',
-    gap: Spacing.modal.step10ButtonGap,
+    gap: Spacing.modal.stepVoteConfirmButtonGap,
     width: '100%',
   },
-  step10CancelButton: {
+  stepVoteConfirmCancelButton: {
     flex: 1,
-    paddingVertical: Spacing.modal.step10ButtonPaddingVertical,
+    paddingVertical: Spacing.modal.stepVoteConfirmButtonPaddingVertical,
     backgroundColor: colors.cardBackground,
     alignItems: 'center',
   },
-  step10CancelButtonText: {
+  stepVoteConfirmCancelButtonText: {
     fontFamily: Typography.fontFamily.bold,
     fontSize: Typography.fontSize.button,
     lineHeight: Typography.lineHeight.button,
@@ -619,13 +619,13 @@ export const createStepSpecificStyles = (colors: ReturnType<typeof useColors>) =
     color: colors.text,
     textAlign: 'center',
   },
-  step10ConfirmButton: {
+  stepVoteConfirmConfirmButton: {
     flex: 1,
-    paddingVertical: Spacing.modal.step10ButtonPaddingVertical,
+    paddingVertical: Spacing.modal.stepVoteConfirmButtonPaddingVertical,
     backgroundColor: colors.secondary,
     alignItems: 'center',
   },
-  step10ConfirmButtonText: {
+  stepVoteConfirmConfirmButtonText: {
     fontFamily: Typography.fontFamily.bold,
     fontSize: Typography.fontSize.button,
     lineHeight: Typography.lineHeight.button,
@@ -633,34 +633,34 @@ export const createStepSpecificStyles = (colors: ReturnType<typeof useColors>) =
     color: colors.buttonText,
     textAlign: 'center',
   },
-  step11Container: {
+  stepProofSubmissionContainer: {
     flex: 1,
-    padding: Spacing.modal.step11Padding,
-    gap: Spacing.modal.step11Gap,
+    padding: Spacing.modal.stepProofSubmissionPadding,
+    gap: Spacing.modal.stepProofSubmissionGap,
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
     backgroundColor: colors.cardBackground,
   },
-  step11Loading: {
-    width: Spacing.modal.step11LoadingWidth,
-    height: Spacing.modal.step11LoadingHeight,
+  stepProofSubmissionLoading: {
+    width: Spacing.modal.stepProofSubmissionLoadingWidth,
+    height: Spacing.modal.stepProofSubmissionLoadingHeight,
   },
-  step12SuccessContainer: {
+  stepVoteSuccessContainer: {
     flex: 1,
-    padding: Spacing.modal.step12SuccessPadding,
-    gap: Spacing.modal.step12SuccessGap,
+    padding: Spacing.modal.stepVoteSuccessPadding,
+    gap: Spacing.modal.stepVoteSuccessGap,
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
     backgroundColor: colors.cardBackground,
   },
-  step12SuccessContent: {
-    gap: Spacing.modal.step12SuccessContentGap,
+  stepVoteSuccessContent: {
+    gap: Spacing.modal.stepVoteSuccessContentGap,
     alignItems: 'center',
     width: '100%',
   },
-  step12SuccessTitle: {
+  stepVoteSuccessTitle: {
     fontFamily: Typography.fontFamily.bold,
     fontSize: Typography.fontSize.h1,
     lineHeight: Typography.lineHeight.h1,
@@ -669,7 +669,7 @@ export const createStepSpecificStyles = (colors: ReturnType<typeof useColors>) =
     textAlign: 'center',
     width: '100%',
   },
-  step12SuccessDescription: {
+  stepVoteSuccessDescription: {
     fontFamily: Typography.fontFamily.medium,
     fontWeight: Typography.fontWeight.medium,
     fontSize: Typography.fontSize.body,
@@ -679,17 +679,17 @@ export const createStepSpecificStyles = (colors: ReturnType<typeof useColors>) =
     textAlign: 'center',
     width: '100%',
   },
-  step12SuccessAnimation: {
-    width: Spacing.modal.step12SuccessAnimationSize,
-    height: Spacing.modal.step12SuccessAnimationSize,
+  stepVoteSuccessAnimation: {
+    width: Spacing.modal.stepVoteSuccessAnimationSize,
+    height: Spacing.modal.stepVoteSuccessAnimationSize,
   },
-  step12SuccessButton: {
-    paddingVertical: Spacing.modal.step12SuccessButtonPaddingVertical,
+  stepVoteSuccessButton: {
+    paddingVertical: Spacing.modal.stepVoteSuccessButtonPaddingVertical,
     backgroundColor: colors.secondary,
     alignItems: 'center',
     width: '100%',
   },
-  step12SuccessButtonText: {
+  stepVoteSuccessButtonText: {
     fontFamily: Typography.fontFamily.bold,
     fontSize: Typography.fontSize.button,
     lineHeight: Typography.lineHeight.button,
@@ -697,21 +697,21 @@ export const createStepSpecificStyles = (colors: ReturnType<typeof useColors>) =
     color: colors.buttonText,
     textAlign: 'center',
   },
-  step12ErrorContainer: {
+  stepVoteErrorContainer: {
     flex: 1,
-    padding: Spacing.modal.step12ErrorPadding,
-    gap: Spacing.modal.step12ErrorGap,
+    padding: Spacing.modal.stepVoteErrorPadding,
+    gap: Spacing.modal.stepVoteErrorGap,
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
     backgroundColor: colors.cardBackground,
   },
-  step12ErrorContent: {
-    gap: Spacing.modal.step12ErrorContentGap,
+  stepVoteErrorContent: {
+    gap: Spacing.modal.stepVoteErrorContentGap,
     alignItems: 'center',
     width: '100%',
   },
-  step12ErrorTitle: {
+  stepVoteErrorTitle: {
     fontFamily: Typography.fontFamily.bold,
     fontSize: Typography.fontSize.h1,
     lineHeight: Typography.lineHeight.h1,
@@ -720,7 +720,7 @@ export const createStepSpecificStyles = (colors: ReturnType<typeof useColors>) =
     textAlign: 'center',
     width: '100%',
   },
-  step12ErrorDescription: {
+  stepVoteErrorDescription: {
     fontFamily: Typography.fontFamily.medium,
     fontWeight: Typography.fontWeight.medium,
     fontSize: Typography.fontSize.body,
@@ -730,17 +730,17 @@ export const createStepSpecificStyles = (colors: ReturnType<typeof useColors>) =
     textAlign: 'center',
     width: '100%',
   },
-  step12ErrorAnimation: {
-    width: Spacing.modal.step12ErrorAnimationSize,
-    height: Spacing.modal.step12ErrorAnimationSize,
+  stepVoteErrorAnimation: {
+    width: Spacing.modal.stepVoteErrorAnimationSize,
+    height: Spacing.modal.stepVoteErrorAnimationSize,
   },
-  step12ErrorButton: {
-    paddingVertical: Spacing.modal.step12ErrorButtonPaddingVertical,
+  stepVoteErrorButton: {
+    paddingVertical: Spacing.modal.stepVoteErrorButtonPaddingVertical,
     backgroundColor: colors.secondary,
     alignItems: 'center',
     width: '100%',
   },
-  step12ErrorButtonText: {
+  stepVoteErrorButtonText: {
     fontFamily: Typography.fontFamily.bold,
     fontSize: Typography.fontSize.button,
     lineHeight: Typography.lineHeight.button,

@@ -48,24 +48,24 @@ const StepReadyToVote: React.FC<StepReadyToVoteProps> = ({
 
   return (
     <View style={[{ width: '100%' }]} onLayout={onLayout}>
-      <View style={stepSpecificStyles.step8Container}>
-        <View style={stepSpecificStyles.step8Content}>
-          <Text style={stepSpecificStyles.step8Title}>{t('voting.step8Ready')}</Text>
+      <View style={stepSpecificStyles.stepReadyToVoteContainer}>
+        <View style={stepSpecificStyles.stepReadyToVoteContent}>
+          <Text style={stepSpecificStyles.stepReadyToVoteTitle}>{t('voting.step8Ready')}</Text>
 
           <LottieView
             source={require('@/assets/animations/success.json')}
-            style={stepSpecificStyles.step8SuccessAnimation}
+            style={stepSpecificStyles.stepReadyToVoteSuccessAnimation}
             autoPlay
             loop={false}
           />
         </View>
 
         <TouchableOpacity
-          style={stepSpecificStyles.step8Button}
+          style={stepSpecificStyles.stepReadyToVoteButton}
           activeOpacity={0.8}
           onPress={handleVote}
         >
-          <Text style={stepSpecificStyles.step8ButtonText}>{t('voting.step8VoteNow')}</Text>
+          <Text style={stepSpecificStyles.stepReadyToVoteButtonText}>{t('voting.step8VoteNow')}</Text>
         </TouchableOpacity>
       </View>
     </View>

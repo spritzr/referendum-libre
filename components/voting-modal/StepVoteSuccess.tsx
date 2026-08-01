@@ -52,19 +52,19 @@ const StepVoteSuccess: React.FC<StepVoteSuccessProps> = ({ voteIdentifier, confi
       ]}
       onLayout={onLayout}
     >
-      <View style={stepSpecificStyles.step12SuccessContainer}>
-        <View style={stepSpecificStyles.step12SuccessContent}>
-          <Text style={stepSpecificStyles.step12SuccessTitle}>
+      <View style={stepSpecificStyles.stepVoteSuccessContainer}>
+        <View style={stepSpecificStyles.stepVoteSuccessContent}>
+          <Text style={stepSpecificStyles.stepVoteSuccessTitle}>
             {t(confirmed ? 'voting.step12SuccessTitle' : 'voting.step12PendingTitle')}
           </Text>
 
-          <Text style={stepSpecificStyles.step12SuccessDescription}>
+          <Text style={stepSpecificStyles.stepVoteSuccessDescription}>
             {t(confirmed ? 'voting.step12SuccessDescription' : 'voting.step12PendingDescription')}
           </Text>
 
           <LottieView
             source={require('@/assets/animations/success.json')}
-            style={stepSpecificStyles.step12SuccessAnimation}
+            style={stepSpecificStyles.stepVoteSuccessAnimation}
             autoPlay
             loop={false}
           />
@@ -159,11 +159,11 @@ const StepVoteSuccess: React.FC<StepVoteSuccessProps> = ({ voteIdentifier, confi
         </View>
 
         <TouchableOpacity
-          style={stepSpecificStyles.step12SuccessButton}
+          style={stepSpecificStyles.stepVoteSuccessButton}
           activeOpacity={0.8}
           onPress={onViewResults || (() => console.log('View results'))}
         >
-          <Text style={stepSpecificStyles.step12SuccessButtonText}>{t('voting.step12SuccessButton')}</Text>
+          <Text style={stepSpecificStyles.stepVoteSuccessButtonText}>{t('voting.step12SuccessButton')}</Text>
         </TouchableOpacity>
       </View>
     </View>

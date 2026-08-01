@@ -50,12 +50,12 @@ const StepIntroConsent: React.FC<StepIntroConsentProps> = ({
                   ? require('@/assets/images/poster-passport.png')
                   : require('@/assets/images/poster-card.png')
               }
-              style={stepSpecificStyles.cardVideo}
+              style={stepSpecificStyles.stepIntroConsentVideo}
               resizeMode="cover"
             />
           ) : (
             <VideoView
-              style={stepSpecificStyles.cardVideo}
+              style={stepSpecificStyles.stepIntroConsentVideo}
               player={player}
               contentFit="cover"
               nativeControls={false}

@@ -292,19 +292,19 @@ const StepMRZScan: React.FC<StepMRZScanProps> = ({ isActive, onMRZScanned, onMan
     console.log('❌ Step5: Rendering NO PERMISSION screen');
     return (
       <View style={[{ width: '100%' }]} onLayout={onLayout}>
-        <View style={stepSpecificStyles.step5Container}>
-          <Text style={stepSpecificStyles.step5Title} maxFontSizeMultiplier={CAP_SMALL}>{t(`voting.step5Title_${isPassportFlow ? 'passport' : 'idCard'}`)}</Text>
-          <View style={stepSpecificStyles.step5Camera}>
+        <View style={stepSpecificStyles.stepMRZScanContainer}>
+          <Text style={stepSpecificStyles.stepMRZScanTitle} maxFontSizeMultiplier={CAP_SMALL}>{t(`voting.step5Title_${isPassportFlow ? 'passport' : 'idCard'}`)}</Text>
+          <View style={stepSpecificStyles.stepMRZScanCamera}>
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background }}>
-              <Text style={stepSpecificStyles.step5Title} maxFontSizeMultiplier={CAP_SMALL}>{t('voting.step5CameraPermission')}</Text>
+              <Text style={stepSpecificStyles.stepMRZScanTitle} maxFontSizeMultiplier={CAP_SMALL}>{t('voting.step5CameraPermission')}</Text>
             </View>
           </View>
           <TouchableOpacity
-            style={stepSpecificStyles.step5Button}
+            style={stepSpecificStyles.stepMRZScanButton}
             activeOpacity={0.8}
             onPress={onManualFill || (() => console.log('Manual fill'))}
           >
-            <Text style={stepSpecificStyles.step5ButtonText}>{t('common.manualFill')}</Text>
+            <Text style={stepSpecificStyles.stepMRZScanButtonText}>{t('common.manualFill')}</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -315,19 +315,19 @@ const StepMRZScan: React.FC<StepMRZScanProps> = ({ isActive, onMRZScanned, onMan
     console.log('❌ Step5: Rendering NO DEVICE screen');
     return (
       <View style={[{ width: '100%' }]} onLayout={onLayout}>
-        <View style={stepSpecificStyles.step5Container}>
-          <Text style={stepSpecificStyles.step5Title} maxFontSizeMultiplier={CAP_SMALL}>{t(`voting.step5Title_${isPassportFlow ? 'passport' : 'idCard'}`)}</Text>
-          <View style={stepSpecificStyles.step5Camera}>
+        <View style={stepSpecificStyles.stepMRZScanContainer}>
+          <Text style={stepSpecificStyles.stepMRZScanTitle} maxFontSizeMultiplier={CAP_SMALL}>{t(`voting.step5Title_${isPassportFlow ? 'passport' : 'idCard'}`)}</Text>
+          <View style={stepSpecificStyles.stepMRZScanCamera}>
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background }}>
-              <Text style={stepSpecificStyles.step5Title} maxFontSizeMultiplier={CAP_SMALL}>{t('voting.step5CameraUnavailable')}</Text>
+              <Text style={stepSpecificStyles.stepMRZScanTitle} maxFontSizeMultiplier={CAP_SMALL}>{t('voting.step5CameraUnavailable')}</Text>
             </View>
           </View>
           <TouchableOpacity
-            style={stepSpecificStyles.step5Button}
+            style={stepSpecificStyles.stepMRZScanButton}
             activeOpacity={0.8}
             onPress={onManualFill || (() => console.log('Manual fill'))}
           >
-            <Text style={stepSpecificStyles.step5ButtonText}>{t('common.manualFill')}</Text>
+            <Text style={stepSpecificStyles.stepMRZScanButtonText}>{t('common.manualFill')}</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -338,9 +338,9 @@ const StepMRZScan: React.FC<StepMRZScanProps> = ({ isActive, onMRZScanned, onMan
 
   return (
     <View style={[{ width: '100%' }]} onLayout={onLayout}>
-      <View style={stepSpecificStyles.step5Container}>
-        <Text style={stepSpecificStyles.step5Title} maxFontSizeMultiplier={CAP_SMALL}>{t(`voting.step5Title_${isPassportFlow ? 'passport' : 'idCard'}`)}</Text>
-        <View style={[stepSpecificStyles.step5Camera, { position: 'relative' }]}>
+      <View style={stepSpecificStyles.stepMRZScanContainer}>
+        <Text style={stepSpecificStyles.stepMRZScanTitle} maxFontSizeMultiplier={CAP_SMALL}>{t(`voting.step5Title_${isPassportFlow ? 'passport' : 'idCard'}`)}</Text>
+        <View style={[stepSpecificStyles.stepMRZScanCamera, { position: 'relative' }]}>
           {/*
             Android (Volla / Camera2): keep <Camera /> permanently mounted;
             use display:flex/none + isActive prop to pause/resume the session
@@ -488,11 +488,11 @@ const StepMRZScan: React.FC<StepMRZScanProps> = ({ isActive, onMRZScanned, onMan
           </View>
         )}
         <TouchableOpacity
-          style={stepSpecificStyles.step5Button}
+          style={stepSpecificStyles.stepMRZScanButton}
           activeOpacity={0.8}
           onPress={onManualFill || (() => console.log('Manual fill'))}
         >
-          <Text style={stepSpecificStyles.step5ButtonText}>{t('common.manualFill')}</Text>
+          <Text style={stepSpecificStyles.stepMRZScanButtonText}>{t('common.manualFill')}</Text>
         </TouchableOpacity>
         {devMode && DEV_EXAMPLE_MRZ && (
           <TouchableOpacity

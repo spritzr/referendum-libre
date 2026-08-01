@@ -43,9 +43,9 @@ const StepDocumentScanStart: React.FC<StepDocumentScanStartProps> = ({ player, o
 
   return (
     <View style={[{ width: '100%' }]} onLayout={onLayout}>
-      <View style={stepSpecificStyles.step4Container}>
-        <View style={stepSpecificStyles.step4Content}>
-          <Text style={stepSpecificStyles.step4Title}>{t(`voting.step4Title_${docSfx}`)}</Text>
+      <View style={stepSpecificStyles.stepDocumentScanStartContainer}>
+        <View style={stepSpecificStyles.stepDocumentScanStartContent}>
+          <Text style={stepSpecificStyles.stepDocumentScanStartTitle}>{t(`voting.step4Title_${docSfx}`)}</Text>
         </View>
         {Platform.OS === 'android' ? (
           <Image
@@ -54,12 +54,12 @@ const StepDocumentScanStart: React.FC<StepDocumentScanStartProps> = ({ player, o
             source={isPassportFlow
               ? require('@/assets/images/poster-passport.png')
               : require('@/assets/images/poster-card.png')}
-            style={stepSpecificStyles.step4Video}
+            style={stepSpecificStyles.stepDocumentScanStartVideo}
             resizeMode="cover"
           />
         ) : (
           <VideoView
-            style={stepSpecificStyles.step4Video}
+            style={stepSpecificStyles.stepDocumentScanStartVideo}
             player={player}
             contentFit="cover"
             nativeControls={false}
@@ -67,11 +67,11 @@ const StepDocumentScanStart: React.FC<StepDocumentScanStartProps> = ({ player, o
           />
         )}
         <TouchableOpacity
-          style={stepSpecificStyles.step4Button}
+          style={stepSpecificStyles.stepDocumentScanStartButton}
           activeOpacity={0.8}
           onPress={handleStartAnalysis}
         >
-          <Text style={stepSpecificStyles.step4ButtonText}>{t('voting.step4Start')}</Text>
+          <Text style={stepSpecificStyles.stepDocumentScanStartButtonText}>{t('voting.step4Start')}</Text>
         </TouchableOpacity>
       </View>
     </View>

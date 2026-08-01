@@ -562,8 +562,8 @@ const StepBlockchainVerify: React.FC<StepBlockchainVerifyProps> = ({
 
   return (
     <View style={[{ width: '100%' }]} onLayout={onLayout}>
-      <View style={stepSpecificStyles.step7Container}>
-        <Text style={stepSpecificStyles.step7Title}>{t('voting.step7Title')}</Text>
+      <View style={stepSpecificStyles.stepBlockchainVerifyContainer}>
+        <Text style={stepSpecificStyles.stepBlockchainVerifyTitle}>{t('voting.step7Title')}</Text>
 
         {/* Hide the 225×225 poster while an error message is rendered. A long
             VOTE_INELIGIBLE message (the ECDSA-dispatcher / curve-unsupported /
@@ -573,12 +573,12 @@ const StepBlockchainVerify: React.FC<StepBlockchainVerifyProps> = ({
           Platform.OS === 'android' ? (
             <Image
               source={require('@/assets/images/poster-verify.png')}
-              style={stepSpecificStyles.step7Image}
+              style={stepSpecificStyles.stepBlockchainVerifyImage}
               resizeMode="contain"
             />
           ) : (
             <VideoView
-              style={stepSpecificStyles.step7Image}
+              style={stepSpecificStyles.stepBlockchainVerifyImage}
               player={player}
               contentFit="contain"
               nativeControls={false}
@@ -587,18 +587,18 @@ const StepBlockchainVerify: React.FC<StepBlockchainVerifyProps> = ({
           )
         )}
 
-        {/* Spinner + description as direct children of step7Container.
+        {/* Spinner + description as direct children of stepBlockchainVerifyContainer.
             A previous attempt wrapped them in an inner column-flex View with
             no explicit width — that View collapsed to its widest child's
-            natural width, so step7Description's `width: '100%'` resolved to
+            natural width, so stepBlockchainVerifyDescription's `width: '100%'` resolved to
             the unwrapped natural width of the (long) errorMessage Text and
-            overflowed the screen. step7Container already provides
+            overflowed the screen. stepBlockchainVerifyContainer already provides
             `width: '100%'` + `alignItems: 'center'` + `gap`, so the wrapper
             was redundant. */}
         {!errorMessage && hasStarted && (
           <ActivityIndicator size="small" color={colors.text} />
         )}
-        <Text style={stepSpecificStyles.step7Description}>
+        <Text style={stepSpecificStyles.stepBlockchainVerifyDescription}>
           {errorMessage || statusText}
         </Text>
 

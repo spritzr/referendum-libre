@@ -31,12 +31,12 @@ const StepAnonymousVoteExplainer: React.FC<StepAnonymousVoteExplainerProps> = ({
           {Platform.OS === 'android' ? (
             <Image
               source={require('@/assets/images/poster-ballot.png')}
-              style={stepSpecificStyles.ballotImage}
+              style={stepSpecificStyles.stepAnonymousVoteExplainerImage}
               resizeMode="contain"
             />
           ) : (
             <VideoView
-              style={stepSpecificStyles.ballotImage}
+              style={stepSpecificStyles.stepAnonymousVoteExplainerImage}
               player={player}
               contentFit="contain"
               nativeControls={false}

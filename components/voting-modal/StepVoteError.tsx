@@ -33,19 +33,19 @@ const StepVoteError: React.FC<StepVoteErrorProps> = ({ onGoHome, onLayout, error
       ]}
       onLayout={onLayout}
     >
-      <View style={stepSpecificStyles.step12ErrorContainer}>
-        <View style={stepSpecificStyles.step12ErrorContent}>
-          <Text style={stepSpecificStyles.step12ErrorTitle}>
+      <View style={stepSpecificStyles.stepVoteErrorContainer}>
+        <View style={stepSpecificStyles.stepVoteErrorContent}>
+          <Text style={stepSpecificStyles.stepVoteErrorTitle}>
             {t('voting.step12ErrorTitle')}
           </Text>
 
-          <Text style={stepSpecificStyles.step12ErrorDescription}>
+          <Text style={stepSpecificStyles.stepVoteErrorDescription}>
             {errorReason || t('voting.step12ErrorDescription')}
           </Text>
 
           <LottieView
             source={require('@/assets/animations/error.json')}
-            style={stepSpecificStyles.step12ErrorAnimation}
+            style={stepSpecificStyles.stepVoteErrorAnimation}
             autoPlay
             loop={false}
           />
@@ -56,11 +56,11 @@ const StepVoteError: React.FC<StepVoteErrorProps> = ({ onGoHome, onLayout, error
         </View>
 
         <TouchableOpacity
-          style={stepSpecificStyles.step12ErrorButton}
+          style={stepSpecificStyles.stepVoteErrorButton}
           activeOpacity={0.8}
           onPress={onGoHome || (() => console.log('Go home'))}
         >
-          <Text style={stepSpecificStyles.step12ErrorButtonText}>{t('common.backToHome')}</Text>
+          <Text style={stepSpecificStyles.stepVoteErrorButtonText}>{t('common.backToHome')}</Text>
         </TouchableOpacity>
       </View>
     </View>
