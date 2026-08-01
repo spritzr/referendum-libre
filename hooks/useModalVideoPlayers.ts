@@ -21,7 +21,7 @@ const stepSources: Partial<Record<FlowStepValue, VideoSource>> = {
 };
 
 const safe = (fn: () => void) => {
-  try { fn(); } catch (e) { /* Ignore errors from released players */ }
+  try { fn(); } catch { /* Ignore errors from released players */ }
 };
 
 export function useModalVideoPlayers() {
