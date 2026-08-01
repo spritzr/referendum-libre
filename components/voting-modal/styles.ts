@@ -130,25 +130,23 @@ export const createModalStyles = (colors: ReturnType<typeof useColors>) => Style
 });
 
 // Android's mediaContainer is 120h with paddingBottom: 20, giving ~100px of
-// inner space. The iOS-sized assets (167–175h) overflow that container; with
-// `resizeMode: contain` the overflow shifts the visible image content and makes
-// the three slides look misaligned (ballot sits visibly lower than card/phone).
-// Clamp all three to the same footprint on Android so they line up identically.
+// inner space — smaller than the shared 225 stepVideoSize. With
+// `resizeMode: contain` the overflow would shift the visible image content,
+// so every slide is clamped to the same square footprint on Android.
 const ANDROID_SLIDE_IMAGE = 100;
-const ANDROID_CARD_WIDTH = Math.round(ANDROID_SLIDE_IMAGE * (199 / 167)); // keep card aspect
 
 export const createStepSpecificStyles = (colors: ReturnType<typeof useColors>) => StyleSheet.create({
   cardVideo: {
-    width: Platform.OS === 'android' ? ANDROID_CARD_WIDTH : Spacing.modal.cardImageWidth,
-    height: Platform.OS === 'android' ? ANDROID_SLIDE_IMAGE : Spacing.modal.cardImageHeight,
+    width: Platform.OS === 'android' ? ANDROID_SLIDE_IMAGE : Spacing.modal.stepVideoSize,
+    height: Platform.OS === 'android' ? ANDROID_SLIDE_IMAGE : Spacing.modal.stepVideoSize,
   },
   phoneImage: {
-    width: Platform.OS === 'android' ? ANDROID_SLIDE_IMAGE : Spacing.modal.phoneImageSize,
-    height: Platform.OS === 'android' ? ANDROID_SLIDE_IMAGE : Spacing.modal.phoneImageSize,
+    width: Platform.OS === 'android' ? ANDROID_SLIDE_IMAGE : Spacing.modal.stepVideoSize,
+    height: Platform.OS === 'android' ? ANDROID_SLIDE_IMAGE : Spacing.modal.stepVideoSize,
   },
   ballotImage: {
-    width: Platform.OS === 'android' ? ANDROID_SLIDE_IMAGE : Spacing.modal.ballotImageSize,
-    height: Platform.OS === 'android' ? ANDROID_SLIDE_IMAGE : Spacing.modal.ballotImageSize,
+    width: Platform.OS === 'android' ? ANDROID_SLIDE_IMAGE : Spacing.modal.stepVideoSize,
+    height: Platform.OS === 'android' ? ANDROID_SLIDE_IMAGE : Spacing.modal.stepVideoSize,
   },
   // StepIntroVideo — teaching clip shown before the user reaches
   // StepDocumentScanStart's "Démarrer l'analyse" content. The video fills
@@ -203,8 +201,8 @@ export const createStepSpecificStyles = (colors: ReturnType<typeof useColors>) =
     width: '100%',
   },
   step4Video: {
-    width: Spacing.modal.cardImageWidth,
-    height: Spacing.modal.cardImageHeight,
+    width: Spacing.modal.stepVideoSize,
+    height: Spacing.modal.stepVideoSize,
   },
   step4Button: {
     paddingVertical: Spacing.modal.step4ButtonPaddingVertical,
@@ -343,8 +341,8 @@ export const createStepSpecificStyles = (colors: ReturnType<typeof useColors>) =
     alignItems: 'center',
   },
   step6Image: {
-    width: Spacing.modal.step6ImageWidth,
-    height: Spacing.modal.step6ImageHeight,
+    width: Spacing.modal.stepVideoSize,
+    height: Spacing.modal.stepVideoSize,
     backgroundColor: colors.cardBackground,
   },
   step6ButtonContainer: {
@@ -382,8 +380,8 @@ export const createStepSpecificStyles = (colors: ReturnType<typeof useColors>) =
     width: '100%',
   },
   step7Image: {
-    width: Spacing.modal.step7ImageSize,
-    height: Spacing.modal.step7ImageSize,
+    width: Spacing.modal.stepVideoSize,
+    height: Spacing.modal.stepVideoSize,
   },
   step7Description: {
     fontFamily: Typography.fontFamily.medium,
@@ -599,8 +597,8 @@ export const createStepSpecificStyles = (colors: ReturnType<typeof useColors>) =
     width: '100%',
   },
   step10BallotVideo: {
-    width: Spacing.modal.step10BallotSize,
-    height: Spacing.modal.step10BallotSize,
+    width: Spacing.modal.stepVideoSize,
+    height: Spacing.modal.stepVideoSize,
   },
   step10ButtonContainer: {
     flexDirection: 'row',
