@@ -1,78 +1,45 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, TouchableOpacity, LayoutChangeEvent, Platform, Image } from 'react-native';
 import { VideoView } from 'expo-video';
 import { useCameraPermission } from 'react-native-vision-camera';
-import { createModalStyles, createStepSpecificStyles } from './styles';
-import { useColors } from '@/constants/theme';
+import { createStepSpecificStyles } from './styles';
 import { useTranslation } from 'react-i18next';
+import { useColors } from '@/constants/theme';
 
 interface StepDocumentScanStartProps {
   player: any;
-  // Intro clip that plays *before* the "Démarrer l'analyse" content.
-  // Optional so the test renders stay green.
-  introPlayer?: any;
   onStartAnalysis?: () => void;
   onLayout?: (event: LayoutChangeEvent) => void;
   isPassportFlow?: boolean;
 }
 
-const StepDocumentScanStart: React.FC<StepDocumentScanStartProps> = ({ player, introPlayer, onStartAnalysis, onLayout, isPassportFlow = false }) => {
+const StepDocumentScanStart: React.FC<StepDocumentScanStartProps> = ({ player, onStartAnalysis, onLayout, isPassportFlow = false }) => {
   const { t } = useTranslation();
   const docSfx = isPassportFlow ? 'passport' : 'idCard';
   const colors = useColors();
-  const modalStyles = createModalStyles(colors);
   const stepSpecificStyles = createStepSpecificStyles(colors);
   const { hasPermission, requestPermission } = useCameraPermission();
 
-  // Intro phase. Voters who've gone through the flow before can tap "Passer"
-  // to skip straight to the analysis CTA. Plays on both platforms — the
-  // Android branch uses a re-muxed MP4 (see useModalVideoPlayers).
-  const [showIntro, setShowIntro] = useState(true);
-
   const handleStartAnalysis = async () => {
-    console.log('🔘 Step4: Start analysis pressed, hasPermission:', hasPermission);
+    console.log('🔘 StepDocumentScanStart: Start analysis pressed, hasPermission:', hasPermission);
 
     // Request camera permission before proceeding
     if (!hasPermission) {
-      console.log('📸 Step4: Requesting camera permission...');
+      console.log('📸 StepDocumentScanStart: Requesting camera permission...');
       const granted = await requestPermission();
-      console.log('📸 Step4: Permission result:', granted);
+      console.log('📸 StepDocumentScanStart: Permission result:', granted);
 
       if (!granted) {
         // Permission denied - stay on this step
-        console.log('❌ Step4: Camera permission denied');
+        console.log('❌ StepDocumentScanStart: Camera permission denied');
         return;
       }
     }
 
     // Permission granted or already had it - proceed to next step
-    console.log('✅ Step4: Permission OK, proceeding to Step 5');
+    console.log('✅ StepDocumentScanStart: Permission OK, proceeding to next step');
     onStartAnalysis?.();
   };
-
-  if (showIntro && introPlayer) {
-    return (
-      <View style={[{ width: '100%', flex: 1 }]} onLayout={onLayout}>
-        <View style={stepSpecificStyles.stepIntroContainer}>
-          <VideoView
-            style={stepSpecificStyles.stepIntroVideo}
-            player={introPlayer}
-            contentFit="contain"
-            nativeControls={false}
-          />
-          <TouchableOpacity
-            style={stepSpecificStyles.stepIntroSkipButton}
-            activeOpacity={0.8}
-            onPress={() => setShowIntro(false)}
-            accessibilityRole="button"
-            accessibilityLabel={t('common.skip')}
-          >
-            <Text style={stepSpecificStyles.stepIntroSkipButtonText}>{t('common.skip')}</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    );
-  }
 
   return (
     <View style={[{ width: '100%' }]} onLayout={onLayout}>
@@ -83,7 +50,7 @@ const StepDocumentScanStart: React.FC<StepDocumentScanStartProps> = ({ player, i
         {Platform.OS === 'android' ? (
           <Image
             // poster-passport.png is currently a placeholder copy of
-            // poster-card.png — see Step1.tsx for the same TODO.
+            // poster-card.png — see StepIntroConsent.tsx for the same TODO.
             source={isPassportFlow
               ? require('@/assets/images/poster-passport.png')
               : require('@/assets/images/poster-card.png')}

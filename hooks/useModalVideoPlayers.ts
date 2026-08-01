@@ -7,16 +7,18 @@ import { VIDEO_1, VIDEO_2, VIDEO_3, VIDEO_4_PHONE_OVER_CARD, VIDEO_5, VIDEO_INTR
 // app/voting-flow.tsx mounts exactly one step at a time (no ±1 carousel
 // window, so no two VideoViews can ever be bound to this player at once —
 // see expo/expo#30271 for why that would otherwise be a crash risk).
-// stepSources keys off today's step numbering (intro folded into Step4).
+// stepSources keys off today's step numbering (StepIntroVideo is its own
+// step 4, ahead of StepDocumentScanStart).
 
 const stepSources: Record<number, any> = {
   1: VIDEO_1,
   2: VIDEO_2,
   3: VIDEO_3,
   4: VIDEO_INTRO,
-  6: VIDEO_4_PHONE_OVER_CARD,
-  7: VIDEO_5,
-  9: VIDEO_3,
+  5: VIDEO_1,
+  7: VIDEO_4_PHONE_OVER_CARD,
+  8: VIDEO_5,
+  10: VIDEO_3,
 };
 
 const safe = (fn: () => void) => {
@@ -34,7 +36,7 @@ export function useModalVideoPlayers() {
   const loadedStepRef = useRef<number | null>(1);
 
   const handleStepChange = useCallback((nextStep: number) => {
-    if (nextStep === 5 || nextStep === 10) {
+    if (nextStep === 6 || nextStep === 11) {
       safe(() => player.pause());
       return;
     }
@@ -43,7 +45,7 @@ export function useModalVideoPlayers() {
     if (!source) return;
 
     const alreadyLoaded = loadedStepRef.current === nextStep
-      || (nextStep === 9 && loadedStepRef.current === 3);
+      || (nextStep === 10 && loadedStepRef.current === 3);
 
     if (alreadyLoaded) {
       safe(() => player.play());

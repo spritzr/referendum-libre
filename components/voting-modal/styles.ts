@@ -150,10 +150,10 @@ export const createStepSpecificStyles = (colors: ReturnType<typeof useColors>) =
     width: Platform.OS === 'android' ? ANDROID_SLIDE_IMAGE : Spacing.modal.ballotImageSize,
     height: Platform.OS === 'android' ? ANDROID_SLIDE_IMAGE : Spacing.modal.ballotImageSize,
   },
-  // iOS-only "intro video" phase rendered on top of Step 4 before the
-  // user reaches the existing "Démarrer l'analyse" content. The video
-  // fills the available vertical space; the skip button sits below it,
-  // hugging the bottom of the modal sheet.
+  // StepIntroVideo — teaching clip shown before the user reaches
+  // StepDocumentScanStart's "Démarrer l'analyse" content. The video fills
+  // the available vertical space; the skip button sits below it, hugging
+  // the bottom of the modal sheet.
   stepIntroContainer: {
     flex: 1,
     width: '100%',
