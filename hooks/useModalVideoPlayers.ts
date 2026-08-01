@@ -1,5 +1,5 @@
 import { useCallback, useRef } from 'react';
-import { useVideoPlayer } from 'expo-video';
+import { useVideoPlayer, type VideoSource } from 'expo-video';
 import { VIDEO_1, VIDEO_2, VIDEO_3, VIDEO_4_PHONE_OVER_CARD, VIDEO_5, VIDEO_INTRO } from '@/constants/videos';
 import { FlowStep, type FlowStepValue } from '@/constants/voting-flow-steps';
 
@@ -9,7 +9,7 @@ import { FlowStep, type FlowStepValue } from '@/constants/voting-flow-steps';
 // window, so no two VideoViews can ever be bound to this player at once —
 // see expo/expo#30271 for why that would otherwise be a crash risk).
 
-const stepSources: Partial<Record<FlowStepValue, any>> = {
+const stepSources: Partial<Record<FlowStepValue, VideoSource>> = {
   [FlowStep.IntroConsent]: VIDEO_1,
   [FlowStep.EligibilityCheck]: VIDEO_2,
   [FlowStep.AnonymousVoteExplainer]: VIDEO_3,
