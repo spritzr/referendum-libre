@@ -27,23 +27,6 @@ export const createModalStyles = (colors: ReturnType<typeof useColors>) => Style
     color: colors.text,
     textAlign: 'center',
   },
-  slidingWrapper: {
-    overflow: 'hidden',
-    alignSelf: 'stretch',
-    // On Android, fill the available vertical space above the nav bar so the
-    // white slide background extends consistently across steps 1–3 (otherwise
-    // the row shrinks to the tallest mounted slide, which differs per step
-    // because of the ±1 mount window — Step 4 is taller than Steps 1–3).
-    flex: Platform.OS === 'android' ? 1 : undefined,
-  },
-  slidingContainer: {
-    flexDirection: 'row',
-    // Fill slidingWrapper's height on Android so row-children (slides) stretch
-    // vertically to the full available space. Without this, the row shrinks to
-    // max(slide intrinsic heights) and the white slide backgrounds end at
-    // different Y positions between steps.
-    flex: Platform.OS === 'android' ? 1 : undefined,
-  },
   stepSlide: {
     alignItems: 'center',
     backgroundColor: Platform.OS === 'android' ? colors.cardBackground : undefined,

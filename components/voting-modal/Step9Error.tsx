@@ -7,21 +7,20 @@ import { useTranslation } from 'react-i18next';
 import { ErrorReportButton } from '@/components/ErrorReportButton';
 
 interface Step9ErrorProps {
-  containerWidth: number;
   onGoHome?: () => void;
   onLayout?: (event: LayoutChangeEvent) => void;
   isPassportFlow?: boolean;
   error?: unknown;
 }
 
-const Step9Error: React.FC<Step9ErrorProps> = ({ containerWidth, onGoHome, onLayout, isPassportFlow = false, error }) => {
+const Step9Error: React.FC<Step9ErrorProps> = ({ onGoHome, onLayout, isPassportFlow = false, error }) => {
   const { t } = useTranslation();
   const docSfx = isPassportFlow ? 'passport' : 'idCard';
   const colors = useColors();
   const modalStyles = createModalStyles(colors);
   const stepSpecificStyles = createStepSpecificStyles(colors);
   return (
-    <View style={[{ width: containerWidth }]} onLayout={onLayout}>
+    <View style={[{ width: '100%' }]} onLayout={onLayout}>
       <View style={stepSpecificStyles.step9ErrorContainer}>
         <View style={stepSpecificStyles.step9ErrorContent}>
           <Text style={stepSpecificStyles.step9ErrorTitle}>

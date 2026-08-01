@@ -6,7 +6,6 @@ import { useColors } from '@/constants/theme';
 import { useTranslation } from 'react-i18next';
 
 interface Step8Props {
-  containerWidth: number;
   verificationResult?: 'success' | 'error' | null;
   voteSubmissionResult?: 'success' | 'error' | null;
   onVoteSuccess?: () => void;
@@ -16,7 +15,6 @@ interface Step8Props {
 }
 
 const Step8: React.FC<Step8Props> = ({
-  containerWidth,
   verificationResult,
   voteSubmissionResult,
   onVoteSuccess,
@@ -49,7 +47,7 @@ const Step8: React.FC<Step8Props> = ({
   };
 
   return (
-    <View style={[{ width: containerWidth }]} onLayout={onLayout}>
+    <View style={[{ width: '100%' }]} onLayout={onLayout}>
       <View style={stepSpecificStyles.step8Container}>
         <View style={stepSpecificStyles.step8Content}>
           <Text style={stepSpecificStyles.step8Title}>{t('voting.step8Ready')}</Text>

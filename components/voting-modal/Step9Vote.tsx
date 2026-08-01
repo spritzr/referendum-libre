@@ -6,7 +6,6 @@ import type { ProposalInfo } from '@rarimo/rarime-rn-sdk';
 import { useTranslation } from 'react-i18next';
 
 interface Step9VoteProps {
-  containerWidth: number;
   onVoteSubmit?: (answerIndex: number) => void;
   onCancel?: () => void;
   onLayout?: (event: LayoutChangeEvent) => void;
@@ -14,7 +13,7 @@ interface Step9VoteProps {
   proposalInfo?: ProposalInfo;
 }
 
-const Step9Vote: React.FC<Step9VoteProps> = ({ containerWidth, onVoteSubmit, onCancel, onLayout, onVoteSelect, proposalInfo }) => {
+const Step9Vote: React.FC<Step9VoteProps> = ({ onVoteSubmit, onCancel, onLayout, onVoteSelect, proposalInfo }) => {
   const { t } = useTranslation();
   const colors = useColors();
   const stepSpecificStyles = createStepSpecificStyles(colors);
@@ -56,7 +55,7 @@ const Step9Vote: React.FC<Step9VoteProps> = ({ containerWidth, onVoteSubmit, onC
 
   return (
     <>
-    <View style={[{ width: containerWidth }]} onLayout={onLayout}>
+    <View style={[{ width: '100%' }]} onLayout={onLayout}>
       <View style={stepSpecificStyles.step9VoteContainer}>
         <Text style={stepSpecificStyles.step9VoteTitle}>
           {questionTitle}

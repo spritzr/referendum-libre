@@ -8,7 +8,6 @@ import { CAP_SMALL } from '@/utils/font-scale-cap';
 
 interface Step2Props {
   player: any;
-  containerWidth: number;
   slideAreaHeight?: number;
   onLayout?: (event: LayoutChangeEvent) => void;
   isPassportFlow?: boolean;
@@ -16,7 +15,6 @@ interface Step2Props {
 
 const Step2: React.FC<Step2Props> = ({
   player,
-  containerWidth,
   slideAreaHeight,
   onLayout,
   isPassportFlow = false,
@@ -27,7 +25,7 @@ const Step2: React.FC<Step2Props> = ({
   const modalStyles = createModalStyles(colors);
   const stepSpecificStyles = createStepSpecificStyles(colors);
   return (
-    <View style={[modalStyles.stepSlide, { width: containerWidth }]} onLayout={onLayout}>
+    <View style={[modalStyles.stepSlide, { width: '100%' }]} onLayout={onLayout}>
       <ScrollView
         style={[
           { width: '100%' },

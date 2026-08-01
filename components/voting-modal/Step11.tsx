@@ -21,7 +21,6 @@ import { isStorageFullError } from '@/utils/storage-errors';
 const SLIDE_MIN_HEIGHT = Math.round(Dimensions.get('window').height * 0.75);
 
 interface Step11Props {
-  containerWidth: number;
   isActive?: boolean;
   /** `confirmed` reflects the on-chain receipt: true = mined with status 1,
    * false = submitted but not yet confirmed (Step12 shows a neutral pending
@@ -52,7 +51,6 @@ interface Step11Props {
 }
 
 const Step11: React.FC<Step11Props> = ({
-  containerWidth,
   isActive,
   onSuccess,
   onError,
@@ -378,7 +376,7 @@ const Step11: React.FC<Step11Props> = ({
   }, [hasStarted, canSubmitReal, freedomTool, rarime, passport, proposalInfo, answerIndex, onSuccess, onError]);
 
   return (
-    <View style={[{ width: containerWidth, minHeight: SLIDE_MIN_HEIGHT }]} onLayout={onLayout}>
+    <View style={[{ width: '100%', minHeight: SLIDE_MIN_HEIGHT }]} onLayout={onLayout}>
       <View style={stepSpecificStyles.step11Container}>
         <LottieView
           source={require('@/assets/animations/loading.json')}

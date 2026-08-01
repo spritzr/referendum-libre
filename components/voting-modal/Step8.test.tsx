@@ -30,7 +30,7 @@ describe('Step8 vote-now guard', () => {
 
   it('fires onVoteSuccess when verification succeeded', async () => {
     const onVoteSuccess = jest.fn();
-    await press(<Step8 containerWidth={300} verificationResult="success" onVoteSuccess={onVoteSuccess} />);
+    await press(<Step8 verificationResult="success" onVoteSuccess={onVoteSuccess} />);
     expect(onVoteSuccess).toHaveBeenCalledTimes(1);
   });
 
@@ -40,7 +40,6 @@ describe('Step8 vote-now guard', () => {
       const onVoteSuccess = jest.fn();
       await press(
         <Step8
-          containerWidth={300}
           verificationResult={vr as any}
           onVoteSuccess={onVoteSuccess}
         />,

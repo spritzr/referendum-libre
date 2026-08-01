@@ -16,7 +16,6 @@ import { loadDevExamplePassportData } from '@/utils/dev-example-passport';
 const DEV_EXAMPLE_PASSPORT_DATA = loadDevExamplePassportData();
 
 interface Step6Props {
-  containerWidth: number;
   player: any;
   mrzData?: {
     documentNumber: string;
@@ -34,7 +33,7 @@ interface Step6Props {
   isPassportFlow?: boolean;
 }
 
-const Step6: React.FC<Step6Props> = ({ containerWidth, player, mrzData, onAnalyze, onNFCSuccess, onNFCError, onGoBack, onLayout, isPassportFlow = false }) => {
+const Step6: React.FC<Step6Props> = ({ player, mrzData, onAnalyze, onNFCSuccess, onNFCError, onGoBack, onLayout, isPassportFlow = false }) => {
   const { t } = useTranslation();
   const docSfx = isPassportFlow ? 'passport' : 'idCard';
   const { devMode } = useDevMode();
@@ -386,7 +385,7 @@ const Step6: React.FC<Step6Props> = ({ containerWidth, player, mrzData, onAnalyz
   };
 
   return (
-    <View style={[{ width: containerWidth }]} onLayout={onLayout}>
+    <View style={[{ width: '100%' }]} onLayout={onLayout}>
       <View style={stepSpecificStyles.step6Container}>
         <Text style={stepSpecificStyles.step6Title}>{t(`voting.step6Title_${docSfx}`)}</Text>
 

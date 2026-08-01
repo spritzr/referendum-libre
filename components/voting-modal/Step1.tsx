@@ -8,7 +8,6 @@ import { CAP_SMALL } from '@/utils/font-scale-cap';
 
 interface Step1Props {
   player: any;
-  containerWidth: number;
   /** Available slide-area height; caps the iOS ScrollView so content scrolls
    * only when it overflows. */
   slideAreaHeight?: number;
@@ -20,7 +19,6 @@ interface Step1Props {
 
 const Step1: React.FC<Step1Props> = ({
   player,
-  containerWidth,
   slideAreaHeight,
   onLayout,
   isPassportFlow = false,
@@ -31,7 +29,7 @@ const Step1: React.FC<Step1Props> = ({
   const stepSpecificStyles = createStepSpecificStyles(colors);
 
   return (
-    <View style={[modalStyles.stepSlide, { width: containerWidth }]} onLayout={onLayout}>
+    <View style={[modalStyles.stepSlide, { width: '100%' }]} onLayout={onLayout}>
       <ScrollView
         style={[
           { width: '100%' },

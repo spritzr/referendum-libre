@@ -58,7 +58,6 @@ interface NFCData {
 }
 
 interface Step7Props {
-  containerWidth: number;
   player: any;
   isActive?: boolean;
   nfcData?: NFCData | null;
@@ -84,7 +83,6 @@ interface Step7Props {
 }
 
 const Step7: React.FC<Step7Props> = ({
-  containerWidth,
   player,
   isActive,
   nfcData,
@@ -563,16 +561,14 @@ const Step7: React.FC<Step7Props> = ({
   }, [hasStarted, rarime, passport, freedomTool, onSuccess, onError]);
 
   return (
-    <View style={[{ width: containerWidth }]} onLayout={onLayout}>
+    <View style={[{ width: '100%' }]} onLayout={onLayout}>
       <View style={stepSpecificStyles.step7Container}>
         <Text style={stepSpecificStyles.step7Title}>{t('voting.step7Title')}</Text>
 
-        {/* Hide the 225×225 poster while an error message is rendered.
-            slidingWrapper has `overflow: 'hidden'`, so a long VOTE_INELIGIBLE
-            message (the ECDSA-dispatcher / curve-unsupported / compressed-key
-            strings run 250–300 chars) was overflowing the bottom of the slide
-            and getting clipped. Collapsing the image gives the error text the
-            vertical budget it needs to fully render. */}
+        {/* Hide the 225×225 poster while an error message is rendered. A long
+            VOTE_INELIGIBLE message (the ECDSA-dispatcher / curve-unsupported /
+            compressed-key strings run 250–300 chars) needs the vertical
+            budget the poster would otherwise take up to fully render. */}
         {!errorMessage && (
           Platform.OS === 'android' ? (
             <Image

@@ -8,18 +8,17 @@ import { CAP_SMALL } from '@/utils/font-scale-cap';
 
 interface Step3Props {
   player: any;
-  containerWidth: number;
   slideAreaHeight?: number;
   onLayout?: (event: LayoutChangeEvent) => void;
 }
 
-const Step3: React.FC<Step3Props> = ({ player, containerWidth, slideAreaHeight, onLayout }) => {
+const Step3: React.FC<Step3Props> = ({ player, slideAreaHeight, onLayout }) => {
   const { t } = useTranslation();
   const colors = useColors();
   const modalStyles = createModalStyles(colors);
   const stepSpecificStyles = createStepSpecificStyles(colors);
   return (
-    <View style={[modalStyles.stepSlide, { width: containerWidth }]} onLayout={onLayout}>
+    <View style={[modalStyles.stepSlide, { width: '100%' }]} onLayout={onLayout}>
       <ScrollView
         style={[
           { width: '100%' },

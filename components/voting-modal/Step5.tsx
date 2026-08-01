@@ -17,7 +17,6 @@ import { loadDevExampleMrz } from '@/utils/dev-example-passport';
 const DEV_EXAMPLE_MRZ = loadDevExampleMrz();
 
 interface Step5Props {
-  containerWidth: number;
   isActive?: boolean;
   onMRZScanned?: (data: {
     documentNumber: string;
@@ -40,7 +39,7 @@ interface Step5Props {
   allowedCitizenships?: readonly bigint[];
 }
 
-const Step5: React.FC<Step5Props> = ({ containerWidth, isActive, onMRZScanned, onManualFill, onLayout, isPassportFlow = false, allowedCitizenships }) => {
+const Step5: React.FC<Step5Props> = ({ isActive, onMRZScanned, onManualFill, onLayout, isPassportFlow = false, allowedCitizenships }) => {
   // Dev-mode toggle: bypasses the MRZ-level underage / expired guards so
   // QA can scan otherwise-ineligible documents and test the downstream
   // NFC + registration + voting paths. Turn it on with 7 taps on the
@@ -292,7 +291,7 @@ const Step5: React.FC<Step5Props> = ({ containerWidth, isActive, onMRZScanned, o
   if (!hasPermission) {
     console.log('❌ Step5: Rendering NO PERMISSION screen');
     return (
-      <View style={[{ width: containerWidth }]} onLayout={onLayout}>
+      <View style={[{ width: '100%' }]} onLayout={onLayout}>
         <View style={stepSpecificStyles.step5Container}>
           <Text style={stepSpecificStyles.step5Title} maxFontSizeMultiplier={CAP_SMALL}>{t(`voting.step5Title_${isPassportFlow ? 'passport' : 'idCard'}`)}</Text>
           <View style={stepSpecificStyles.step5Camera}>
@@ -315,7 +314,7 @@ const Step5: React.FC<Step5Props> = ({ containerWidth, isActive, onMRZScanned, o
   if (!device) {
     console.log('❌ Step5: Rendering NO DEVICE screen');
     return (
-      <View style={[{ width: containerWidth }]} onLayout={onLayout}>
+      <View style={[{ width: '100%' }]} onLayout={onLayout}>
         <View style={stepSpecificStyles.step5Container}>
           <Text style={stepSpecificStyles.step5Title} maxFontSizeMultiplier={CAP_SMALL}>{t(`voting.step5Title_${isPassportFlow ? 'passport' : 'idCard'}`)}</Text>
           <View style={stepSpecificStyles.step5Camera}>
@@ -338,7 +337,7 @@ const Step5: React.FC<Step5Props> = ({ containerWidth, isActive, onMRZScanned, o
   console.log('✅ Step5: Rendering CAMERA');
 
   return (
-    <View style={[{ width: containerWidth }]} onLayout={onLayout}>
+    <View style={[{ width: '100%' }]} onLayout={onLayout}>
       <View style={stepSpecificStyles.step5Container}>
         <Text style={stepSpecificStyles.step5Title} maxFontSizeMultiplier={CAP_SMALL}>{t(`voting.step5Title_${isPassportFlow ? 'passport' : 'idCard'}`)}</Text>
         <View style={[stepSpecificStyles.step5Camera, { position: 'relative' }]}>

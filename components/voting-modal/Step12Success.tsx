@@ -11,7 +11,6 @@ interface Step12SuccessProps {
    * neutral "awaiting confirmation" title/description instead of definitive
    * success. Defaults to true. */
   confirmed?: boolean;
-  containerWidth: number;
   voteIdentifier?: string;
   onViewResults?: () => void;
   onLayout?: (event: LayoutChangeEvent) => void;
@@ -23,7 +22,7 @@ interface Step12SuccessProps {
 // minHeight on both platforms.
 const SLIDE_MIN_HEIGHT = Math.round(Dimensions.get('window').height * 0.75);
 
-const Step12Success: React.FC<Step12SuccessProps> = ({ containerWidth, voteIdentifier, confirmed = true, onViewResults, onLayout }) => {
+const Step12Success: React.FC<Step12SuccessProps> = ({ voteIdentifier, confirmed = true, onViewResults, onLayout }) => {
   const { t } = useTranslation();
   const colors = useColors();
   const modalStyles = createModalStyles(colors);
@@ -49,7 +48,7 @@ const Step12Success: React.FC<Step12SuccessProps> = ({ containerWidth, voteIdent
   return (
     <View
       style={[
-        { width: containerWidth, minHeight: SLIDE_MIN_HEIGHT },
+        { width: '100%', minHeight: SLIDE_MIN_HEIGHT },
       ]}
       onLayout={onLayout}
     >

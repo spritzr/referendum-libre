@@ -7,23 +7,21 @@ import { useTranslation } from 'react-i18next';
 import { ErrorReportButton } from '@/components/ErrorReportButton';
 
 interface Step12ErrorProps {
-  containerWidth: number;
   onGoHome?: () => void;
   onLayout?: (event: LayoutChangeEvent) => void;
   errorReason?: string | null;
   error?: unknown;
 }
 
-// voting-flow's slidingWrapper + slidingContainer have flex: 0 on iOS and
-// flex: 1 on Android (styles.ts), but in BOTH cases percentage heights on
-// children resolve unpredictably — Android collapses to 0, iOS resolves to
-// 0 because the parent has no defined height. Use a concrete minHeight on
-// both platforms instead of `height: '100%'` so step11/12 slides paint at
-// usable height (otherwise the LottieView animation, title text, and CTA
-// button all stack around y=0).
+// Percentage heights on this view's children resolve unpredictably against
+// the flex parent (Android collapses to 0, iOS resolves to 0 because the
+// parent has no defined height). Use a concrete minHeight on both platforms
+// instead of `height: '100%'` so step11/12 slides paint at usable height
+// (otherwise the LottieView animation, title text, and CTA button all stack
+// around y=0).
 const SLIDE_MIN_HEIGHT = Math.round(Dimensions.get('window').height * 0.75);
 
-const Step12Error: React.FC<Step12ErrorProps> = ({ containerWidth, onGoHome, onLayout, errorReason, error }) => {
+const Step12Error: React.FC<Step12ErrorProps> = ({ onGoHome, onLayout, errorReason, error }) => {
   const { t } = useTranslation();
   const colors = useColors();
   const modalStyles = createModalStyles(colors);
@@ -31,7 +29,7 @@ const Step12Error: React.FC<Step12ErrorProps> = ({ containerWidth, onGoHome, onL
   return (
     <View
       style={[
-        { width: containerWidth, minHeight: SLIDE_MIN_HEIGHT },
+        { width: '100%', minHeight: SLIDE_MIN_HEIGHT },
       ]}
       onLayout={onLayout}
     >

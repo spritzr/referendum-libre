@@ -11,13 +11,12 @@ interface Step4Props {
   // Intro clip that plays *before* the "Démarrer l'analyse" content.
   // Optional so the test renders stay green.
   introPlayer?: any;
-  containerWidth: number;
   onStartAnalysis?: () => void;
   onLayout?: (event: LayoutChangeEvent) => void;
   isPassportFlow?: boolean;
 }
 
-const Step4: React.FC<Step4Props> = ({ player, introPlayer, containerWidth, onStartAnalysis, onLayout, isPassportFlow = false }) => {
+const Step4: React.FC<Step4Props> = ({ player, introPlayer, onStartAnalysis, onLayout, isPassportFlow = false }) => {
   const { t } = useTranslation();
   const docSfx = isPassportFlow ? 'passport' : 'idCard';
   const colors = useColors();
@@ -53,7 +52,7 @@ const Step4: React.FC<Step4Props> = ({ player, introPlayer, containerWidth, onSt
 
   if (showIntro && introPlayer) {
     return (
-      <View style={[{ width: containerWidth }]} onLayout={onLayout}>
+      <View style={[{ width: '100%', flex: 1 }]} onLayout={onLayout}>
         <View style={stepSpecificStyles.stepIntroContainer}>
           <VideoView
             style={stepSpecificStyles.stepIntroVideo}
@@ -76,7 +75,7 @@ const Step4: React.FC<Step4Props> = ({ player, introPlayer, containerWidth, onSt
   }
 
   return (
-    <View style={[{ width: containerWidth }]} onLayout={onLayout}>
+    <View style={[{ width: '100%' }]} onLayout={onLayout}>
       <View style={stepSpecificStyles.step4Container}>
         <View style={stepSpecificStyles.step4Content}>
           <Text style={stepSpecificStyles.step4Title}>{t(`voting.step4Title_${docSfx}`)}</Text>
