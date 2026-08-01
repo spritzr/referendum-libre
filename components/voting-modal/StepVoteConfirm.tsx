@@ -6,7 +6,7 @@ import { useColors } from '@/constants/theme';
 import type { ProposalInfo } from '@rarimo/rarime-rn-sdk';
 import { useTranslation } from 'react-i18next';
 
-interface Step10Props {
+interface StepVoteConfirmProps {
   player: any;
   onCancel?: () => void;
   onConfirm?: () => void;
@@ -15,7 +15,7 @@ interface Step10Props {
   proposalInfo?: ProposalInfo;
 }
 
-const Step10: React.FC<Step10Props> = ({ player, onCancel, onConfirm, onLayout, selectedVote = 0, proposalInfo }) => {
+const StepVoteConfirm: React.FC<StepVoteConfirmProps> = ({ player, onCancel, onConfirm, onLayout, selectedVote = 0, proposalInfo }) => {
   const { t } = useTranslation();
   const colors = useColors();
   const modalStyles = createModalStyles(colors);
@@ -81,4 +81,4 @@ const Step10: React.FC<Step10Props> = ({ player, onCancel, onConfirm, onLayout, 
   );
 };
 
-export default Step10;
+export default StepVoteConfirm;

@@ -6,7 +6,7 @@ import { createModalStyles, createStepSpecificStyles } from './styles';
 import { useColors } from '@/constants/theme';
 import { useTranslation } from 'react-i18next';
 
-interface Step4Props {
+interface StepDocumentScanStartProps {
   player: any;
   // Intro clip that plays *before* the "Démarrer l'analyse" content.
   // Optional so the test renders stay green.
@@ -16,7 +16,7 @@ interface Step4Props {
   isPassportFlow?: boolean;
 }
 
-const Step4: React.FC<Step4Props> = ({ player, introPlayer, onStartAnalysis, onLayout, isPassportFlow = false }) => {
+const StepDocumentScanStart: React.FC<StepDocumentScanStartProps> = ({ player, introPlayer, onStartAnalysis, onLayout, isPassportFlow = false }) => {
   const { t } = useTranslation();
   const docSfx = isPassportFlow ? 'passport' : 'idCard';
   const colors = useColors();
@@ -111,4 +111,4 @@ const Step4: React.FC<Step4Props> = ({ player, introPlayer, onStartAnalysis, onL
   );
 };
 
-export default Step4;
+export default StepDocumentScanStart;

@@ -6,14 +6,14 @@ import { useColors } from '@/constants/theme';
 import { useTranslation } from 'react-i18next';
 import { ErrorReportButton } from '@/components/ErrorReportButton';
 
-interface Step9ErrorProps {
+interface StepVoteChoiceErrorProps {
   onGoHome?: () => void;
   onLayout?: (event: LayoutChangeEvent) => void;
   isPassportFlow?: boolean;
   error?: unknown;
 }
 
-const Step9Error: React.FC<Step9ErrorProps> = ({ onGoHome, onLayout, isPassportFlow = false, error }) => {
+const StepVoteChoiceError: React.FC<StepVoteChoiceErrorProps> = ({ onGoHome, onLayout, isPassportFlow = false, error }) => {
   const { t } = useTranslation();
   const docSfx = isPassportFlow ? 'passport' : 'idCard';
   const colors = useColors();
@@ -53,4 +53,4 @@ const Step9Error: React.FC<Step9ErrorProps> = ({ onGoHome, onLayout, isPassportF
   );
 };
 
-export default Step9Error;
+export default StepVoteChoiceError;

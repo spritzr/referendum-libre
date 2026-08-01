@@ -57,7 +57,7 @@ interface NFCData {
   aaSignature?: Uint8Array | string;
 }
 
-interface Step7Props {
+interface StepBlockchainVerifyProps {
   player: any;
   isActive?: boolean;
   nfcData?: NFCData | null;
@@ -82,7 +82,7 @@ interface Step7Props {
   network?: Network;
 }
 
-const Step7: React.FC<Step7Props> = ({
+const StepBlockchainVerify: React.FC<StepBlockchainVerifyProps> = ({
   player,
   isActive,
   nfcData,
@@ -640,4 +640,4 @@ const Step7: React.FC<Step7Props> = ({
   );
 };
 
-export default Step7;
+export default StepBlockchainVerify;

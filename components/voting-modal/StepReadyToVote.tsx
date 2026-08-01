@@ -5,7 +5,7 @@ import { createModalStyles, createStepSpecificStyles } from './styles';
 import { useColors } from '@/constants/theme';
 import { useTranslation } from 'react-i18next';
 
-interface Step8Props {
+interface StepReadyToVoteProps {
   verificationResult?: 'success' | 'error' | null;
   voteSubmissionResult?: 'success' | 'error' | null;
   onVoteSuccess?: () => void;
@@ -14,7 +14,7 @@ interface Step8Props {
   onLayout?: (event: LayoutChangeEvent) => void;
 }
 
-const Step8: React.FC<Step8Props> = ({
+const StepReadyToVote: React.FC<StepReadyToVoteProps> = ({
   verificationResult,
   voteSubmissionResult,
   onVoteSuccess,
@@ -72,4 +72,4 @@ const Step8: React.FC<Step8Props> = ({
   );
 };
 
-export default Step8;
+export default StepReadyToVote;

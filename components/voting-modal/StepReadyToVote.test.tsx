@@ -10,7 +10,7 @@ jest.mock('lottie-react-native', () => {
 });
 
 import '@/locales';
-import Step8 from './Step8';
+import StepReadyToVote from './StepReadyToVote';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 
 // The "Vote now" button must only advance the flow when Step 7 actually
@@ -19,7 +19,7 @@ import { ThemeProvider } from '@/contexts/ThemeContext';
 // and NO registration — Step 11 then dead-ends on "Unknown vote error".
 // Whatever the (still unidentified) jump path is, this guard makes it
 // harmless: an unverified user cannot advance past Step 8.
-describe('Step8 vote-now guard', () => {
+describe('StepReadyToVote vote-now guard', () => {
   // ThemeProvider renders null until it has loaded the theme from
   // AsyncStorage, so the button only appears after that async resolves.
   const press = async (ui: React.ReactElement) => {
@@ -30,7 +30,7 @@ describe('Step8 vote-now guard', () => {
 
   it('fires onVoteSuccess when verification succeeded', async () => {
     const onVoteSuccess = jest.fn();
-    await press(<Step8 verificationResult="success" onVoteSuccess={onVoteSuccess} />);
+    await press(<StepReadyToVote verificationResult="success" onVoteSuccess={onVoteSuccess} />);
     expect(onVoteSuccess).toHaveBeenCalledTimes(1);
   });
 
@@ -39,7 +39,7 @@ describe('Step8 vote-now guard', () => {
     async (vr) => {
       const onVoteSuccess = jest.fn();
       await press(
-        <Step8
+        <StepReadyToVote
           verificationResult={vr as any}
           onVoteSuccess={onVoteSuccess}
         />,

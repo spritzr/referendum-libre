@@ -15,7 +15,7 @@ import { loadDevExamplePassportData } from '@/utils/dev-example-passport';
 // hides itself.
 const DEV_EXAMPLE_PASSPORT_DATA = loadDevExamplePassportData();
 
-interface Step6Props {
+interface StepNFCReadProps {
   player: any;
   mrzData?: {
     documentNumber: string;
@@ -33,7 +33,7 @@ interface Step6Props {
   isPassportFlow?: boolean;
 }
 
-const Step6: React.FC<Step6Props> = ({ player, mrzData, onAnalyze, onNFCSuccess, onNFCError, onGoBack, onLayout, isPassportFlow = false }) => {
+const StepNFCRead: React.FC<StepNFCReadProps> = ({ player, mrzData, onAnalyze, onNFCSuccess, onNFCError, onGoBack, onLayout, isPassportFlow = false }) => {
   const { t } = useTranslation();
   const docSfx = isPassportFlow ? 'passport' : 'idCard';
   const { devMode } = useDevMode();
@@ -627,4 +627,4 @@ const Step6: React.FC<Step6Props> = ({ player, mrzData, onAnalyze, onNFCSuccess,
   );
 };
 
-export default Step6;
+export default StepNFCRead;

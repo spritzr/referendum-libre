@@ -6,13 +6,13 @@ import { useColors } from '@/constants/theme';
 import { useTranslation } from 'react-i18next';
 import { CAP_SMALL } from '@/utils/font-scale-cap';
 
-interface Step3Props {
+interface StepAnonymousVoteExplainerProps {
   player: any;
   slideAreaHeight?: number;
   onLayout?: (event: LayoutChangeEvent) => void;
 }
 
-const Step3: React.FC<Step3Props> = ({ player, slideAreaHeight, onLayout }) => {
+const StepAnonymousVoteExplainer: React.FC<StepAnonymousVoteExplainerProps> = ({ player, slideAreaHeight, onLayout }) => {
   const { t } = useTranslation();
   const colors = useColors();
   const modalStyles = createModalStyles(colors);
@@ -67,4 +67,4 @@ const Step3: React.FC<Step3Props> = ({ player, slideAreaHeight, onLayout }) => {
   );
 };
 
-export default Step3;
+export default StepAnonymousVoteExplainer;

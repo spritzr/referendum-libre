@@ -22,20 +22,20 @@ import { useTranslation } from 'react-i18next';
 import type { PassportData } from '@/modules/e-document';
 
 // Import all steps
-import Step1 from '@/components/voting-modal/Step1';
-import Step2 from '@/components/voting-modal/Step2';
-import Step3 from '@/components/voting-modal/Step3';
-import Step4 from '@/components/voting-modal/Step4';
-import Step5 from '@/components/voting-modal/Step5';
-import Step6 from '@/components/voting-modal/Step6';
-import Step7 from '@/components/voting-modal/Step7';
-import Step8 from '@/components/voting-modal/Step8';
-import Step9Error from '@/components/voting-modal/Step9Error';
-import Step9Vote from '@/components/voting-modal/Step9Vote';
-import Step10 from '@/components/voting-modal/Step10';
-import Step11 from '@/components/voting-modal/Step11';
-import Step12Success from '@/components/voting-modal/Step12Success';
-import Step12Error from '@/components/voting-modal/Step12Error';
+import StepIntroConsent from '@/components/voting-modal/StepIntroConsent';
+import StepEligibilityCheck from '@/components/voting-modal/StepEligibilityCheck';
+import StepAnonymousVoteExplainer from '@/components/voting-modal/StepAnonymousVoteExplainer';
+import StepDocumentScanStart from '@/components/voting-modal/StepDocumentScanStart';
+import StepMRZScan from '@/components/voting-modal/StepMRZScan';
+import StepNFCRead from '@/components/voting-modal/StepNFCRead';
+import StepBlockchainVerify from '@/components/voting-modal/StepBlockchainVerify';
+import StepReadyToVote from '@/components/voting-modal/StepReadyToVote';
+import StepVoteChoiceError from '@/components/voting-modal/StepVoteChoiceError';
+import StepVoteChoice from '@/components/voting-modal/StepVoteChoice';
+import StepVoteConfirm from '@/components/voting-modal/StepVoteConfirm';
+import StepProofSubmission from '@/components/voting-modal/StepProofSubmission';
+import StepVoteSuccess from '@/components/voting-modal/StepVoteSuccess';
+import StepVoteError from '@/components/voting-modal/StepVoteError';
 import ManualMRZInput from '@/components/voting-modal/ManualMRZInput';
 import { createModalStyles } from '@/components/voting-modal/styles';
 import { useModalVideoPlayers } from '@/hooks/useModalVideoPlayers';
@@ -577,21 +577,21 @@ export default function VotingFlowScreen() {
           ]}
         >
           {verificationResult === 'error' ? (
-            <Step9Error
+            <StepVoteChoiceError
               onGoHome={handleClose}
               isPassportFlow={isPassportFlow}
               error={verificationError}
             />
           ) : currentStep === 1 ? (
-            <Step1 player={player1} slideAreaHeight={slideAreaHeight} isPassportFlow={isPassportFlow} />
+            <StepIntroConsent player={player1} slideAreaHeight={slideAreaHeight} isPassportFlow={isPassportFlow} />
           ) : currentStep === 2 ? (
-            <Step2 player={player2} slideAreaHeight={slideAreaHeight} isPassportFlow={isPassportFlow} />
+            <StepEligibilityCheck player={player2} slideAreaHeight={slideAreaHeight} isPassportFlow={isPassportFlow} />
           ) : currentStep === 3 ? (
-            <Step3 player={player3} slideAreaHeight={slideAreaHeight} />
+            <StepAnonymousVoteExplainer player={player3} slideAreaHeight={slideAreaHeight} />
           ) : currentStep === 4 ? (
-            <Step4 player={player1} introPlayer={playerIntro} onStartAnalysis={handleNext} isPassportFlow={isPassportFlow} />
+            <StepDocumentScanStart player={player1} introPlayer={playerIntro} onStartAnalysis={handleNext} isPassportFlow={isPassportFlow} />
           ) : currentStep === 5 ? (
-            <Step5
+            <StepMRZScan
               // Kill the camera while the manual-entry modal is open so
               // the preview doesn't sit on top of the keyboard.
               isActive={!isManualInputVisible}
@@ -604,7 +604,7 @@ export default function VotingFlowScreen() {
               allowedCitizenships={proposalInfo?.criteria.citizenshipWhitelist}
             />
           ) : currentStep === 6 ? (
-            <Step6
+            <StepNFCRead
               player={player4}
               mrzData={mrzData}
               onNFCSuccess={handleNFCSuccess}
@@ -612,7 +612,7 @@ export default function VotingFlowScreen() {
               isPassportFlow={isPassportFlow}
             />
           ) : currentStep === 7 ? (
-            <Step7
+            <StepBlockchainVerify
               player={player5}
               isActive
               nfcData={nfcData}
@@ -625,20 +625,20 @@ export default function VotingFlowScreen() {
               network={network}
             />
           ) : currentStep === 8 ? (
-            <Step8
+            <StepReadyToVote
               verificationResult={verificationResult}
               voteSubmissionResult={voteSubmissionResult}
               onVoteSuccess={handleVoteSuccess}
               onClose={handleClose}
             />
           ) : currentStep === 9 ? (
-            <Step9Vote
+            <StepVoteChoice
               onVoteSelect={handleVoteSelect}
               onCancel={handleStep9Cancel}
               proposalInfo={proposalInfo ?? undefined}
             />
           ) : currentStep === 10 ? (
-            <Step10
+            <StepVoteConfirm
               player={player3}
               selectedVote={selectedVote}
               proposalInfo={proposalInfo ?? undefined}
@@ -646,7 +646,7 @@ export default function VotingFlowScreen() {
               onConfirm={handleStep9Confirm}
             />
           ) : currentStep === 11 ? (
-            <Step11
+            <StepProofSubmission
               isActive
               onSuccess={handleStep11Success}
               onError={handleStep11Error}
@@ -658,13 +658,13 @@ export default function VotingFlowScreen() {
               network={network}
             />
           ) : currentStep === 12 ? (
-            <Step12Success
+            <StepVoteSuccess
               voteIdentifier={voteTxId ?? undefined}
               confirmed={voteConfirmed}
               onViewResults={handleClose}
             />
           ) : currentStep === 13 ? (
-            <Step12Error
+            <StepVoteError
               onGoHome={handleClose}
               errorReason={voteErrorReason}
               error={voteError}

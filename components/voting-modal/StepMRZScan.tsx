@@ -16,7 +16,7 @@ import { loadDevExampleMrz } from '@/utils/dev-example-passport';
 
 const DEV_EXAMPLE_MRZ = loadDevExampleMrz();
 
-interface Step5Props {
+interface StepMRZScanProps {
   isActive?: boolean;
   onMRZScanned?: (data: {
     documentNumber: string;
@@ -39,7 +39,7 @@ interface Step5Props {
   allowedCitizenships?: readonly bigint[];
 }
 
-const Step5: React.FC<Step5Props> = ({ isActive, onMRZScanned, onManualFill, onLayout, isPassportFlow = false, allowedCitizenships }) => {
+const StepMRZScan: React.FC<StepMRZScanProps> = ({ isActive, onMRZScanned, onManualFill, onLayout, isPassportFlow = false, allowedCitizenships }) => {
   // Dev-mode toggle: bypasses the MRZ-level underage / expired guards so
   // QA can scan otherwise-ineligible documents and test the downstream
   // NFC + registration + voting paths. Turn it on with 7 taps on the
@@ -522,4 +522,4 @@ const Step5: React.FC<Step5Props> = ({ isActive, onMRZScanned, onManualFill, onL
   );
 };
 
-export default Step5;
+export default StepMRZScan;

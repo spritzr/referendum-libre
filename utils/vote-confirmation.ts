@@ -46,7 +46,7 @@ export function classifyReceipt(receipt: ReceiptLike | null | undefined): VoteTx
 /**
  * Poll the voting RPC for the tx receipt until it is mined (status known) or
  * the timeout elapses. Mirrors the registration confirmation poll in
- * `components/voting-modal/Step7.tsx`. Returns:
+ * `components/voting-modal/StepBlockchainVerify.tsx`. Returns:
  *   'success'  — mined, status 1 (vote counted)
  *   'reverted' — mined, status 0 (vote NOT counted)
  *   'pending'  — still not mined when the timeout elapsed

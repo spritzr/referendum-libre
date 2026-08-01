@@ -20,7 +20,7 @@ import { isStorageFullError } from '@/utils/storage-errors';
 // Use a concrete minHeight on both platforms instead.
 const SLIDE_MIN_HEIGHT = Math.round(Dimensions.get('window').height * 0.75);
 
-interface Step11Props {
+interface StepProofSubmissionProps {
   isActive?: boolean;
   /** `confirmed` reflects the on-chain receipt: true = mined with status 1,
    * false = submitted but not yet confirmed (Step12 shows a neutral pending
@@ -50,7 +50,7 @@ interface Step11Props {
   network?: Network;
 }
 
-const Step11: React.FC<Step11Props> = ({
+const StepProofSubmission: React.FC<StepProofSubmissionProps> = ({
   isActive,
   onSuccess,
   onError,
@@ -398,4 +398,4 @@ const Step11: React.FC<Step11Props> = ({
   );
 };
 
-export default Step11;
+export default StepProofSubmission;
