@@ -41,6 +41,7 @@ import ManualMRZInput from '@/components/voting-modal/ManualMRZInput';
 import { createModalStyles } from '@/components/voting-modal/styles';
 import { useModalVideoPlayers } from '@/hooks/useModalVideoPlayers';
 import { markVoteJustCast } from '@/utils/post-vote-refresh';
+import { FlowStep, type FlowStepValue } from '@/constants/voting-flow-steps';
 
 
 export default function VotingFlowScreen() {
@@ -53,7 +54,7 @@ export default function VotingFlowScreen() {
   const modalStyles = createModalStyles(colors);
   const insets = useSafeAreaInsets();
 
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState<FlowStepValue>(FlowStep.IntroConsent);
   const [verificationResult, setVerificationResult] = useState<'success' | 'error' | null>(null);
   const [verificationError, setVerificationError] = useState<unknown>(null);
   const [voteSubmissionResult, setVoteSubmissionResult] = useState<'success' | 'error' | null>(null);
@@ -143,7 +144,7 @@ export default function VotingFlowScreen() {
   // IsoDep during PACE. Step 8 reads rarimeRef.current defensively and will
   // wait for init to complete.
   useEffect(() => {
-    if (currentStep < 8) return;
+    if (currentStep < FlowStep.BlockchainVerify) return;
     // Wait for handleNFCSuccess's async block to finish writing the
     // per-passport BJJ key into the legacy SecureStore slot. Without this
     // gate, the line below that calls `getOrCreatePrivateKey()` can read
@@ -235,7 +236,7 @@ export default function VotingFlowScreen() {
     useCallback(() => {
       // Reset to step 1 when screen is focused
       console.log('[flow] step → 1 (focus-reset)');
-      setCurrentStep(1);
+      setCurrentStep(FlowStep.IntroConsent);
       setVerificationResult(null);
       setVerificationError(null);
       setVoteSubmissionResult(null);
@@ -277,7 +278,7 @@ export default function VotingFlowScreen() {
   // back to JS — heavy renders here back up the bridge and can starve the
   // IsoDep session on the very first APDU.
   useEffect(() => {
-    if (Platform.OS === 'android' && currentStep === 7) {
+    if (Platform.OS === 'android' && currentStep === FlowStep.NFCRead) {
       pauseAll();
     }
   }, [currentStep, pauseAll]);
@@ -286,22 +287,22 @@ export default function VotingFlowScreen() {
   // showed users reaching the vote screens with no visible path in the logs.
   // Every transition now logs its source so the 5-min error-report tail can
   // name the jumper outright.
-  const goToStep = useCallback((newStep: number, source: string) => {
+  const goToStep = useCallback((newStep: FlowStepValue, source: string) => {
     console.log(`[flow] step → ${newStep} (${source})`);
     setCurrentStep(newStep);
     handleStepChange(newStep);
   }, [handleStepChange]);
 
   const handleNext = useCallback(() => {
-    const newStep = currentStep + 1;
+    const newStep = (currentStep + 1) as FlowStepValue;
     goToStep(newStep, 'next');
 
     // Light the Nth bar when entering step N. Bar 1 is already lit at init
     // (so step 1 → 1 bar, step 2 → 2 bars, step 3 → 3 bars). Step 4 hides the
     // nav entirely, so nothing to animate there.
-    if (newStep === 2) {
+    if (newStep === FlowStep.EligibilityCheck) {
       Animated.timing(progressOpacity2, { toValue: 1, duration: 200, useNativeDriver: true }).start();
-    } else if (newStep === 3) {
+    } else if (newStep === FlowStep.AnonymousVoteExplainer) {
       Animated.timing(progressOpacity3, { toValue: 1, duration: 200, useNativeDriver: true }).start();
     }
   }, [currentStep, goToStep, progressOpacity2, progressOpacity3]);
@@ -395,7 +396,7 @@ export default function VotingFlowScreen() {
 
   const handleGoBackToMRZScan = useCallback(() => {
     setMRZData(null);
-    goToStep(6, 'back-to-mrz');
+    goToStep(FlowStep.MRZScan, 'back-to-mrz');
   }, [goToStep]);
 
   const handleManualFill = useCallback(() => {
@@ -417,7 +418,7 @@ export default function VotingFlowScreen() {
     verificationHandledRef.current = true;
     setVerificationResult('success');
     // Move to step 9 (voting screen) after a brief delay
-    setTimeout(() => goToStep(9, 'verification-success'), 1500);
+    setTimeout(() => goToStep(FlowStep.ReadyToVote, 'verification-success'), 1500);
   }, [goToStep]);
 
   const handleVerificationError = useCallback((_message?: string, fatal?: boolean, error?: unknown) => {
@@ -434,16 +435,16 @@ export default function VotingFlowScreen() {
   }, [handleNext]);
 
   const handleVoteSuccess = useCallback(() => {
-    goToStep(10, 'step9-vote-now');
+    goToStep(FlowStep.VoteChoice, 'step9-vote-now');
   }, [goToStep]);
 
   const handleVoteSelect = useCallback((answerIndex: number) => {
     setSelectedVote(answerIndex);
-    goToStep(11, 'vote-selected');
+    goToStep(FlowStep.VoteConfirm, 'vote-selected');
   }, [goToStep]);
 
   const handleStep9Confirm = useCallback(() => {
-    goToStep(12, 'vote-confirmed');
+    goToStep(FlowStep.ProofSubmission, 'vote-confirmed');
   }, [goToStep]);
 
   const handleClose = useCallback(() => {
@@ -485,7 +486,7 @@ export default function VotingFlowScreen() {
     // refresh once tx propagation completes (the immediate focus-time
     // refetch races ahead of L2 confirmation otherwise).
     markVoteJustCast();
-    goToStep(13, 'vote-submitted');
+    goToStep(FlowStep.VoteSuccess, 'vote-submitted');
   }, [goToStep]);
 
   const [voteErrorReason, setVoteErrorReason] = useState<string | null>(null);
@@ -494,7 +495,7 @@ export default function VotingFlowScreen() {
     setVoteErrorReason(reason || null);
     setVoteError(error ?? new Error(reason ?? 'Unknown vote error'));
     setVoteSubmissionResult('error');
-    goToStep(14, 'vote-error');
+    goToStep(FlowStep.VoteError, 'vote-error');
   }, [goToStep]);
 
   const styles = useMemo(() => createStyles(colors), [colors]);
@@ -525,7 +526,7 @@ export default function VotingFlowScreen() {
       {Platform.OS === 'ios' && (
         <Stack.Screen
           options={{
-            title: currentStep < 4 ? t('voting.title') : '',
+            title: currentStep < FlowStep.IntroVideo ? t('voting.title') : '',
             headerRight: () => (
               <TouchableOpacity
                 onPress={handleClose}
@@ -555,7 +556,7 @@ export default function VotingFlowScreen() {
 
         {/* Title Section — Android only. On iOS the native modal header
             already shows the title in its centre. Hidden for Step 4+. */}
-        {Platform.OS !== 'ios' && currentStep < 4 && (
+        {Platform.OS !== 'ios' && currentStep < FlowStep.IntroVideo && (
           <View style={modalStyles.titleSection}>
             <Text style={modalStyles.title}>{t('voting.title')}</Text>
           </View>
@@ -568,14 +569,14 @@ export default function VotingFlowScreen() {
             // #EDEFF9). On iOS we keep the entire modal sheet white
             // (cardBackground) so the bottom-sheet feels like one continuous
             // surface instead of a tinted band.
-            currentStep < 4 && {
+            currentStep < FlowStep.IntroVideo && {
               backgroundColor: Platform.OS === 'ios' ? colors.cardBackground : colors.background,
             },
             // Step 4 (intro video) only: height-bound to the sheet (not the
             // taller Step 6 camera mounted further down the flow) so the
             // intro video's "Passer" button stays on-screen. Steps 1–3 and
             // 5+ keep content-sized layout.
-            currentStep === 4 && { flex: 1 },
+            currentStep === FlowStep.IntroVideo && { flex: 1 },
           ]}
         >
           {verificationResult === 'error' ? (
@@ -584,17 +585,17 @@ export default function VotingFlowScreen() {
               isPassportFlow={isPassportFlow}
               error={verificationError}
             />
-          ) : currentStep === 1 ? (
+          ) : currentStep === FlowStep.IntroConsent ? (
             <StepIntroConsent player={player1} slideAreaHeight={slideAreaHeight} isPassportFlow={isPassportFlow} />
-          ) : currentStep === 2 ? (
+          ) : currentStep === FlowStep.EligibilityCheck ? (
             <StepEligibilityCheck player={player2} slideAreaHeight={slideAreaHeight} isPassportFlow={isPassportFlow} />
-          ) : currentStep === 3 ? (
+          ) : currentStep === FlowStep.AnonymousVoteExplainer ? (
             <StepAnonymousVoteExplainer player={player3} slideAreaHeight={slideAreaHeight} />
-          ) : currentStep === 4 ? (
+          ) : currentStep === FlowStep.IntroVideo ? (
             <StepIntroVideo player={playerIntro} onSkip={handleNext} />
-          ) : currentStep === 5 ? (
+          ) : currentStep === FlowStep.DocumentScanStart ? (
             <StepDocumentScanStart player={player1} onStartAnalysis={handleNext} isPassportFlow={isPassportFlow} />
-          ) : currentStep === 6 ? (
+          ) : currentStep === FlowStep.MRZScan ? (
             <StepMRZScan
               // Kill the camera while the manual-entry modal is open so
               // the preview doesn't sit on top of the keyboard.
@@ -607,7 +608,7 @@ export default function VotingFlowScreen() {
               // countries).
               allowedCitizenships={proposalInfo?.criteria.citizenshipWhitelist}
             />
-          ) : currentStep === 7 ? (
+          ) : currentStep === FlowStep.NFCRead ? (
             <StepNFCRead
               player={player4}
               mrzData={mrzData}
@@ -615,7 +616,7 @@ export default function VotingFlowScreen() {
               onGoBack={handleGoBackToMRZScan}
               isPassportFlow={isPassportFlow}
             />
-          ) : currentStep === 8 ? (
+          ) : currentStep === FlowStep.BlockchainVerify ? (
             <StepBlockchainVerify
               player={player5}
               isActive
@@ -628,20 +629,20 @@ export default function VotingFlowScreen() {
               freedomTool={freedomToolRef.current ?? undefined}
               network={network}
             />
-          ) : currentStep === 9 ? (
+          ) : currentStep === FlowStep.ReadyToVote ? (
             <StepReadyToVote
               verificationResult={verificationResult}
               voteSubmissionResult={voteSubmissionResult}
               onVoteSuccess={handleVoteSuccess}
               onClose={handleClose}
             />
-          ) : currentStep === 10 ? (
+          ) : currentStep === FlowStep.VoteChoice ? (
             <StepVoteChoice
               onVoteSelect={handleVoteSelect}
               onCancel={handleStep9Cancel}
               proposalInfo={proposalInfo ?? undefined}
             />
-          ) : currentStep === 11 ? (
+          ) : currentStep === FlowStep.VoteConfirm ? (
             <StepVoteConfirm
               player={player3}
               selectedVote={selectedVote}
@@ -649,7 +650,7 @@ export default function VotingFlowScreen() {
               onCancel={handleStep9Cancel}
               onConfirm={handleStep9Confirm}
             />
-          ) : currentStep === 12 ? (
+          ) : currentStep === FlowStep.ProofSubmission ? (
             <StepProofSubmission
               isActive
               onSuccess={handleStep11Success}
@@ -661,13 +662,13 @@ export default function VotingFlowScreen() {
               answerIndex={selectedVote}
               network={network}
             />
-          ) : currentStep === 13 ? (
+          ) : currentStep === FlowStep.VoteSuccess ? (
             <StepVoteSuccess
               voteIdentifier={voteTxId ?? undefined}
               confirmed={voteConfirmed}
               onViewResults={handleClose}
             />
-          ) : currentStep === 14 ? (
+          ) : currentStep === FlowStep.VoteError ? (
             <StepVoteError
               onGoHome={handleClose}
               errorReason={voteErrorReason}
@@ -683,13 +684,13 @@ export default function VotingFlowScreen() {
           // Match the sliding container's per-platform backdrop for steps 1–3
           // so the seam between slide area and nav row stays invisible. iOS:
           // white (continuous modal sheet). Android: tinted (unchanged).
-          currentStep < 4 && {
+          currentStep < FlowStep.IntroVideo && {
             backgroundColor: Platform.OS === 'ios' ? colors.cardBackground : colors.background,
           },
         ]}
       >
         {/* Progress and Navigation */}
-        {currentStep < 4 && (
+        {currentStep < FlowStep.IntroVideo && (
           <View style={styles.navigationSection}>
             <View style={styles.progressSection}>
               <Animated.View style={[styles.progressBar, { opacity: progressOpacity1, backgroundColor: colors.secondary }]} />

@@ -1,24 +1,23 @@
 import { useCallback, useRef } from 'react';
 import { useVideoPlayer } from 'expo-video';
 import { VIDEO_1, VIDEO_2, VIDEO_3, VIDEO_4_PHONE_OVER_CARD, VIDEO_5, VIDEO_INTRO } from '@/constants/videos';
+import { FlowStep, type FlowStepValue } from '@/constants/voting-flow-steps';
 
 // One shared VideoPlayer for the whole voting flow (incl. intro) instead of
 // one per step — only one MediaCodec is ever alive. Safe now that
 // app/voting-flow.tsx mounts exactly one step at a time (no ±1 carousel
 // window, so no two VideoViews can ever be bound to this player at once —
 // see expo/expo#30271 for why that would otherwise be a crash risk).
-// stepSources keys off today's step numbering (StepIntroVideo is its own
-// step 4, ahead of StepDocumentScanStart).
 
-const stepSources: Record<number, any> = {
-  1: VIDEO_1,
-  2: VIDEO_2,
-  3: VIDEO_3,
-  4: VIDEO_INTRO,
-  5: VIDEO_1,
-  7: VIDEO_4_PHONE_OVER_CARD,
-  8: VIDEO_5,
-  10: VIDEO_3,
+const stepSources: Partial<Record<FlowStepValue, any>> = {
+  [FlowStep.IntroConsent]: VIDEO_1,
+  [FlowStep.EligibilityCheck]: VIDEO_2,
+  [FlowStep.AnonymousVoteExplainer]: VIDEO_3,
+  [FlowStep.IntroVideo]: VIDEO_INTRO,
+  [FlowStep.DocumentScanStart]: VIDEO_1,
+  [FlowStep.NFCRead]: VIDEO_4_PHONE_OVER_CARD,
+  [FlowStep.BlockchainVerify]: VIDEO_5,
+  [FlowStep.VoteChoice]: VIDEO_3,
 };
 
 const safe = (fn: () => void) => {
@@ -33,10 +32,10 @@ export function useModalVideoPlayers() {
     p.pause();
   });
 
-  const loadedStepRef = useRef<number | null>(1);
+  const loadedStepRef = useRef<FlowStepValue | null>(FlowStep.IntroConsent);
 
-  const handleStepChange = useCallback((nextStep: number) => {
-    if (nextStep === 6 || nextStep === 11) {
+  const handleStepChange = useCallback((nextStep: FlowStepValue) => {
+    if (nextStep === FlowStep.MRZScan || nextStep === FlowStep.VoteConfirm) {
       safe(() => player.pause());
       return;
     }
@@ -44,8 +43,12 @@ export function useModalVideoPlayers() {
     const source = stepSources[nextStep];
     if (!source) return;
 
+    // StepVoteChoice (10) has no VideoView of its own — pre-loading VIDEO_3
+    // there means it's already warm by the time StepVoteConfirm (11) shows
+    // it. Only applies coming from StepAnonymousVoteExplainer (3), the other
+    // step already on VIDEO_3.
     const alreadyLoaded = loadedStepRef.current === nextStep
-      || (nextStep === 10 && loadedStepRef.current === 3);
+      || (nextStep === FlowStep.VoteChoice && loadedStepRef.current === FlowStep.AnonymousVoteExplainer);
 
     if (alreadyLoaded) {
       safe(() => player.play());
