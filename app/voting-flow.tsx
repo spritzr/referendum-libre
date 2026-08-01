@@ -42,6 +42,10 @@ import { createModalStyles } from '@/components/voting-modal/styles';
 import { useModalVideoPlayers } from '@/hooks/useModalVideoPlayers';
 import { markVoteJustCast } from '@/utils/post-vote-refresh';
 import { FlowStep, type FlowStepValue } from '@/constants/voting-flow-steps';
+import { STEP_VIDEOS } from '@/constants/videos';
+import { VideoView } from 'expo-video';
+import { Portal, PortalProvider } from 'react-native-teleport';
+import { stepVideoHostName } from '@/components/voting-modal/stepVideoHostName';
 
 
 export default function VotingFlowScreen() {
@@ -97,8 +101,7 @@ export default function VotingFlowScreen() {
   const progressOpacity2 = useRef(new Animated.Value(0.25)).current;
   const progressOpacity3 = useRef(new Animated.Value(0.25)).current;
 
-  const { players, handleStepChange, pauseAll } = useModalVideoPlayers();
-  const { player1, player2, player3, player4, player5, playerIntro } = players;
+  const { player, handleStepChange, pauseAll } = useModalVideoPlayers();
 
   // If the user switches network from Settings while the voting-flow screen
   // is still mounted (rare — would require backing out to Settings and back),
@@ -501,6 +504,7 @@ export default function VotingFlowScreen() {
   const styles = useMemo(() => createStyles(colors), [colors]);
 
   return (
+    <PortalProvider>
     <View
       style={[
         styles.container,
@@ -579,6 +583,28 @@ export default function VotingFlowScreen() {
             currentStep === FlowStep.IntroVideo && { flex: 1 },
           ]}
         >
+          {/* Single teleported VideoView — moves to whichever step's
+              <PortalHost> is currently mounted instead of being unmounted
+              and recreated on every step change (see expo/expo#38426 for
+              why rebinding a persistent player to a brand-new VideoView can
+              silently fail to display on Android). Falls back to rendering
+              inertly here when no step claims the host name (e.g. the intro
+              consent/eligibility/etc. video steps are mid-transition or a
+              non-video step like StepMRZScan is active). */}
+          <Portal hostName={stepVideoHostName(currentStep)}>
+            <VideoView
+              player={player}
+              contentFit={STEP_VIDEOS[currentStep]?.contentFit ?? 'contain'}
+              nativeControls={false}
+              surfaceType="textureView"
+              // iOS Live Text was disabled on 3 of the 8 video-bearing steps
+              // before teleport unified them onto one VideoView; off
+              // everywhere now rather than re-introducing whatever issue
+              // that was working around per-step.
+              allowsVideoFrameAnalysis={false}
+              style={{ width: '100%', height: '100%' }}
+            />
+          </Portal>
           {verificationResult === 'error' ? (
             <StepVoteChoiceError
               onGoHome={handleClose}
@@ -586,15 +612,15 @@ export default function VotingFlowScreen() {
               error={verificationError}
             />
           ) : currentStep === FlowStep.IntroConsent ? (
-            <StepIntroConsent player={player1} slideAreaHeight={slideAreaHeight} isPassportFlow={isPassportFlow} />
+            <StepIntroConsent slideAreaHeight={slideAreaHeight} isPassportFlow={isPassportFlow} />
           ) : currentStep === FlowStep.EligibilityCheck ? (
-            <StepEligibilityCheck player={player2} slideAreaHeight={slideAreaHeight} isPassportFlow={isPassportFlow} />
+            <StepEligibilityCheck slideAreaHeight={slideAreaHeight} isPassportFlow={isPassportFlow} />
           ) : currentStep === FlowStep.AnonymousVoteExplainer ? (
-            <StepAnonymousVoteExplainer player={player3} slideAreaHeight={slideAreaHeight} />
+            <StepAnonymousVoteExplainer slideAreaHeight={slideAreaHeight} />
           ) : currentStep === FlowStep.IntroVideo ? (
-            <StepIntroVideo player={playerIntro} onSkip={handleNext} />
+            <StepIntroVideo onSkip={handleNext} />
           ) : currentStep === FlowStep.DocumentScanStart ? (
-            <StepDocumentScanStart player={player1} onStartAnalysis={handleNext} isPassportFlow={isPassportFlow} />
+            <StepDocumentScanStart onStartAnalysis={handleNext} isPassportFlow={isPassportFlow} />
           ) : currentStep === FlowStep.MRZScan ? (
             <StepMRZScan
               // Kill the camera while the manual-entry modal is open so
@@ -610,7 +636,6 @@ export default function VotingFlowScreen() {
             />
           ) : currentStep === FlowStep.NFCRead ? (
             <StepNFCRead
-              player={player4}
               mrzData={mrzData}
               onNFCSuccess={handleNFCSuccess}
               onGoBack={handleGoBackToMRZScan}
@@ -618,7 +643,6 @@ export default function VotingFlowScreen() {
             />
           ) : currentStep === FlowStep.BlockchainVerify ? (
             <StepBlockchainVerify
-              player={player5}
               isActive
               nfcData={nfcData}
               onSuccess={handleVerificationSuccess}
@@ -644,7 +668,6 @@ export default function VotingFlowScreen() {
             />
           ) : currentStep === FlowStep.VoteConfirm ? (
             <StepVoteConfirm
-              player={player3}
               selectedVote={selectedVote}
               proposalInfo={proposalInfo ?? undefined}
               onCancel={handleStep9Cancel}
@@ -722,6 +745,7 @@ export default function VotingFlowScreen() {
         onSubmit={handleManualInputSubmit}
       />
     </View>
+    </PortalProvider>
   );
 }
 

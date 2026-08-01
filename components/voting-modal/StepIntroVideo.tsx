@@ -1,17 +1,18 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, LayoutChangeEvent } from 'react-native';
-import { VideoView } from 'expo-video';
+import { PortalHost } from 'react-native-teleport';
 import { createStepSpecificStyles } from './styles';
 import { useColors } from '@/constants/theme';
 import { useTranslation } from 'react-i18next';
+import { FlowStep } from '@/constants/voting-flow-steps';
+import { stepVideoHostName } from './stepVideoHostName';
 
 interface StepIntroVideoProps {
-  player?: any;
   onSkip?: () => void;
   onLayout?: (event: LayoutChangeEvent) => void;
 }
 
-const StepIntroVideo: React.FC<StepIntroVideoProps> = ({ player, onSkip, onLayout }) => {
+const StepIntroVideo: React.FC<StepIntroVideoProps> = ({ onSkip, onLayout }) => {
   const { t } = useTranslation();
   const colors = useColors();
   const stepSpecificStyles = createStepSpecificStyles(colors);
@@ -19,11 +20,9 @@ const StepIntroVideo: React.FC<StepIntroVideoProps> = ({ player, onSkip, onLayou
   return (
     <View style={[{ width: '100%', flex: 1 }]} onLayout={onLayout}>
       <View style={stepSpecificStyles.stepIntroContainer}>
-        <VideoView
+        <PortalHost
+          name={stepVideoHostName(FlowStep.IntroVideo)}
           style={stepSpecificStyles.stepIntroVideo}
-          player={player}
-          contentFit="contain"
-          nativeControls={false}
         />
         <TouchableOpacity
           style={stepSpecificStyles.stepIntroSkipButton}

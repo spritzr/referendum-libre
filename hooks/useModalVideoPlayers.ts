@@ -1,5 +1,5 @@
 import { useCallback, useRef } from 'react';
-import { useVideoPlayer } from 'expo-video';
+import { useVideoPlayer, type VideoSource } from 'expo-video';
 import { VIDEO_1, STEP_VIDEOS } from '@/constants/videos';
 import { FlowStep, type FlowStepValue } from '@/constants/voting-flow-steps';
 
@@ -11,6 +11,10 @@ import { FlowStep, type FlowStepValue } from '@/constants/voting-flow-steps';
 // Which video plays on which step is centralized in STEP_VIDEOS
 // (constants/videos.ts).
 
+// expo-video throws if a method is called on a player whose native peer was
+// already released (e.g. a deferred replaceAsync().then() or statusChange
+// listener firing after the screen unmounted). Swallow that race instead of
+// crashing.
 const safe = (fn: () => void) => {
   try { fn(); } catch { /* Ignore errors from released players */ }
 };
@@ -23,9 +27,16 @@ export function useModalVideoPlayers() {
     p.pause();
   });
 
-  const loadedStepRef = useRef<FlowStepValue | null>(FlowStep.IntroConsent);
+  const loadedSourceRef = useRef<VideoSource>(VIDEO_1);
+  // Bumped on every handleStepChange call so a slow replaceAsync() from a
+  // superseded step can detect it's stale and no-op instead of clobbering
+  // whatever the current step actually loaded (replaceAsync has no
+  // built-in cancellation — see expo-video's VideoPlayer.types.d.ts).
+  const requestIdRef = useRef(0);
 
   const handleStepChange = useCallback((nextStep: FlowStepValue) => {
+    const requestId = ++requestIdRef.current;
+
     if (nextStep === FlowStep.MRZScan || nextStep === FlowStep.VoteConfirm) {
       safe(() => player.pause());
       return;
@@ -34,14 +45,7 @@ export function useModalVideoPlayers() {
     const source = STEP_VIDEOS[nextStep]?.source;
     if (!source) return;
 
-    // StepVoteChoice (10) has no VideoView of its own — pre-loading VIDEO_3
-    // there means it's already warm by the time StepVoteConfirm (11) shows
-    // it. Only applies coming from StepAnonymousVoteExplainer (3), the other
-    // step already on VIDEO_3.
-    const alreadyLoaded = loadedStepRef.current === nextStep
-      || (nextStep === FlowStep.VoteChoice && loadedStepRef.current === FlowStep.AnonymousVoteExplainer);
-
-    if (alreadyLoaded) {
+    if (source === loadedSourceRef.current) {
       safe(() => player.play());
       return;
     }
@@ -49,14 +53,15 @@ export function useModalVideoPlayers() {
     // replace() resolves once ExoPlayer.prepare() is *called*, not once a
     // frame is decoded — wait for readyToPlay before playing.
     player.replaceAsync(source).then(() => {
-      loadedStepRef.current = nextStep;
+      if (requestIdRef.current !== requestId) return; // superseded by a later step change
+      loadedSourceRef.current = source;
       if (player.status === 'readyToPlay') {
         safe(() => player.play());
         return;
       }
       const sub = player.addListener('statusChange', ({ status }) => {
         if (status === 'readyToPlay' || status === 'error') sub.remove();
-        if (status === 'readyToPlay') safe(() => player.play());
+        if (status === 'readyToPlay' && requestIdRef.current === requestId) safe(() => player.play());
       });
     });
   }, [player]);
@@ -64,17 +69,8 @@ export function useModalVideoPlayers() {
   const pauseAll = useCallback(() => safe(() => player.pause()), [player]);
   const pauseVerificationVideo = useCallback(() => safe(() => player.pause()), [player]);
 
-  // All keys alias the same instance — exactly one VideoView is ever
-  // mounted at a time, so sharing one player across all of them is safe.
   return {
-    players: {
-      player1: player,
-      player2: player,
-      player3: player,
-      player4: player,
-      player5: player,
-      playerIntro: player,
-    },
+    player,
     handleStepChange,
     pauseAll,
     pauseVerificationVideo,

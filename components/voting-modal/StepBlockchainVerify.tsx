@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, LayoutChangeEvent, Platform, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { VideoView } from 'expo-video';
+import { PortalHost } from 'react-native-teleport';
 import { createStepSpecificStyles } from './styles';
 import { useColors, Typography } from '@/constants/theme';
 import {
@@ -21,6 +21,8 @@ import { EPassport } from '@/utils/e-document/e-document';
 import { expandMrzBirthYear } from '@/utils/mrzDate';
 import { isServiceUnavailableError } from '@/utils/relayer-errors';
 import { isStorageFullError } from '@/utils/storage-errors';
+import { FlowStep } from '@/constants/voting-flow-steps';
+import { stepVideoHostName } from './stepVideoHostName';
 
 interface NFCPersonDetails {
   firstName?: string;
@@ -58,7 +60,6 @@ interface NFCData {
 }
 
 interface StepBlockchainVerifyProps {
-  player: any;
   isActive?: boolean;
   nfcData?: NFCData | null;
   onSuccess?: () => void;
@@ -83,7 +84,6 @@ interface StepBlockchainVerifyProps {
 }
 
 const StepBlockchainVerify: React.FC<StepBlockchainVerifyProps> = ({
-  player,
   isActive,
   nfcData,
   onSuccess,
@@ -577,12 +577,9 @@ const StepBlockchainVerify: React.FC<StepBlockchainVerifyProps> = ({
               resizeMode="contain"
             />
           ) : (
-            <VideoView
+            <PortalHost
+              name={stepVideoHostName(FlowStep.BlockchainVerify)}
               style={stepSpecificStyles.stepBlockchainVerifyImage}
-              player={player}
-              contentFit="contain"
-              nativeControls={false}
-              surfaceType="textureView"
             />
           )
         )}

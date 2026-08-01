@@ -1,20 +1,20 @@
 import React from 'react';
 import { View, Text, ScrollView, LayoutChangeEvent, Platform, Image } from 'react-native';
-import { VideoView } from 'expo-video';
+import { PortalHost } from 'react-native-teleport';
 import { createModalStyles, createStepSpecificStyles } from './styles';
 import { useColors } from '@/constants/theme';
 import { useTranslation } from 'react-i18next';
 import { CAP_SMALL } from '@/utils/font-scale-cap';
+import { FlowStep } from '@/constants/voting-flow-steps';
+import { stepVideoHostName } from './stepVideoHostName';
 
 interface StepEligibilityCheckProps {
-  player: any;
   slideAreaHeight?: number;
   onLayout?: (event: LayoutChangeEvent) => void;
   isPassportFlow?: boolean;
 }
 
 const StepEligibilityCheck: React.FC<StepEligibilityCheckProps> = ({
-  player,
   slideAreaHeight,
   onLayout,
   isPassportFlow = false,
@@ -42,13 +42,9 @@ const StepEligibilityCheck: React.FC<StepEligibilityCheckProps> = ({
               resizeMode="contain"
             />
           ) : (
-            <VideoView
+            <PortalHost
+              name={stepVideoHostName(FlowStep.EligibilityCheck)}
               style={stepSpecificStyles.stepEligibilityCheckImage}
-              player={player}
-              contentFit="contain"
-              nativeControls={false}
-              surfaceType="textureView"
-              allowsVideoFrameAnalysis={false}
             />
           )}
         </View>

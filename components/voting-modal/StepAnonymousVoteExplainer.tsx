@@ -1,18 +1,19 @@
 import React from 'react';
 import { View, Text, ScrollView, LayoutChangeEvent, Platform, Image } from 'react-native';
-import { VideoView } from 'expo-video';
+import { PortalHost } from 'react-native-teleport';
 import { createModalStyles, createStepSpecificStyles } from './styles';
 import { useColors } from '@/constants/theme';
 import { useTranslation } from 'react-i18next';
 import { CAP_SMALL } from '@/utils/font-scale-cap';
+import { FlowStep } from '@/constants/voting-flow-steps';
+import { stepVideoHostName } from './stepVideoHostName';
 
 interface StepAnonymousVoteExplainerProps {
-  player: any;
   slideAreaHeight?: number;
   onLayout?: (event: LayoutChangeEvent) => void;
 }
 
-const StepAnonymousVoteExplainer: React.FC<StepAnonymousVoteExplainerProps> = ({ player, slideAreaHeight, onLayout }) => {
+const StepAnonymousVoteExplainer: React.FC<StepAnonymousVoteExplainerProps> = ({ slideAreaHeight, onLayout }) => {
   const { t } = useTranslation();
   const colors = useColors();
   const modalStyles = createModalStyles(colors);
@@ -35,13 +36,9 @@ const StepAnonymousVoteExplainer: React.FC<StepAnonymousVoteExplainerProps> = ({
               resizeMode="contain"
             />
           ) : (
-            <VideoView
+            <PortalHost
+              name={stepVideoHostName(FlowStep.AnonymousVoteExplainer)}
               style={stepSpecificStyles.stepAnonymousVoteExplainerImage}
-              player={player}
-              contentFit="contain"
-              nativeControls={false}
-              surfaceType="textureView"
-              allowsVideoFrameAnalysis={false}
             />
           )}
         </View>

@@ -1,13 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, TouchableOpacity, LayoutChangeEvent, Platform, Image, ScrollView, Alert, Linking, AppState } from 'react-native';
 import NfcManager from 'react-native-nfc-manager';
-import { VideoView } from 'expo-video';
+import { PortalHost } from 'react-native-teleport';
 import { createModalStyles, createStepSpecificStyles } from './styles';
 import { useColors, Typography } from '@/constants/theme';
 import { getRandomValues } from 'expo-crypto';
 import { useTranslation } from 'react-i18next';
 import { useDevMode } from '@/contexts/DevModeContext';
 import { loadDevExamplePassportData } from '@/utils/dev-example-passport';
+import { FlowStep } from '@/constants/voting-flow-steps';
+import { stepVideoHostName } from './stepVideoHostName';
 
 // Dev shortcut: pretend the NFC scan succeeded by handing the parent the
 // PassportData built from example-passport.json (gitignored). Loads at
@@ -16,7 +18,6 @@ import { loadDevExamplePassportData } from '@/utils/dev-example-passport';
 const DEV_EXAMPLE_PASSPORT_DATA = loadDevExamplePassportData();
 
 interface StepNFCReadProps {
-  player: any;
   mrzData?: {
     documentNumber: string;
     birthDate: string;
@@ -33,7 +34,7 @@ interface StepNFCReadProps {
   isPassportFlow?: boolean;
 }
 
-const StepNFCRead: React.FC<StepNFCReadProps> = ({ player, mrzData, onAnalyze, onNFCSuccess, onNFCError, onGoBack, onLayout, isPassportFlow = false }) => {
+const StepNFCRead: React.FC<StepNFCReadProps> = ({ mrzData, onAnalyze, onNFCSuccess, onNFCError, onGoBack, onLayout, isPassportFlow = false }) => {
   const { t } = useTranslation();
   const docSfx = isPassportFlow ? 'passport' : 'idCard';
   const { devMode } = useDevMode();
@@ -402,12 +403,9 @@ const StepNFCRead: React.FC<StepNFCReadProps> = ({ player, mrzData, onAnalyze, o
               resizeMode="contain"
             />
           ) : (
-            <VideoView
+            <PortalHost
+              name={stepVideoHostName(FlowStep.NFCRead)}
               style={stepSpecificStyles.stepNFCReadImage}
-              player={player}
-              contentFit="contain"
-              nativeControls={false}
-              surfaceType="textureView"
             />
           )}
         </View>

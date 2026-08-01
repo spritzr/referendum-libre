@@ -1,13 +1,14 @@
 import React from 'react';
 import { View, Text, ScrollView, LayoutChangeEvent, Platform, Image } from 'react-native';
-import { VideoView } from 'expo-video';
+import { PortalHost } from 'react-native-teleport';
 import { createModalStyles, createStepSpecificStyles } from './styles';
 import { useColors } from '@/constants/theme';
 import { useTranslation } from 'react-i18next';
 import { CAP_SMALL } from '@/utils/font-scale-cap';
+import { FlowStep } from '@/constants/voting-flow-steps';
+import { stepVideoHostName } from './stepVideoHostName';
 
 interface StepIntroConsentProps {
-  player: any;
   /** Available slide-area height; caps the iOS ScrollView so content scrolls
    * only when it overflows. */
   slideAreaHeight?: number;
@@ -18,7 +19,6 @@ interface StepIntroConsentProps {
 }
 
 const StepIntroConsent: React.FC<StepIntroConsentProps> = ({
-  player,
   slideAreaHeight,
   onLayout,
   isPassportFlow = false,
@@ -54,13 +54,9 @@ const StepIntroConsent: React.FC<StepIntroConsentProps> = ({
               resizeMode="cover"
             />
           ) : (
-            <VideoView
+            <PortalHost
+              name={stepVideoHostName(FlowStep.IntroConsent)}
               style={stepSpecificStyles.stepIntroConsentVideo}
-              player={player}
-              contentFit="cover"
-              nativeControls={false}
-              surfaceType="textureView"
-              allowsVideoFrameAnalysis={false}
             />
           )}
         </View>

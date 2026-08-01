@@ -1,19 +1,20 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, LayoutChangeEvent, Platform, Image } from 'react-native';
-import { VideoView } from 'expo-video';
+import { PortalHost } from 'react-native-teleport';
 import { useCameraPermission } from 'react-native-vision-camera';
 import { createStepSpecificStyles } from './styles';
 import { useTranslation } from 'react-i18next';
 import { useColors } from '@/constants/theme';
+import { FlowStep } from '@/constants/voting-flow-steps';
+import { stepVideoHostName } from './stepVideoHostName';
 
 interface StepDocumentScanStartProps {
-  player: any;
   onStartAnalysis?: () => void;
   onLayout?: (event: LayoutChangeEvent) => void;
   isPassportFlow?: boolean;
 }
 
-const StepDocumentScanStart: React.FC<StepDocumentScanStartProps> = ({ player, onStartAnalysis, onLayout, isPassportFlow = false }) => {
+const StepDocumentScanStart: React.FC<StepDocumentScanStartProps> = ({ onStartAnalysis, onLayout, isPassportFlow = false }) => {
   const { t } = useTranslation();
   const docSfx = isPassportFlow ? 'passport' : 'idCard';
   const colors = useColors();
@@ -58,12 +59,9 @@ const StepDocumentScanStart: React.FC<StepDocumentScanStartProps> = ({ player, o
             resizeMode="cover"
           />
         ) : (
-          <VideoView
+          <PortalHost
+            name={stepVideoHostName(FlowStep.DocumentScanStart)}
             style={stepSpecificStyles.stepDocumentScanStartVideo}
-            player={player}
-            contentFit="cover"
-            nativeControls={false}
-            surfaceType="textureView"
           />
         )}
         <TouchableOpacity

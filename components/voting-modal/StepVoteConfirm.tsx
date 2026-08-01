@@ -1,13 +1,14 @@
 import React, { useEffect } from 'react';
 import { View, Text, TouchableOpacity, LayoutChangeEvent, Platform, Image } from 'react-native';
-import { VideoView } from 'expo-video';
+import { PortalHost } from 'react-native-teleport';
 import { createModalStyles, createStepSpecificStyles } from './styles';
 import { useColors } from '@/constants/theme';
 import type { ProposalInfo } from '@rarimo/rarime-rn-sdk';
 import { useTranslation } from 'react-i18next';
+import { FlowStep } from '@/constants/voting-flow-steps';
+import { stepVideoHostName } from './stepVideoHostName';
 
 interface StepVoteConfirmProps {
-  player: any;
   onCancel?: () => void;
   onConfirm?: () => void;
   onLayout?: (event: LayoutChangeEvent) => void;
@@ -15,7 +16,7 @@ interface StepVoteConfirmProps {
   proposalInfo?: ProposalInfo;
 }
 
-const StepVoteConfirm: React.FC<StepVoteConfirmProps> = ({ player, onCancel, onConfirm, onLayout, selectedVote = 0, proposalInfo }) => {
+const StepVoteConfirm: React.FC<StepVoteConfirmProps> = ({ onCancel, onConfirm, onLayout, selectedVote = 0, proposalInfo }) => {
   const { t } = useTranslation();
   const colors = useColors();
   const modalStyles = createModalStyles(colors);
@@ -49,12 +50,9 @@ const StepVoteConfirm: React.FC<StepVoteConfirmProps> = ({ player, onCancel, onC
               resizeMode="cover"
             />
           ) : (
-            <VideoView
+            <PortalHost
+              name={stepVideoHostName(FlowStep.VoteConfirm)}
               style={stepSpecificStyles.stepVoteConfirmBallotVideo}
-              player={player}
-              contentFit="cover"
-              nativeControls={false}
-              surfaceType="textureView"
             />
           )}
         </View>
