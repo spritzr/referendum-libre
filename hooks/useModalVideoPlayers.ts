@@ -1,6 +1,6 @@
 import { useCallback, useRef } from 'react';
-import { useVideoPlayer, type VideoSource } from 'expo-video';
-import { VIDEO_1, VIDEO_2, VIDEO_3, VIDEO_4_PHONE_OVER_CARD, VIDEO_5, VIDEO_INTRO } from '@/constants/videos';
+import { useVideoPlayer } from 'expo-video';
+import { VIDEO_1, STEP_VIDEOS } from '@/constants/videos';
 import { FlowStep, type FlowStepValue } from '@/constants/voting-flow-steps';
 
 // One shared VideoPlayer for the whole voting flow (incl. intro) instead of
@@ -8,17 +8,8 @@ import { FlowStep, type FlowStepValue } from '@/constants/voting-flow-steps';
 // app/voting-flow.tsx mounts exactly one step at a time (no ±1 carousel
 // window, so no two VideoViews can ever be bound to this player at once —
 // see expo/expo#30271 for why that would otherwise be a crash risk).
-
-const stepSources: Partial<Record<FlowStepValue, VideoSource>> = {
-  [FlowStep.IntroConsent]: VIDEO_1,
-  [FlowStep.EligibilityCheck]: VIDEO_2,
-  [FlowStep.AnonymousVoteExplainer]: VIDEO_3,
-  [FlowStep.IntroVideo]: VIDEO_INTRO,
-  [FlowStep.DocumentScanStart]: VIDEO_1,
-  [FlowStep.NFCRead]: VIDEO_4_PHONE_OVER_CARD,
-  [FlowStep.BlockchainVerify]: VIDEO_5,
-  [FlowStep.VoteChoice]: VIDEO_3,
-};
+// Which video plays on which step is centralized in STEP_VIDEOS
+// (constants/videos.ts).
 
 const safe = (fn: () => void) => {
   try { fn(); } catch { /* Ignore errors from released players */ }
@@ -40,7 +31,7 @@ export function useModalVideoPlayers() {
       return;
     }
 
-    const source = stepSources[nextStep];
+    const source = STEP_VIDEOS[nextStep]?.source;
     if (!source) return;
 
     // StepVoteChoice (10) has no VideoView of its own — pre-loading VIDEO_3
