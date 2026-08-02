@@ -6,9 +6,9 @@ import { useTranslation } from 'react-i18next';
 import { useColors, useTheme, Typography, Spacing } from '@/constants/theme';
 import { Svg, Path } from 'react-native-svg';
 import { useRouter } from 'expo-router';
-import { useDevMode } from '@/contexts/DevModeContext';
-import { useNetwork } from '@/contexts/NetworkContext';
-import { useExtraProposals } from '@/contexts/ExtraProposalsContext';
+import { useDevModeStore } from '@/store/useDevModeStore';
+import { useNetworkStore } from '@/store/useNetworkStore';
+import { useExtraProposalsStore } from '@/store/useExtraProposalsStore';
 import { getContactInfoVars } from '@/utils/contact-info';
 
 const CaretRightIcon = ({ color, size = 24 }: { color: string; size?: number }) => (
@@ -30,14 +30,20 @@ export default function ParametresScreen() {
   const colors = useColors();
   const styles = createStyles(colors);
   const darkModeEnabled = theme === 'dark';
-  const { devMode, setDevMode, handleVersionTap } = useDevMode();
-  const { network, setNetwork } = useNetwork();
-  const { extraEnabled, setExtraEnabled, extraIds, setExtraIds } = useExtraProposals();
+  const devMode = useDevModeStore((s) => s.devMode);
+  const setDevMode = useDevModeStore((s) => s.setDevMode);
+  const handleVersionTap = useDevModeStore((s) => s.handleVersionTap);
+  const network = useNetworkStore((s) => s.network);
+  const setNetwork = useNetworkStore((s) => s.setNetwork);
+  const extraEnabled = useExtraProposalsStore((s) => s.extraEnabled);
+  const setExtraEnabled = useExtraProposalsStore((s) => s.setExtraEnabled);
+  const extraIds = useExtraProposalsStore((s) => s.extraIds);
+  const setExtraIds = useExtraProposalsStore((s) => s.setExtraIds);
 
   // Local mirror of the comma-separated input — lets the user type freely
   // (with intermediate invalid states like a trailing comma) and only
-  // commits sanitised values to the context on blur. Re-syncs from the
-  // context if the value changes externally (e.g. AsyncStorage hydrate).
+  // commits sanitised values to the store on blur. Re-syncs from the store
+  // if the value changes externally (e.g. AsyncStorage hydrate).
   const [extraIdsInput, setExtraIdsInput] = useState<string>(extraIds.join(', '));
   const [extraIdsError, setExtraIdsError] = useState<string | null>(null);
   useEffect(() => {
@@ -203,7 +209,7 @@ export default function ParametresScreen() {
 
               {/* Network selector (Mainnet / Testnet)
                   Visible only in dev mode. Mainnet writes real on-chain
-                  state — see NetworkContext.tsx and the Alert in
+                  state — see useNetworkStore.ts and the Alert in
                   handleNetworkToggle. Switching here propagates to the
                   voting flow on its next mount; existing in-memory Rarime
                   instances are not hot-swapped, the voting flow re-creates
@@ -231,7 +237,7 @@ export default function ParametresScreen() {
               </View>
 
               {/* Extra proposals — toggle + editable list. Adds the IDs
-                  in `extraIds` (see ExtraProposalsContext) to the home
+                  in `extraIds` (see useExtraProposalsStore) to the home
                   screen alongside the production allowlist. Used to keep
                   older verified scrutins reachable for QA without
                   exposing them to regular users. Default off, default

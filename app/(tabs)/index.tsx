@@ -10,9 +10,9 @@ import { getFreedomToolConfig } from '@/constants/rarimo/config';
 import { createFreedomTool } from '@/constants/rarimo/freedom-tool';
 import type { ProposalInfo } from '@rarimo/rarime-rn-sdk';
 import { useTranslation } from 'react-i18next';
-import { useDevMode } from '@/contexts/DevModeContext';
-import { useNetwork } from '@/contexts/NetworkContext';
-import { useExtraProposals } from '@/contexts/ExtraProposalsContext';
+import { useDevModeStore } from '@/store/useDevModeStore';
+import { useNetworkStore } from '@/store/useNetworkStore';
+import { useExtraProposalsStore } from '@/store/useExtraProposalsStore';
 import SettingsButton from '@/components/SettingsButton';
 import { preloadCircuits, subscribeCircuitPreload, type PreloadProgress } from '@/utils/circuit-preload';
 import {
@@ -235,12 +235,13 @@ const VoteResults = ({ variants, percents, counts, belowThreshold }: VoteResults
 
 export default function AccueilScreen() {
   const { t } = useTranslation();
-  const { devMode } = useDevMode();
+  const devMode = useDevModeStore((s) => s.devMode);
   const colors = useColors();
   const styles = createStyles(colors);
   const router = useRouter();
-  const { network } = useNetwork();
-  const { extraEnabled, extraIds } = useExtraProposals();
+  const network = useNetworkStore((s) => s.network);
+  const extraEnabled = useExtraProposalsStore((s) => s.extraEnabled);
+  const extraIds = useExtraProposalsStore((s) => s.extraIds);
   // Lock down the config for THIS render — capture once so all useCallbacks
   // inside this render share the same network reference.
   const ftConfig = useMemo(() => getFreedomToolConfig(network), [network]);
