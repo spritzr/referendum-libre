@@ -9,7 +9,7 @@ import { useColors } from '@/constants/theme';
 import { useTranslation } from 'react-i18next';
 import { CAP_SMALL } from '@/utils/font-scale-cap';
 import { parseMRZDate, checkBirthDate, checkExpiryDate } from '@/utils/mrzDate';
-import { useDevMode } from '@/contexts/DevModeContext';
+import { useDevModeStore } from '@/store/useDevModeStore';
 import { extractMrz, extractMrzTd1 } from '@/utils/mrz-rarimo';
 import { isCitizenshipAllowed } from '@/utils/voteResults';
 import { loadDevExampleMrz } from '@/utils/dev-example-passport';
@@ -44,7 +44,7 @@ const StepMRZScan: React.FC<StepMRZScanProps> = ({ isActive, onMRZScanned, onMan
   // QA can scan otherwise-ineligible documents and test the downstream
   // NFC + registration + voting paths. Turn it on with 7 taps on the
   // version row in Settings.
-  const { devMode } = useDevMode();
+  const devMode = useDevModeStore((s) => s.devMode);
   const { t } = useTranslation();
   const colors = useColors();
   const stepSpecificStyles = createStepSpecificStyles(colors);

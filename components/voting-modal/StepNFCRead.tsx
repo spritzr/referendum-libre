@@ -6,7 +6,7 @@ import { createModalStyles, createStepSpecificStyles } from './styles';
 import { useColors, Typography } from '@/constants/theme';
 import { getRandomValues } from 'expo-crypto';
 import { useTranslation } from 'react-i18next';
-import { useDevMode } from '@/contexts/DevModeContext';
+import { useDevModeStore } from '@/store/useDevModeStore';
 import { loadDevExamplePassportData } from '@/utils/dev-example-passport';
 import { FlowStep } from '@/constants/voting-flow-steps';
 import { stepVideoHostName } from './stepVideoHostName';
@@ -37,7 +37,7 @@ interface StepNFCReadProps {
 const StepNFCRead: React.FC<StepNFCReadProps> = ({ mrzData, onAnalyze, onNFCSuccess, onNFCError, onGoBack, onLayout, isPassportFlow = false }) => {
   const { t } = useTranslation();
   const docSfx = isPassportFlow ? 'passport' : 'idCard';
-  const { devMode } = useDevMode();
+  const devMode = useDevModeStore((s) => s.devMode);
   const colors = useColors();
   const modalStyles = createModalStyles(colors);
   const stepSpecificStyles = createStepSpecificStyles(colors);

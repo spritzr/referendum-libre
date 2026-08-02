@@ -28,7 +28,7 @@ import { useTextRecognition } from 'react-native-vision-camera-text-recognition'
 import { Worklets } from 'react-native-worklets-core';
 import { parse } from 'mrz';
 import { SOD, DG14, DG15 } from '@li0ard/tsemrtd';
-import { useDevMode } from '@/contexts/DevModeContext';
+import { useDevModeStore } from '@/store/useDevModeStore';
 import { Spacing, Typography, useColors } from '@/constants/theme';
 
 // Mirrors the existing example-passport.json shape (see the reference file
@@ -238,7 +238,7 @@ const isMRZLike = (line: string): boolean => {
 
 export default function ExportPassportScreen() {
   const router = useRouter();
-  const { devMode } = useDevMode();
+  const devMode = useDevModeStore((s) => s.devMode);
   const colors = useColors();
   const styles = createStyles(colors);
 

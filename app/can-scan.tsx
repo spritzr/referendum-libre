@@ -1,5 +1,5 @@
 import { useColors, Typography, Spacing } from "@/constants/theme";
-import { useDevMode } from "@/contexts/DevModeContext";
+import { useDevModeStore } from '@/store/useDevModeStore';
 import { useRouter, Stack } from "expo-router";
 import React, { useEffect } from "react";
 import {
@@ -34,7 +34,7 @@ export default function CanScanScreen() {
   const router = useRouter();
   const colors = useColors();
   const styles = createStyles(colors);
-  const { devMode } = useDevMode();
+  const devMode = useDevModeStore((s) => s.devMode);
   // Diagnostic screen — gated to dev mode; production deep-links bounce
   // home before the CAN / chip-scan internals render. (Render guard lives
   // below all hooks; this useEffect drives the redirect.)

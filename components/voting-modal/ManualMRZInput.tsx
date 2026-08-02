@@ -18,7 +18,7 @@ import {
   checkBirthDate,
   checkExpiryDate,
 } from '@/utils/mrzDate';
-import { useDevMode } from '@/contexts/DevModeContext';
+import { useDevModeStore } from '@/store/useDevModeStore';
 
 interface ManualMRZInputProps {
   isVisible: boolean;
@@ -31,7 +31,7 @@ const ManualMRZInput: React.FC<ManualMRZInputProps> = ({ isVisible, onClose, onS
   const colors = useColors();
   // Dev mode lets QA submit underage / expired documents — mirrors the
   // Step5 camera path bypass.
-  const { devMode } = useDevMode();
+  const devMode = useDevModeStore((s) => s.devMode);
   const [documentNumber, setDocumentNumber] = useState('');
   const [birthDate, setBirthDate] = useState('');
   const [expiryDate, setExpiryDate] = useState('');

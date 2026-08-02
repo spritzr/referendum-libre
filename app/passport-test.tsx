@@ -1,5 +1,5 @@
 import { Colors, Spacing, Typography } from "@/constants/theme";
-import { useDevMode } from "@/contexts/DevModeContext";
+import { useDevModeStore } from '@/store/useDevModeStore';
 import { expandMrzBirthYear, expandMrzExpiryYear } from "@/utils/mrzDate";
 import { useRouter, Stack } from "expo-router";
 import React, { useEffect } from "react";
@@ -42,7 +42,7 @@ const formatMRZDate = (mrzDate: string | null, isExpiry: boolean = false): strin
 
 export default function PassportTestScreen() {
   const router = useRouter();
-  const { devMode } = useDevMode();
+  const devMode = useDevModeStore((s) => s.devMode);
   // Diagnostic screen — gated to dev mode; production deep-links bounce
   // home before the NFC / passport internals render. (Render guard lives
   // below all hooks; this useEffect drives the redirect.)

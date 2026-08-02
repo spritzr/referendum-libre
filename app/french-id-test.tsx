@@ -1,5 +1,5 @@
 import { useColors, Typography, Spacing } from "@/constants/theme";
-import { useDevMode } from "@/contexts/DevModeContext";
+import { useDevModeStore } from '@/store/useDevModeStore';
 import { useRouter, Stack } from "expo-router";
 import React, { useEffect } from "react";
 import {
@@ -144,7 +144,7 @@ export default function FrenchIDTestScreen() {
   const router = useRouter();
   const colors = useColors();
   const styles = createStyles(colors);
-  const { devMode } = useDevMode();
+  const devMode = useDevModeStore((s) => s.devMode);
   // Diagnostic screen. Reachable only while the Settings 7-tap dev-mode
   // is enabled. Anyone deep-linking `referendumlibre://french-id-test`
   // on a release install gets bounced to home before the screen renders
