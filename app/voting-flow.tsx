@@ -13,7 +13,7 @@ import {
   withRetry,
   formatRpcError,
 } from '@/constants/rarimo/config';
-import { useNetwork } from '@/contexts/NetworkContext';
+import { useNetworkStore } from '@/store/useNetworkStore';
 import { assertOnChainConstants } from '@/utils/register-via-noir';
 import { getOrCreatePrivateKey } from '@/utils/identity';
 import { findCachedProposal } from '@/utils/proposal-cache';
@@ -54,7 +54,7 @@ export default function VotingFlowScreen() {
   const router = useRouter();
   const colors = useColors();
   const { theme } = useTheme();
-  const { network } = useNetwork();
+  const network = useNetworkStore((s) => s.network);
   const modalStyles = createModalStyles(colors);
   const insets = useSafeAreaInsets();
 

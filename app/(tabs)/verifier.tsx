@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useColors, Typography, Spacing } from '@/constants/theme';
 import { getFreedomToolConfig, getExplorerTxBaseUrl, type Network } from '@/constants/rarimo/config';
 import { classifyReceipt, type VoteTxStatus } from '@/utils/vote-confirmation';
-import { useNetwork } from '@/contexts/NetworkContext';
+import { useNetworkStore } from '@/store/useNetworkStore';
 import SettingsButton from '@/components/SettingsButton';
 import type { ProposalInfo } from '@rarimo/rarime-rn-sdk';
 
@@ -125,7 +125,7 @@ export default function VerifierScreen() {
   const { t } = useTranslation();
   const colors = useColors();
   const styles = createStyles(colors);
-  const { network } = useNetwork();
+  const network = useNetworkStore((s) => s.network);
   const [txHashInput, setTxHashInput] = useState('');
   const [txLookupStatus, setTxLookupStatus] = useState<'idle' | 'loading' | 'success' | 'not_found' | 'error'>('idle');
   const [lookupResult, setLookupResult] = useState<LookupResult | null>(null);
