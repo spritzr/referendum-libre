@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
 import { StyleSheet, ScrollView, View, Text, useWindowDimensions } from 'react-native';
-import { VideoView } from 'expo-video';
+import { VideoView, useVideoPlayer } from 'expo-video';
 import Accordion from '@/components/Accordion';
 import { useColors, Typography, Spacing } from '@/constants/theme';
-import { useComprendreVideo } from '@/contexts/VideoContext';
+import { VIDEO_6 } from '@/constants/videos';
 import { useTranslation } from 'react-i18next';
 import SettingsButton from '@/components/SettingsButton';
 import { CAP_BIG } from '@/utils/font-scale-cap';
@@ -12,7 +12,11 @@ export default function ComprendreScreen() {
   const { t } = useTranslation();
   const colors = useColors();
   const styles = createStyles(colors);
-  const player = useComprendreVideo();
+  const player = useVideoPlayer(VIDEO_6, (p) => {
+    p.loop = false;
+    p.muted = true;
+    p.audioMixingMode = 'mixWithOthers';
+  });
   // Scale the character animation in step with the welcome text so they grow
   // together — never below the design size, never past CAP_BIG.
   const { fontScale } = useWindowDimensions();
@@ -37,16 +41,11 @@ export default function ComprendreScreen() {
     }
 
     return () => {
-      // Pause when leaving screen. The player may already be released by its
-      // owning context during teardown — swallow that specific error since
-      // it's expected and non-actionable.
       try {
         player.pause();
         player.currentTime = 0;
-      } catch (error: any) {
-        if (error?.code !== 'ERR_USING_RELEASED_SHARED_OBJECT') {
-          console.log('Error pausing video:', error);
-        }
+      } catch (error) {
+        console.log('Error pausing video:', error);
       }
     };
   }, [player]);
