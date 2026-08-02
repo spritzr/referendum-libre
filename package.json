@@ -100,7 +100,8 @@
     "react-native-worklets-core": "^1.6.2",
     "readable-stream": "^4.7.0",
     "superjson": "^2.2.2",
-    "uniffi-bindgen-react-native": "^0.29.3-0"
+    "uniffi-bindgen-react-native": "^0.29.3-0",
+    "zustand": "^5.0.14"
   },
   "devDependencies": {
     "@testing-library/jest-native": "^5.4.3",
