@@ -14,12 +14,8 @@ import { StatusBar } from 'expo-status-bar';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { Audio, InterruptionModeIOS, InterruptionModeAndroid } from 'expo-av';
 import NfcManager from 'react-native-nfc-manager';
-import { ThemeProvider as CustomThemeProvider, useTheme } from '@/contexts/ThemeContext';
-import { DevModeProvider } from '@/contexts/DevModeContext';
-import { NetworkProvider } from '@/contexts/NetworkContext';
-import { TermsProvider, useTerms } from '@/contexts/TermsContext';
-import { ExtraProposalsProvider } from '@/contexts/ExtraProposalsContext';
-import { ErrorReportProvider } from '@/contexts/ErrorReportContext';
+import { useTheme } from '@/constants/theme';
+import { useTermsStore } from '@/store/useTermsStore';
 import { RootErrorBoundary } from '@/components/RootErrorBoundary';
 import { TERMS_VERSION } from '@/constants/terms';
 import TermsGate from './terms-gate';
@@ -99,21 +95,9 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <GestureHandlerRootView style={{ flex: 1 }}>
-        <ErrorReportProvider>
-          <RootErrorBoundary>
-            <CustomThemeProvider>
-              <DevModeProvider>
-                <NetworkProvider>
-                  <TermsProvider>
-                    <ExtraProposalsProvider>
-                      <RootLayoutNav />
-                    </ExtraProposalsProvider>
-                  </TermsProvider>
-                </NetworkProvider>
-              </DevModeProvider>
-            </CustomThemeProvider>
-          </RootErrorBoundary>
-        </ErrorReportProvider>
+        <RootErrorBoundary>
+          <RootLayoutNav />
+        </RootErrorBoundary>
       </GestureHandlerRootView>
     </SafeAreaProvider>
   );
@@ -122,7 +106,8 @@ export default function RootLayout() {
 function RootLayoutNav() {
   const { theme } = useTheme();
   const { t } = useTranslation();
-  const { acceptedVersion, hydrated } = useTerms();
+  const acceptedVersion = useTermsStore((s) => s.acceptedVersion);
+  const hydrated = useTermsStore((s) => s.hydrated);
 
   // Block the entire app behind the CGU gate until the user has accepted
   // the current TERMS_VERSION. While AsyncStorage is still hydrating we
