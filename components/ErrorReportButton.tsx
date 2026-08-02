@@ -2,7 +2,7 @@ import React from 'react';
 import { Pressable, Text, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColors, Typography } from '@/constants/theme';
-import { useErrorReporter } from '@/contexts/ErrorReportContext';
+import { useErrorReportStore } from '@/store/useErrorReportStore';
 import { ReportContext, sendErrorReport } from '@/utils/error-reporter';
 
 interface Props {
@@ -17,7 +17,9 @@ interface Props {
 export const ErrorReportButton: React.FC<Props> = ({ error, context }) => {
   const { t } = useTranslation();
   const colors = useColors();
-  const { pendingReport, reportError, isExpected } = useErrorReporter();
+  const pendingReport = useErrorReportStore((s) => s.pendingReport);
+  const reportError = useErrorReportStore((s) => s.reportError);
+  const isExpected = useErrorReportStore((s) => s.isExpected);
   const styles = makeStyles(colors);
 
   if (isExpected(error)) return null;

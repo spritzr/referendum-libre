@@ -1,19 +1,16 @@
 import React from 'react';
 import { View, Text, StyleSheet, Pressable, useColorScheme } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { useErrorReporter } from '@/contexts/ErrorReportContext';
-import { LightColors, DarkColors } from '@/contexts/ThemeContext';
+import { useErrorReportStore } from '@/store/useErrorReportStore';
+import { LightColors, DarkColors } from '@/constants/colorSchemes';
 
 interface State { error: unknown }
 
 // Class component is required for getDerivedStateFromError / componentDidCatch.
-// Must be rendered INSIDE the ErrorReportProvider so the Fallback can use the
-// useErrorReporter hook. See app/_layout.tsx wiring in Task 14.
 //
-// Sits OUTSIDE CustomThemeProvider so it can catch theme-provider errors,
-// which means useColors() is unavailable here. The Fallback reads the OS
-// colour scheme directly via useColorScheme() and applies LightColors /
-// DarkColors itself.
+// Sits above any error the theme store's persist hydration could throw, so
+// useColors() is unavailable here. The Fallback reads the OS colour scheme
+// directly via useColorScheme() and applies LightColors / DarkColors itself.
 export class RootErrorBoundary extends React.Component<{ children: React.ReactNode }, State> {
   state: State = { error: null };
 
@@ -37,7 +34,9 @@ export class RootErrorBoundary extends React.Component<{ children: React.ReactNo
 
 function Fallback({ error, reset }: { error: unknown; reset: () => void }) {
   const { t } = useTranslation();
-  const { reportError, pendingReport, sendPending } = useErrorReporter();
+  const reportError = useErrorReportStore((s) => s.reportError);
+  const pendingReport = useErrorReportStore((s) => s.pendingReport);
+  const sendPending = useErrorReportStore((s) => s.sendPending);
   const scheme = useColorScheme();
   const colors = scheme === 'dark' ? DarkColors : LightColors;
   const styles = makeStyles(colors);
