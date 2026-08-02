@@ -11,7 +11,6 @@ jest.mock('lottie-react-native', () => {
 
 import '@/locales';
 import StepReadyToVote from './StepReadyToVote';
-import { ThemeProvider } from '@/contexts/ThemeContext';
 
 // The "Vote now" button must only advance the flow when Step 7 actually
 // verified the registration. Three production reports (2026-06-11/12, all
@@ -20,10 +19,8 @@ import { ThemeProvider } from '@/contexts/ThemeContext';
 // Whatever the (still unidentified) jump path is, this guard makes it
 // harmless: an unverified user cannot advance past Step 8.
 describe('StepReadyToVote vote-now guard', () => {
-  // ThemeProvider renders null until it has loaded the theme from
-  // AsyncStorage, so the button only appears after that async resolves.
   const press = async (ui: React.ReactElement) => {
-    const r = render(<ThemeProvider>{ui}</ThemeProvider>);
+    const r = render(ui);
     fireEvent.press(await r.findByText('Votez maintenant'));
     return r;
   };

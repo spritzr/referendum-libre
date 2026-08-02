@@ -1,7 +1,17 @@
-import { LightColors } from '@/contexts/ThemeContext';
+import { useThemeStore } from '@/store/useThemeStore';
+import { LightColors, DarkColors } from '@/constants/colorSchemes';
 
-// Re-export theme utilities from ThemeContext
-export { LightColors, DarkColors, useColors, useTheme } from '@/contexts/ThemeContext';
+export { LightColors, DarkColors } from '@/constants/colorSchemes';
+
+export function useTheme() {
+  const theme = useThemeStore((s) => s.theme);
+  const toggleTheme = useThemeStore((s) => s.toggleTheme);
+  return { theme, toggleTheme, colors: theme === 'light' ? LightColors : DarkColors };
+}
+
+export function useColors() {
+  return useThemeStore((s) => (s.theme === 'light' ? LightColors : DarkColors));
+}
 
 // Static colors alias — kept for screens that can't use the hook (e.g. StyleSheet
 // at module scope). Points at LightColors so there's only one source of truth.
