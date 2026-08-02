@@ -35,7 +35,7 @@ import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
 import * as DocumentPicker from 'expo-document-picker';
 import { useColors, Typography, Spacing } from '@/constants/theme';
-import { useDevMode } from '@/contexts/DevModeContext';
+import { useDevModeStore } from '@/store/useDevModeStore';
 import {
   deletePrivateKey,
   exportToJson as exportPassportDb,
@@ -44,15 +44,15 @@ import {
   wipeDb as wipePassportDb,
   type PassportKeyEntry,
 } from '@/utils/identity';
-import { useTerms } from '@/contexts/TermsContext';
+import { useTermsStore } from '@/store/useTermsStore';
 import { useTranslation } from 'react-i18next';
 
 export default function KeyManagementScreen() {
   const { t } = useTranslation();
   const colors = useColors();
   const styles = createStyles(colors);
-  const { clear: clearTerms } = useTerms();
-  const { devMode } = useDevMode();
+  const clearTerms = useTermsStore((s) => s.clear);
+  const devMode = useDevModeStore((s) => s.devMode);
   // Screen is accessible to ordinary users — they need backup / restore to
   // survive an app reinstall without losing their on-chain identities. The
   // destructive "Tout supprimer" section further down is still gated to
