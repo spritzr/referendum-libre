@@ -11,12 +11,12 @@ import React, { useState } from 'react';
 import { View, Text, Pressable, StyleSheet, SafeAreaView } from 'react-native';
 import { useColors, Typography, Spacing, BorderRadius } from '@/constants/theme';
 import TermsBody from '@/components/TermsBody';
-import { useTerms } from '@/contexts/TermsContext';
+import { useTermsStore } from '@/store/useTermsStore';
 
 export default function TermsGate() {
   const colors = useColors();
   const styles = createStyles(colors);
-  const { accept } = useTerms();
+  const accept = useTermsStore((s) => s.accept);
   const [reachedEnd, setReachedEnd] = useState(false);
 
   return (
