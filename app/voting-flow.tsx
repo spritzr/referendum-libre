@@ -19,7 +19,7 @@ import { getOrCreatePrivateKey } from '@/utils/identity';
 import { findCachedProposal } from '@/utils/proposal-cache';
 import { isPassportVotingTarget } from '@/utils/voteResults';
 import { useTranslation } from 'react-i18next';
-import type { PassportData } from '@/modules/e-document';
+import type { EDocument } from '@/utils/e-document/e-document';
 
 // Import all steps
 import StepIntroConsent from '@/components/voting-modal/StepIntroConsent';
@@ -63,7 +63,7 @@ export default function VotingFlowScreen() {
   const [verificationError, setVerificationError] = useState<unknown>(null);
   const [voteSubmissionResult, setVoteSubmissionResult] = useState<'success' | 'error' | null>(null);
   const [mrzData, setMRZData] = useState<{ documentNumber: string; birthDate: string; expiryDate: string } | null>(null);
-  const [nfcData, setNFCData] = useState<PassportData | null>(null);
+  const [nfcData, setNFCData] = useState<EDocument | null>(null);
   // Flips true ONLY after `handleNFCSuccess`'s async block has resolved the
   // per-passport BJJ key and synced it into the legacy SecureStore slot.
   // The Rarime init `useEffect` below gates on this so it never reads a
@@ -315,7 +315,7 @@ export default function VotingFlowScreen() {
     handleNext();
   }, [handleNext]);
 
-  const handleNFCSuccess = useCallback((data: PassportData) => {
+  const handleNFCSuccess = useCallback((data: EDocument) => {
     setNFCData(data);
 
     // Create RarimePassport from NFC data. dg1Bytes / sodBytes are already

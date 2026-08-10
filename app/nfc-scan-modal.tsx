@@ -82,7 +82,6 @@ export default function NFCScanModal() {
       setScanStatus(t('voting.step6Init'));
 
       const { scanDocument } = await import('@/modules/e-document');
-      const challenge = getRandomValues(new Uint8Array(32));
 
       if (Platform.OS === 'android') {
         await new Promise(resolve => setTimeout(resolve, 500));
@@ -90,11 +89,13 @@ export default function NFCScanModal() {
 
       setScanStatus(t('voting.step6Now'));
 
-      const result = await scanDocument('P', {
-        documentNumber: mrzData.documentNumber,
-        dateOfBirth: mrzData.birthDate,
-        dateOfExpiry: mrzData.expiryDate,
-      }, challenge);
+      const result = await scanDocument(
+        'P',
+        '',
+        mrzData.documentNumber,
+        mrzData.birthDate,
+        mrzData.expiryDate,
+      );
 
       // Navigate back with success
       router.back();

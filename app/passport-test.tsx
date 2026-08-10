@@ -840,11 +840,13 @@ export default function PassportTestScreen() {
         console.log("BAC Expiry Date (YYMMDD):", bacExpiryDate);
       }
 
-      const result = await scanDocument('P', {
-        documentNumber: documentNo,
-        dateOfBirth: bacBirthDate,
-        dateOfExpiry: bacExpiryDate,
-      }, challenge);
+      const result = await scanDocument(
+        'P',
+        '',
+        documentNo,
+        bacBirthDate,
+        bacExpiryDate,
+      );
 
       // Helper to truncate long base64 strings for cleaner logs
       const truncateBase64 = (obj: any): any => {
@@ -1604,7 +1606,7 @@ export default function PassportTestScreen() {
 
                   <View style={styles.infoRow}>
                     <Text style={styles.infoLabel}>Date de naissance:</Text>
-                    <Text style={styles.infoValue}>{formatMRZDate(tagData.personDetails?.birthDate)}</Text>
+                    <Text style={styles.infoValue}>{formatMRZDate(tagData.personDetails?.dateOfBirth)}</Text>
                   </View>
 
                   <View style={styles.infoRow}>
@@ -1619,7 +1621,7 @@ export default function PassportTestScreen() {
 
                   <View style={styles.infoRow}>
                     <Text style={styles.infoLabel}>Date d&apos;expiration:</Text>
-                    <Text style={styles.infoValue}>{formatMRZDate(tagData.personDetails?.expiryDate, true)}</Text>
+                    <Text style={styles.infoValue}>{formatMRZDate(tagData.personDetails?.documentExpiryDate, true)}</Text>
                   </View>
                 </>
               ) : (

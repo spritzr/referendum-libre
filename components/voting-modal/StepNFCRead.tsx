@@ -239,11 +239,13 @@ const StepNFCRead: React.FC<StepNFCReadProps> = ({ mrzData, onAnalyze, onNFCSucc
       // protocol French CNIes use. 'P' = TD3 passport → Type B + BAC.
       // The doc type is driven by the selected proposal's voting contract
       // upstream (voting-flow.tsx → isPassportFlow prop).
-      const scanPromise = scanDocument(isPassportFlow ? 'P' : 'I', {
-        documentNumber: mrzData.documentNumber,
-        dateOfBirth: mrzData.birthDate,
-        dateOfExpiry: mrzData.expiryDate,
-      }, challenge);
+      const scanPromise = scanDocument(
+        isPassportFlow ? 'P' : 'I',
+        '',
+        mrzData.documentNumber,
+        mrzData.birthDate,
+        mrzData.expiryDate,
+      );
 
       // Clear the timeout as soon as the scan settles (success or error) so the
       // two outcomes can never be shown simultaneously.

@@ -15,24 +15,11 @@ struct BacKeyParameters: Codable {
     var can: String?
 }
 
-struct PersonDetails : Codable {
-    var firstName: String
-    var lastName: String
-    var gender: String
-    var passportImageRaw: String?
-    var issuingAuthority: String
-    var documentNumber: String
-    var documentExpiryDate: String
-    var dateOfBirth: String
-    var nationality: String
-}
-
 struct Passport: Codable {
-    var personDetails: PersonDetails
     let dg1: String // base64
     let dg15: String? // base64 — absent on French CNIe (no Active Authentication)
     let sod: String // base64
-    let signature: String? // base64 — absent when no Active Authentication
+    let aaSignature: String? // base64 — absent when no Active Authentication
     let dg11: String? // base64
     let dg12: String? // base64 — issuing authority + date of issue
     let dg14: String? // base64 — chip authentication / PACE security info
@@ -45,33 +32,13 @@ struct Passport: Codable {
         let dg15 = model.getDataGroup(.DG15)?.data
         let sod = model.getDataGroup(.SOD)?.data ?? []
 
-        // HACK: For some reason Georgian passports have the first name and last name
-        // joined together in the last name field
-        let nameParts = model.lastName.components(separatedBy: " ")
-        let hasJoinedName = model.firstName.isEmpty && nameParts.count == 2
-
-        let personDetails = PersonDetails(
-            firstName: hasJoinedName ? nameParts[0] : model.firstName,
-            lastName: hasJoinedName ? nameParts[1] : model.lastName,
-            gender: model.gender,
-            passportImageRaw: model.passportImage?
-                .pngData()?
-                .base64EncodedString(options: .endLineWithLineFeed),
-            issuingAuthority: model.issuingAuthority,
-            documentNumber: model.documentNumber,
-            documentExpiryDate: model.documentExpiryDate,
-            dateOfBirth: model.dateOfBirth,
-            nationality: model.nationality
-        )
-
         let aaSignature = model.activeAuthenticationSignature
 
         return Passport(
-            personDetails: personDetails,
             dg1: Data(dg1).base64EncodedString(),
             dg15: dg15.map { Data($0).base64EncodedString() },
             sod: Data(sod).base64EncodedString(),
-            signature: aaSignature.isEmpty ? nil : Data(aaSignature).base64EncodedString(),
+            aaSignature: aaSignature.isEmpty ? nil : Data(aaSignature).base64EncodedString(),
             dg11: dg11.map { Data($0).base64EncodedString() },
             dg12: dg12.map { Data($0).base64EncodedString() },
             dg14: dg14.map { Data($0).base64EncodedString() }

@@ -4,28 +4,24 @@
 //   loadDevExampleMrz()           → Step 5 "skip OCR" button
 //   loadDevExamplePassportData()  → Step 6 "skip NFC" button (returns the
 //                                   same PassportData the eDocument module
-//                                   would produce on a successful scan)
+//                                   would produce on a successful scan —
+//                                   personDetails is derived from dg1 the
+//                                   same way scanDocument() does)
 //
 // The require() is wrapped in try/catch so a missing fixture (clean CI
 // checkout) returns null and the gated UI hides itself — mirrors the
 // lazyUnzip pattern in modules/witnesscalculator/index.ts.
 
-import type { PassportData } from '@/modules/e-document';
+import { EDocument } from '@/utils/e-document/e-document';
 
-// Same JSON shape the dev-only passport-dump path in app/voting-flow.tsx
-// writes to documentDirectory + the inid passport-debug spike repo also
-// emits — kept loose because we read it forgivingly.
+// Same JSON shape app/export-passport.tsx writes — kept loose because we
+// read it forgivingly.
 interface ExamplePassportFile {
   docCode?: string;
   personDetails?: {
-    firstName?: string | null;
-    lastName?: string | null;
-    gender?: string | null;
+    documentNumber?: string | null;
     birthDate?: string | null;
     expiryDate?: string | null;
-    documentNumber?: string | null;
-    nationality?: string | null;
-    issuingAuthority?: string | null;
   };
   dgHex?: {
     dg1?: string | null;
@@ -71,33 +67,22 @@ export function loadDevExampleMrz(): {
   };
 }
 
-export function loadDevExamplePassportData(): PassportData | null {
+export function loadDevExamplePassportData(): EDocument | null {
   const ep = loadRaw();
-  const pd = ep?.personDetails;
   const hex = ep?.dgHex;
   // dg1 + sod are the minimum needed for Step 7's verify + Step 11's vote
   // calldata. Bail if either is missing.
-  if (!hex?.dg1 || !hex?.sod || !pd) return null;
+  if (!hex?.dg1 || !hex?.sod) return null;
+  const bytes = (field: string | null | undefined) => field ? hexToBytes(field) : undefined;
 
-  return {
+  return new EDocument({
     docCode: ep?.docCode ?? 'P',
-    personDetails: {
-      firstName: pd.firstName ?? null,
-      lastName: pd.lastName ?? null,
-      gender: pd.gender ?? null,
-      birthDate: pd.birthDate ?? null,
-      expiryDate: pd.expiryDate ?? null,
-      documentNumber: pd.documentNumber ?? null,
-      nationality: pd.nationality ?? null,
-      issuingAuthority: pd.issuingAuthority ?? null,
-      passportImageRaw: null,
-    },
-    dg1Bytes: hexToBytes(hex.dg1),
-    sodBytes: hexToBytes(hex.sod),
-    dg11Bytes: hex.dg11 ? hexToBytes(hex.dg11) : undefined,
-    dg12Bytes: hex.dg12 ? hexToBytes(hex.dg12) : undefined,
-    dg14Bytes: hex.dg14 ? hexToBytes(hex.dg14) : undefined,
-    dg15Bytes: hex.dg15 ? hexToBytes(hex.dg15) : undefined,
-    aaSignature: hex.aaSignature ? hexToBytes(hex.aaSignature) : undefined,
-  };
+    dg1Bytes: bytes(hex.dg1)!,
+    sodBytes: bytes(hex.sod)!,
+    dg11Bytes: bytes(hex.dg11),
+    dg12Bytes: bytes(hex.dg12),
+    dg14Bytes: bytes(hex.dg14),
+    dg15Bytes: bytes(hex.dg15),
+    aaSignature: bytes(hex.aaSignature),
+  });
 }

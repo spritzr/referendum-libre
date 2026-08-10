@@ -34,7 +34,7 @@ import {
   MAINNET_CERT_POSEIDON_SMT_ADDRESS,
   RARIME_MAINNET_CONFIG,
 } from '@/constants/rarimo/config';
-import { EPassport } from '@/utils/e-document/e-document';
+import { EDocument } from '@/utils/e-document/e-document';
 import {
   buildHeavyRegisterInputs,
   slaveCertSmtLeafKey,
@@ -365,7 +365,7 @@ const HEAVY_CIRCUIT_NAME = 'registerIdentity_1_256_3_5_576_248_NA';
  * path).
  */
 export async function generateHeavyNoirProof(
-  passport: EPassport,
+  passport: EDocument,
   skIdentityHex: string,
 ): Promise<HeavyNoirProof> {
   // ---- 1. SMT leaf key --------------------------------------------------

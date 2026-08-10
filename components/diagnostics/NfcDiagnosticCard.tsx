@@ -76,7 +76,12 @@ type Strategy = {
   type: 'I' | 'P';
   needs: ('can' | 'mrz')[];
   primary?: boolean;
-  buildParams: (can: string, docNumber: string, dob: string, expiry: string) => object;
+  buildParams: (can: string, docNumber: string, dob: string, expiry: string) => {
+    can?: string;
+    documentNumber?: string;
+    dateOfBirth?: string;
+    dateOfExpiry?: string;
+  };
 };
 
 const PRODUCTION_STRATEGY: Strategy = {
@@ -216,7 +221,13 @@ export function NfcDiagnosticCard() {
     try {
       const params = s.buildParams(can, docNumber, toMRZ(dob), toMRZ(expiry));
       const data = await withTimeout(
-        scanDocument(s.type, params, new Uint8Array(32)),
+        scanDocument(
+          s.type,
+          params.can ?? '',
+          params.documentNumber ?? '',
+          params.dateOfBirth ?? '',
+          params.dateOfExpiry ?? '',
+        ),
         45_000,
         s.label
       );

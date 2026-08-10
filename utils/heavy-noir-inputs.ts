@@ -28,7 +28,7 @@
 import { Hex } from '@iden3/js-crypto';
 import { AsnConvert } from '@peculiar/asn1-schema';
 import { RSAPublicKey } from '@peculiar/asn1-rsa';
-import { EPassport } from '@/utils/e-document/e-document';
+import { EDocument } from '@/utils/e-document/e-document';
 import {
   bytesToBigIntBE,
   rsaBarrettReductionParam,
@@ -79,7 +79,7 @@ function bytesToU8HexList(bytes: Uint8Array): string[] {
  * Caller is responsible for asserting the algorithm is RSA — the helper
  * throws on EC keys rather than silently misinterpreting them as RSA.
  */
-function extractSlaveCertRsaModulus(eDoc: EPassport): Uint8Array {
+function extractSlaveCertRsaModulus(eDoc: EDocument): Uint8Array {
   const slaveCert = eDoc.sod.slaveCertificate.certificate;
   const spki = slaveCert.tbsCertificate.subjectPublicKeyInfo;
   // RSA OID = 1.2.840.113549.1.1.1 — the slave cert's SPKI carries this
@@ -105,9 +105,9 @@ export interface SmtInclusionProof {
 }
 
 export interface BuildHeavyInputsArgs {
-  /** EPassport built from the NFC scan. Provides DG1/DG15/SOD bytes and
+  /** EDocument built from the NFC scan. Provides DG1/SOD bytes and
    * the slave certificate. */
-  passport: EPassport;
+  passport: EDocument;
   /** BJJ private key as a hex string ("0x…" or bare hex). */
   skIdentityHex: string;
   /** Inclusion proof from the on-chain `CertificatesSMT.getProof(leaf)`
@@ -146,11 +146,8 @@ export function buildHeavyRegisterInputs(args: BuildHeavyInputsArgs): Record<str
 
   // ---- DG1 / DG15 --------------------------------------------------------
   const dg1 = bytesToU8HexList(passport.dg1Bytes);
-  // dg15 is u8[0] in the circuit ABI — an empty array. We still emit `[]`
-  // explicitly so the JSON shape is unambiguous.
-  const dg15 = passport.dg15Bytes && passport.dg15Bytes.length > 0
-    ? bytesToU8HexList(passport.dg15Bytes)
-    : [];
+  // dg15 is u8[0] in the circuit ABI — no Active Authentication support.
+  const dg15: string[] = [];
 
   // ---- sk_identity -------------------------------------------------------
   // Accept "0x"-prefixed or bare hex; canonicalise to a clean "0x…" Field.
@@ -198,7 +195,7 @@ export function buildHeavyRegisterInputs(args: BuildHeavyInputsArgs): Record<str
  * Returns a 0x-prefixed bytes32 hex string ready to pass to
  * `CertificatesSMT.getProof(...)`.
  */
-export function slaveCertSmtLeafKey(passport: EPassport): string {
+export function slaveCertSmtLeafKey(passport: EDocument): string {
   const indexBytes = passport.sod.slaveCertificate.slaveCertificateIndex;
   return '0x' + Hex.encodeString(indexBytes).padStart(64, '0');
 }

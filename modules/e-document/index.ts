@@ -1,164 +1,65 @@
-// Import the native module. On web, it will be resolved to EDocument.web.ts
-// and on native platforms to EDocument.ts
+import { requireNativeModule } from 'expo-modules-core'
 
-import type { EventSubscription } from 'expo-modules-core'
-import { EventEmitter } from 'expo-modules-core'
-import { Platform } from 'react-native'
-import { Buffer } from 'buffer'
+// TEST: still works ? was export default requireNativeModule('EDocument')
+const EDocumentModule = requireNativeModule('EDocument')
 
-import EDocumentModule from './src/EDocumentModule'
-import type { EDocumentModuleEvents } from './src/enums'
-import get from 'lodash/get'
-
-// Helper to clean MRZ name fields (remove < filler characters)
-const cleanMRZName = (name: string | null): string | null => {
-  if (!name) return null;
-  return name.replace(/<+/g, ' ').trim();
-};
-
-// Simplified interface without crypto dependencies
 export type PersonDetails = {
   firstName: string | null
   lastName: string | null
   gender: string | null
-  birthDate: string | null
-  expiryDate: string | null
+  dateOfBirth: string | null
+  documentExpiryDate: string | null
   documentNumber: string | null
   nationality: string | null
   issuingAuthority: string | null
   passportImageRaw: string | null
 }
 
-export interface PassportData {
-  docCode: string
-  personDetails: PersonDetails
-  sodBytes: Uint8Array
-  dg1Bytes: Uint8Array
-  dg15Bytes?: Uint8Array
-  dg11Bytes?: Uint8Array
-  dg12Bytes?: Uint8Array
-  dg14Bytes?: Uint8Array
-  aaSignature?: Uint8Array
-}
+import type { EventSubscription } from 'expo-modules-core'
+import { EventEmitter } from 'expo-modules-core'
+import { Platform } from 'react-native'
+import { Buffer } from 'buffer'
+import type { EDocumentModuleEvents } from './src/enums'
+import { EDocument as EDocumentModel } from '@/utils/e-document/e-document'
 
 export async function scanDocument(
   documentType: 'P' | 'I',  // 'P' = Passport, 'I' = ID card
-  bacKeyParameters: {
-    dateOfBirth?: string
-    dateOfExpiry?: string
-    documentNumber?: string
-    can?: string
-  },
-  challenge: Uint8Array,
-): Promise<PassportData> {
+  can: string,
+  documentNumber: string,
+  dateOfBirth: string,
+  dateOfExpiry: string,
+): Promise<EDocumentModel> {
   try {
-    const params = {
-      documentNumber: bacKeyParameters.documentNumber || '000000000',
-      dateOfBirth: bacKeyParameters.dateOfBirth || '000000',
-      dateOfExpiry: bacKeyParameters.dateOfExpiry || '000000',
-      can: bacKeyParameters.can,
-    }
-
     const eDocumentString = await EDocumentModule.scanDocument(
       documentType,
-      JSON.stringify(params),
-      new Uint8Array(challenge),
+      can, documentNumber,
+      dateOfBirth, dateOfExpiry
     )
 
-    const eDocumentJson = JSON.parse(eDocumentString)
+    const eDocument = JSON.parse(eDocumentString)
+    const fromB64 = (field: string | undefined) => field ? Buffer.from(field, 'base64') : undefined
 
-    // Helper: safely decode base64 field, returning undefined if absent/null
-    const decodeBase64 = (path: string): Uint8Array | undefined => {
-      const val = get(eDocumentJson, path, null)
-      if (!val) return undefined
-      return Buffer.from(val, 'base64')
+    if (!eDocument.sod || !eDocument.dg1) {
+      throw new Error('Scan incomplet : DG1 ou SOD manquant dans la réponse native')
     }
 
-    if (Platform.OS === 'ios') {
-      return {
-        docCode: documentType,
-      personDetails: {
-        firstName: get(eDocumentJson, 'personDetails.firstName', null),
-        lastName: get(eDocumentJson, 'personDetails.lastName', null),
-        gender: get(eDocumentJson, 'personDetails.gender', null),
-        birthDate: get(eDocumentJson, 'personDetails.dateOfBirth', null),
-        expiryDate: get(eDocumentJson, 'personDetails.documentExpiryDate', null),
-        documentNumber: get(eDocumentJson, 'personDetails.documentNumber', null),
-        nationality: get(eDocumentJson, 'personDetails.nationality', null),
-        issuingAuthority: get(eDocumentJson, 'personDetails.issuingAuthority', null),
-        passportImageRaw: get(eDocumentJson, 'personDetails.passportImageRaw', null),
-      },
-      sodBytes: Buffer.from(get(eDocumentJson, 'sod', '') || '', 'base64'),
-      dg1Bytes: Buffer.from(get(eDocumentJson, 'dg1', '') || '', 'base64'),
-      dg15Bytes: decodeBase64('dg15'),
-      dg11Bytes: decodeBase64('dg11'),
-      dg12Bytes: decodeBase64('dg12'),
-      dg14Bytes: decodeBase64('dg14'),
-      aaSignature: decodeBase64('signature'),
-    }
-  } else if (Platform.OS === 'android') {
-      return {
-        docCode: documentType,
-        personDetails: {
-          // primaryIdentifier = surname (lastName), secondaryIdentifier = given names (firstName)
-          firstName: cleanMRZName(get(eDocumentJson, 'personDetails.secondaryIdentifier', null)),
-          lastName: cleanMRZName(get(eDocumentJson, 'personDetails.primaryIdentifier', null)),
-          gender: get(eDocumentJson, 'personDetails.gender', null),
-          birthDate: get(eDocumentJson, 'personDetails.dateOfBirth', null),
-          expiryDate: get(eDocumentJson, 'personDetails.dateOfExpiry', null),
-          documentNumber: get(eDocumentJson, 'personDetails.documentNumber', null),
-          nationality: get(eDocumentJson, 'personDetails.nationality', null),
-          issuingAuthority: get(eDocumentJson, 'personDetails.issuingState', null),
-          passportImageRaw: get(eDocumentJson, 'personDetails.passportImageRaw', null),
-        },
-        sodBytes: Buffer.from(get(eDocumentJson, 'sod', '') || '', 'base64'),
-        dg1Bytes: Buffer.from(get(eDocumentJson, 'dg1', '') || '', 'base64'),
-        dg15Bytes: decodeBase64('dg15'),
-        dg11Bytes: decodeBase64('dg11'),
-        aaSignature: decodeBase64('signature'),
-      }
-    }
-
-    throw new TypeError('Unsupported platform')
+    return new EDocumentModel({
+      docCode: documentType,
+      sodBytes: Buffer.from(eDocument.sod, 'base64'),
+      dg1Bytes: Buffer.from(eDocument.dg1, 'base64'),
+      dg11Bytes: fromB64(eDocument.dg11),
+      dg12Bytes: fromB64(eDocument.dg12),
+      dg14Bytes: fromB64(eDocument.dg14),
+      dg15Bytes: fromB64(eDocument.dg15),
+      aaSignature: fromB64(eDocument.aaSignature),
+    })
   } catch (error: any) {
-    // Enhanced error messages for French users
     let errorMessage = error.message || 'Unknown error during document scan'
 
-    // Check for common error patterns and provide French translations
     if (errorMessage.includes('6982') || errorMessage.includes('SECURITY STATUS')) {
-      if (documentType === 'I') {
-        errorMessage =
-          "❌ Erreur d'authentification de la carte d'identité\n\n" +
-          "Les cartes d'identité françaises nécessitent le numéro CAN (6 chiffres) " +
-          "pour l'authentification PACE.\n\n" +
-          "📍 Trouvez le CAN en bas à droite au dos de votre carte.\n\n" +
-          "Vérifiez également que :\n" +
-          "• Le CAN est correct (6 chiffres)\n" +
-          "• La date de naissance est au format JJ/MM/AA\n" +
-          "• La date d'expiration est au format JJ/MM/AA\n" +
-          "• Le numéro de document est correct"
-      } else {
-        errorMessage =
-          "❌ Erreur d'authentification du passeport\n\n" +
-          "Vérifiez que :\n" +
-          "• La date de naissance est au format JJ/MM/AA\n" +
-          "• La date d'expiration est au format JJ/MM/AA\n" +
-          "• Le numéro de passeport est correct\n\n" +
-          "Pour les passeports récents, essayez d'ajouter le numéro CAN si disponible."
-      }
-    } else if (errorMessage.toLowerCase().includes('can') && errorMessage.toLowerCase().includes('required')) {
       errorMessage =
-        "❌ CAN obligatoire\n\n" +
-        "Les cartes d'identité françaises nécessitent le CAN (6 chiffres) " +
-        "pour l'authentification PACE.\n\n" +
-        "📍 Trouvez le CAN en bas à droite au dos de votre carte."
-    } else if (errorMessage.includes('IM not yet implemented') || errorMessage.includes('Step2IM')) {
-      errorMessage =
-        "❌ Méthode PACE non supportée\n\n" +
-        "Cette carte utilise le mode PACE-IM (Integrated Mapping) " +
-        "qui n'est pas encore implémenté dans le lecteur NFC.\n\n" +
-        "Il s'agit d'un problème connu avec certaines cartes d'identité européennes. " +
-        "Une mise à jour sera nécessaire pour supporter cette carte."
+      "Authentication error. Check CAN, date of birth, date of expiration, and document number\n" +
+        "Détail: " + (error.message || 'unknown')
     } else if (errorMessage.includes('NFC')) {
       errorMessage =
         "❌ Erreur NFC\n\n" +
@@ -232,14 +133,14 @@ export function EDocumentModuleListener(
   listener: (payload: unknown) => void,
 ): EventSubscription {
   // FIXME: add event types for module
-   
+
   // @ts-ignore
   return EDocumentModuleEmitter.addListener(eventName, listener)
 }
 
 export function EDocumentModuleRemoveAllListeners(eventName: EDocumentModuleEvents): void {
   // FIXME: add event types for module
-   
+
   // @ts-ignore
   EDocumentModuleEmitter.removeAllListeners(eventName)
 }

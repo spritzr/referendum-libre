@@ -17,28 +17,15 @@ import {
   generateHeavyNoirProof,
   type HeavyNoirProof,
 } from '@/utils/register-via-noir';
-import { EPassport } from '@/utils/e-document/e-document';
+import type { EDocument } from '@/utils/e-document/e-document';
 import { expandMrzBirthYear } from '@/utils/mrzDate';
 import { isServiceUnavailableError } from '@/utils/relayer-errors';
 import { isStorageFullError } from '@/utils/storage-errors';
 import { FlowStep } from '@/constants/voting-flow-steps';
 import { stepVideoHostName } from './stepVideoHostName';
 
-interface NFCPersonDetails {
-  firstName?: string;
-  lastName?: string;
-  // Note: modules/e-document/index.ts renames Android's native
-  // `dateOfBirth` / `dateOfExpiry` to `birthDate` / `expiryDate` in the
-  // normalized PassportData payload, so we read the renamed names here.
-  // Reading dateOfBirth instead would always be undefined → 'N/A'.
-  birthDate?: string;
-  expiryDate?: string;
-  nationality?: string;
-  documentNumber?: string;
-}
-
 // Display helper for the MRZ *birth date* (the only field this is used for —
-// `nfcData.personDetails.birthDate` at line ~484). Uses the ICAO sliding-
+// `nfcData.personDetails.dateOfBirth` at line ~484). Uses the ICAO sliding-
 // window rule via `expandMrzBirthYear` so YY=44 today resolves to 1944 (the
 // 80yo voter case) instead of 2044 (the old fixed `>=50` cutoff was wrong
 // for any pre-1950 birth and produced "Né(e) le: 31/12/2044").
@@ -51,17 +38,9 @@ function formatMrzDateFr(yymmdd?: string | null): string {
   return `${dd}/${mm}/${expandMrzBirthYear(yy)}`;
 }
 
-interface NFCData {
-  personDetails?: NFCPersonDetails;
-  dg1Bytes?: Uint8Array | string;
-  sodBytes?: Uint8Array | string;
-  dg15Bytes?: Uint8Array | string;
-  aaSignature?: Uint8Array | string;
-}
-
 interface StepBlockchainVerifyProps {
   isActive?: boolean;
-  nfcData?: NFCData | null;
+  nfcData?: EDocument | null;
   onSuccess?: () => void;
   /** Called when Step 7 hits a verification error. `fatal=true` means
    * the user cannot recover by retrying — typically a [VOTE_INELIGIBLE]
@@ -310,21 +289,9 @@ const StepBlockchainVerify: React.FC<StepBlockchainVerifyProps> = ({
             const { getOrCreatePrivateKey } = await import('@/utils/identity');
             const skIdentityHex = '0x' + (await getOrCreatePrivateKey());
 
-            // Build an EPassport from the NFC scan bytes — needed by the
-            // input builder because RarimePassport doesn't expose the
-            // ASN.1-parsed slave certificate (e-document does).
-            const eDoc = new EPassport({
-              docCode: 'P',
-              personDetails: nfcData?.personDetails ?? ({} as any),
-              dg1Bytes: new Uint8Array(nfcData!.dg1Bytes as Uint8Array),
-              sodBytes: new Uint8Array(nfcData!.sodBytes as Uint8Array),
-              dg15Bytes: nfcData?.dg15Bytes
-                ? new Uint8Array(nfcData.dg15Bytes as Uint8Array)
-                : undefined,
-              aaSignature: nfcData?.aaSignature
-                ? new Uint8Array(nfcData.aaSignature as Uint8Array)
-                : undefined,
-            });
+            // nfcData is already the EDocument built by scanDocument() —
+            // no need to rebuild it here.
+            const eDoc = nfcData;
 
             // Diagnostic probe BEFORE the Noir prover runs: the SDK's
             // noir.aar swallows System.loadLibrary("noir_java") failures
@@ -619,7 +586,7 @@ const StepBlockchainVerify: React.FC<StepBlockchainVerifyProps> = ({
               opacity: 0.7,
             }}>
               {t('voting.step7BornOn', {
-                date: formatMrzDateFr(nfcData.personDetails.birthDate),
+                date: formatMrzDateFr(nfcData.personDetails.dateOfBirth),
               })}
             </Text>
             <Text style={{

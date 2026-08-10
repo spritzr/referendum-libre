@@ -15,7 +15,6 @@ import {
   Platform,
   Image,
 } from "react-native";
-import { getRandomValues } from "expo-crypto";
 import { Svg, Path } from "react-native-svg";
 
 const ArrowLeftIcon = ({ color, size = 24 }: { color: string; size?: number }) => (
@@ -143,9 +142,8 @@ export default function CanScanScreen() {
 
     try {
       const { scanDocument } = await import('@/modules/e-document');
-      const challenge = getRandomValues(new Uint8Array(32));
 
-      const scanResult = await scanDocument('I', { can }, challenge);
+      const scanResult = await scanDocument('I', can, '', '', '');
 
       console.log("=== CAN SCAN RESULT ===");
       console.log("Person:", scanResult.personDetails);
@@ -286,7 +284,7 @@ export default function CanScanScreen() {
             <View style={styles.resultRow}>
               <Text style={styles.resultLabel}>Date de naissance:</Text>
               <Text style={styles.resultValue}>
-                {result.personDetails.birthDate || 'N/A'}
+                {result.personDetails.dateOfBirth || 'N/A'}
               </Text>
             </View>
 

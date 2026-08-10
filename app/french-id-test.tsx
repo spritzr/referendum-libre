@@ -508,20 +508,16 @@ export default function FrenchIDTestScreen() {
 
     try {
       const { scanDocument } = await import("@/modules/e-document");
-      const challenge = getRandomValues(new Uint8Array(32));
-      challengeRef.current = challenge;
 
       const bacBirthDate = convertFrenchDateToMRZ(birthDate);
       const bacExpiryDate = convertFrenchDateToMRZ(expiryDate);
 
       const result = await scanDocument(
         "I",
-        {
-          documentNumber: documentNo,
-          dateOfBirth: bacBirthDate,
-          dateOfExpiry: bacExpiryDate,
-        },
-        challenge
+        can,
+        documentNo,
+        bacBirthDate,
+        bacExpiryDate,
       );
 
       console.log("=== FRENCH ID SCAN RESULT ===");

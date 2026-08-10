@@ -15,7 +15,6 @@ import { useRouter } from 'expo-router';
 import * as Clipboard from 'expo-clipboard';
 import * as Sharing from 'expo-sharing';
 import * as FileSystem from 'expo-file-system/legacy';
-import { getRandomValues } from 'expo-crypto';
 import { Buffer } from 'buffer';
 import {
   Camera,
@@ -398,15 +397,12 @@ export default function ExportPassportScreen() {
     setIsScanning(true);
     try {
       const { scanDocument } = await import('@/modules/e-document');
-      const challenge = getRandomValues(new Uint8Array(32));
       const result: any = await scanDocument(
         'P',
-        {
-          documentNumber: documentNumber.toUpperCase(),
-          dateOfBirth: birthDate,
-          dateOfExpiry: expiryDate,
-        },
-        challenge,
+        '',
+        documentNumber.toUpperCase(),
+        birthDate,
+        expiryDate,
       );
       const built = buildExportedPassport(result, capturedMrz, {
         documentNumber,
