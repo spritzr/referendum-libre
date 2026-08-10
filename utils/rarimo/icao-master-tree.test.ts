@@ -40,6 +40,7 @@ const KNOWN_GOOD_SIBLINGS = [
 const MASTERS_PEM_PATH = path.join(
   __dirname,
   '..',
+  '..',
   'assets',
   'certificates',
   'master_000316.pem',

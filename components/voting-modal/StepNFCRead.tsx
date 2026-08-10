@@ -7,7 +7,7 @@ import { useColors, Typography } from '@/constants/theme';
 import { getRandomValues } from 'expo-crypto';
 import { useTranslation } from 'react-i18next';
 import { useDevModeStore } from '@/store/useDevModeStore';
-import { loadDevExamplePassportData } from '@/utils/dev-example-passport';
+import { loadDevExamplePassportData } from '@/utils/e-document/dev-example-passport';
 import { FlowStep } from '@/constants/voting-flow-steps';
 import { stepVideoHostName } from './stepVideoHostName';
 

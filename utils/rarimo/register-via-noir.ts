@@ -38,7 +38,7 @@ import { EDocument } from '@/utils/e-document/e-document';
 import {
   buildHeavyRegisterInputs,
   slaveCertSmtLeafKey,
-} from '@/utils/heavy-noir-inputs';
+} from '@/utils/rarimo/heavy-noir-inputs';
 
 // ---------------------------------------------------------------------------
 // 1. ABI fragment for registerViaNoir

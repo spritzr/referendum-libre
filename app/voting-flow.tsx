@@ -14,8 +14,8 @@ import {
   formatRpcError,
 } from '@/constants/rarimo/config';
 import { useNetworkStore } from '@/store/useNetworkStore';
-import { assertOnChainConstants } from '@/utils/register-via-noir';
-import { getOrCreatePrivateKey } from '@/utils/identity';
+import { assertOnChainConstants } from '@/utils/rarimo/register-via-noir';
+import { getOrCreatePrivateKey } from '@/utils/rarimo/identity';
 import { findCachedProposal } from '@/utils/proposal-cache';
 import { isPassportVotingTarget } from '@/utils/voteResults';
 import { useTranslation } from 'react-i18next';
@@ -337,7 +337,7 @@ export default function VotingFlowScreen() {
         // unchanged. See utils/passport-key-db.ts for the DB shape and
         // utils/identity.ts::getOrCreateKeyForPassport for the migration.
         try {
-          const { getOrCreateKeyForPassport } = await import('@/utils/identity');
+          const { getOrCreateKeyForPassport } = await import('@/utils/rarimo/identity');
           // No `label` arg — the previous wiring stored the MRZ document
           // number in the on-device key DB as a display aid for backups,
           // but that's PII we don't want at rest. See
@@ -367,7 +367,7 @@ export default function VotingFlowScreen() {
           // later, after status check + suite resolution), the cache is
           // hot. Fire-and-forget: errors are logged but don't block the
           // NFC flow.
-          import('@/utils/csca-bootstrap')
+          import('@/utils/rarimo/csca-bootstrap')
             .then((m) => m.ensureMastersCache())
             .then(() => console.log('[csca-bootstrap] cache pre-warmed'))
             .catch((e) => console.warn('[csca-bootstrap] pre-warm failed:', e?.message ?? e));

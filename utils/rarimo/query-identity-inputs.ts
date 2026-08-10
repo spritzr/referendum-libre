@@ -12,7 +12,7 @@
  * https://storage.googleapis.com/rarimo-store/zkey/circuit_final.zkey).
  *
  * This file is the pure data-transformation layer. The Groth16 prove call
- * (witnesscalc → rapidsnark) lives in utils/groth16-vote.ts.
+ * (witnesscalc → rapidsnark) lives in utils/rarimo/groth16-vote.ts.
  */
 
 /** SMT inclusion proof as returned by `RegistrationPoseidonSMT.getProof(...)`.

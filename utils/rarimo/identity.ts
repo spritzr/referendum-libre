@@ -6,7 +6,7 @@ import {
   getAllEntries,
   lookupKeyForPassport,
   type PassportKeyEntry,
-} from '@/utils/passport-key-db';
+} from '@/utils/rarimo/passport-key-db';
 
 // ---------------------------------------------------------------------------
 // BJJ private-key validity
@@ -220,5 +220,5 @@ export async function getOrCreateKeyForPassport(args: {
 }
 
 // Re-export so call sites don't need to import from two files.
-export { exportToJson, importFromJson, wipeDb, getAllEntries } from '@/utils/passport-key-db';
+export { exportToJson, importFromJson, wipeDb, getAllEntries } from '@/utils/rarimo/passport-key-db';
 export type { PassportKeyEntry };

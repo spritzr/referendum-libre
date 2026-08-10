@@ -41,11 +41,11 @@ import {
   pubKeyBytesFromSpki,
   spkiFromCert,
   type IcaoMasterTree,
-} from '@/utils/icao-master-tree';
+} from '@/utils/rarimo/icao-master-tree';
 import {
   buildRegisterCertificateCalldata,
   MAINNET_REGISTRATION2_ADDRESS,
-} from '@/utils/build-register-cert-calldata';
+} from '@/utils/rarimo/build-register-cert-calldata';
 import { RARIME_MAINNET_CONFIG } from '@/constants/rarimo/config';
 import { JsonRpcProvider, Contract, keccak256, toUtf8Bytes, ZeroAddress } from 'ethers';
 import i18n from 'i18next';

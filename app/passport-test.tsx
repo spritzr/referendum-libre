@@ -1,6 +1,6 @@
 import { Colors, Spacing, Typography } from "@/constants/theme";
 import { useDevModeStore } from '@/store/useDevModeStore';
-import { expandMrzBirthYear, expandMrzExpiryYear } from "@/utils/mrzDate";
+import { expandMrzBirthYear, expandMrzExpiryYear } from "@/utils/e-document/mrzDate";
 import { useRouter, Stack } from "expo-router";
 import React, { useEffect } from "react";
 import {

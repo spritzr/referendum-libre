@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { Buffer } from 'buffer';
 import { ensureCircuitsReady } from '@/utils/circuit-preload';
 import { castMainnetVote } from '@/utils/mainnet-vote-flow';
-import { getOrCreatePrivateKey } from '@/utils/identity';
+import { getOrCreatePrivateKey } from '@/utils/rarimo/identity';
 import { waitForVoteReceipt } from '@/utils/vote-confirmation';
 import { isServiceUnavailableError } from '@/utils/relayer-errors';
 import { isStorageFullError } from '@/utils/storage-errors';

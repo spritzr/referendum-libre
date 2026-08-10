@@ -8,11 +8,11 @@ import { createStepSpecificStyles } from './styles';
 import { useColors } from '@/constants/theme';
 import { useTranslation } from 'react-i18next';
 import { CAP_SMALL } from '@/utils/font-scale-cap';
-import { parseMRZDate, checkBirthDate, checkExpiryDate } from '@/utils/mrzDate';
+import { parseMRZDate, checkBirthDate, checkExpiryDate } from '@/utils/e-document/mrzDate';
 import { useDevModeStore } from '@/store/useDevModeStore';
-import { extractMrz, extractMrzTd1 } from '@/utils/mrz-rarimo';
+import { extractMrz, extractMrzTd1 } from '@/utils/e-document/mrz-rarimo';
 import { isCitizenshipAllowed } from '@/utils/voteResults';
-import { loadDevExampleMrz } from '@/utils/dev-example-passport';
+import { loadDevExampleMrz } from '@/utils/e-document/dev-example-passport';
 
 const DEV_EXAMPLE_MRZ = loadDevExampleMrz();
 

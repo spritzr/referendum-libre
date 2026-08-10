@@ -43,7 +43,7 @@ import {
   getAllEntries as getAllPassportDbEntries,
   wipeDb as wipePassportDb,
   type PassportKeyEntry,
-} from '@/utils/identity';
+} from '@/utils/rarimo/identity';
 import { useTermsStore } from '@/store/useTermsStore';
 import { useTranslation } from 'react-i18next';
 

@@ -8,7 +8,7 @@ import {
   namedCurveFromOID,
   namedCurveFromSpecified,
   UnsupportedCurveError,
-} from '@/utils/curves'
+} from '@/utils/rarimo/curves'
 
 /**
  * HashPacked computes the Poseidon hash of 5 elements.

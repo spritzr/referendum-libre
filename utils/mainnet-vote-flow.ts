@@ -76,23 +76,23 @@ import {
 import {
   buildQueryIdentityInputs,
   type RegistrationSmtProof,
-} from '@/utils/query-identity-inputs';
+} from '@/utils/rarimo/query-identity-inputs';
 import {
   generateQueryGroth16Proof,
   type Groth16Proof,
   type ZkeyDownloadProgress,
-} from '@/utils/groth16-vote';
+} from '@/utils/rarimo/groth16-vote';
 import {
   buildVoteCalldata,
   submitVote,
   MAINNET_BIO_PASSPORT_VOTING_ADDRESS,
-} from '@/utils/vote-calldata';
+} from '@/utils/rarimo/vote-calldata';
 // Single source of truth for the MRZ 2-digit-year cutoff. Birth dates use
 // the `>35` rule (people born 1936-2035), expiry dates use the legacy `>=50`
 // cutoff. Do NOT reintroduce a local `yy >= 70` (or any other) rule here —
 // that was the bug that turned a YY=65 fixture into "naissance le 2065-…"
 // in the diagnostic error message.
-import { expandMrzBirthYear, expandMrzExpiryYear } from '@/utils/mrzDate';
+import { expandMrzBirthYear, expandMrzExpiryYear } from '@/utils/e-document/mrzDate';
 
 // ---------------------------------------------------------------------------
 // Contract ABIs (the minimal slices we need). Decoded from BlockScout

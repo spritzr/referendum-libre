@@ -16,9 +16,9 @@ import {
   registerIdentityViaNoir,
   generateHeavyNoirProof,
   type HeavyNoirProof,
-} from '@/utils/register-via-noir';
+} from '@/utils/rarimo/register-via-noir';
 import type { EDocument } from '@/utils/e-document/e-document';
-import { expandMrzBirthYear } from '@/utils/mrzDate';
+import { expandMrzBirthYear } from '@/utils/e-document/mrzDate';
 import { isServiceUnavailableError } from '@/utils/relayer-errors';
 import { isStorageFullError } from '@/utils/storage-errors';
 import { FlowStep } from '@/constants/voting-flow-steps';
@@ -286,7 +286,7 @@ const StepBlockchainVerify: React.FC<StepBlockchainVerifyProps> = ({
             // via getOrCreatePrivateKey() — same source the SDK uses for
             // its light path, so the on-chain `identityKey` is bound to
             // the user's stable identity across registration + voting.
-            const { getOrCreatePrivateKey } = await import('@/utils/identity');
+            const { getOrCreatePrivateKey } = await import('@/utils/rarimo/identity');
             const skIdentityHex = '0x' + (await getOrCreatePrivateKey());
 
             // nfcData is already the EDocument built by scanDocument() —
@@ -340,7 +340,7 @@ const StepBlockchainVerify: React.FC<StepBlockchainVerifyProps> = ({
 
               console.log('[Step7][mainnet] CSCA missing — bootstrapping via registerCertificate');
               setStatusText(t('voting.step7Registering'));
-              const { registerCscaForSlave } = await import('@/utils/csca-bootstrap');
+              const { registerCscaForSlave } = await import('@/utils/rarimo/csca-bootstrap');
               const { txHash: cscaTxHash, dispatcherName } =
                 await registerCscaForSlave(eDoc.sod.slaveCertificate);
               console.log(`[Step7][mainnet] CSCA registration tx: ${cscaTxHash} (${dispatcherName})`);
@@ -354,7 +354,7 @@ const StepBlockchainVerify: React.FC<StepBlockchainVerifyProps> = ({
               const provider = new JsonRpcProvider(
                 RARIME_MAINNET_CONFIG.apiConfiguration.jsonRpcEvmUrl,
               );
-              const { slaveCertSmtLeafKey } = await import('@/utils/heavy-noir-inputs');
+              const { slaveCertSmtLeafKey } = await import('@/utils/rarimo/heavy-noir-inputs');
               const leafKey = slaveCertSmtLeafKey(eDoc);
               const smtAbi = ['function getProof(bytes32) view returns (tuple(bytes32 root, bytes32[] siblings, bool existence, bytes32 key, bytes32 value, bool auxExistence, bytes32 auxKey, bytes32 auxValue))'];
               const smt = new Contract(MAINNET_CERT_POSEIDON_SMT_ADDRESS, smtAbi, provider);

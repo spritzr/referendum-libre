@@ -17,7 +17,7 @@ import {
   parseFrenchDate,
   checkBirthDate,
   checkExpiryDate,
-} from '@/utils/mrzDate';
+} from '@/utils/e-document/mrzDate';
 import { useDevModeStore } from '@/store/useDevModeStore';
 
 interface ManualMRZInputProps {

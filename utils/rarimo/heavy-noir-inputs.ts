@@ -33,7 +33,7 @@ import {
   bytesToBigIntBE,
   rsaBarrettReductionParam,
   splitBy120Bits,
-} from '@/utils/heavy-noir-inputs-math';
+} from '@/utils/rarimo/heavy-noir-inputs-math';
 
 // Re-export so existing call sites that import from this file keep working.
 export {
@@ -41,7 +41,7 @@ export {
   rsaBarrettReductionParam,
   smartBNToArray120,
   splitBy120Bits,
-} from '@/utils/heavy-noir-inputs-math';
+} from '@/utils/rarimo/heavy-noir-inputs-math';
 
 /**
  * Hex string ("0x…", left-zero-padded to the natural byte length of v).
