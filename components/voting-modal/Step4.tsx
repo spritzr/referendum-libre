@@ -81,7 +81,7 @@ const Step4: React.FC<Step4Props> = ({ introPlayer, containerWidth, onStartAnaly
           <Text style={stepSpecificStyles.step4Title}>{t(`voting.step4Title_${docSfx}`)}</Text>
         </View>
         <Image
-          source={require('@/assets/gifs/step1-card.gif')}
+          source={require('@/assets/webp/step1-card.webp')}
           style={stepSpecificStyles.step4Video}
           resizeMode="cover"
         />

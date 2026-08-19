@@ -105,7 +105,7 @@ const Step9Vote: React.FC<Step9VoteProps> = ({ containerWidth, onVoteSubmit, onC
           </Text>
 
           <Image
-            source={require('@/assets/gifs/step3-ballot.gif')}
+            source={require('@/assets/webp/step3-ballot.webp')}
             style={stepSpecificStyles.step9VoteImage}
             resizeMode="contain"
           />

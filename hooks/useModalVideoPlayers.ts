@@ -12,11 +12,12 @@ import { useVideoPlayer } from 'expo-video';
 // workaround at the time (static PNG posters on Android) cost the animation
 // entirely on those steps.
 //
-// Those step clips were all short silent loops of a flat-shaded illustration —
-// exactly the content GIF encodes well — so they now ship as animated GIFs
-// rendered through react-native's Image (Fresco animates them on Android via
-// expo.gif.enabled=true in gradle.properties; iOS animates them natively).
-// That restores motion on Android *and* removes the codecs.
+// Those step clips were all short silent loops of a flat-shaded illustration,
+// so they now ship as animated WebP (assets/webp) rendered through
+// react-native's Image. No ExoPlayer, no MediaCodec: Fresco decodes them on
+// Android — via the animated-webp module that plugins/withAnimatedWebp.js
+// enables — and iOS decodes them natively. That restores motion on Android
+// *and* removes the codecs.
 //
 // The Step 4 intro is the one genuine video: full-bleed, six seconds, with a
 // skip affordance. It keeps a real player — and it is now the only one, so the

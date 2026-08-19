@@ -41,7 +41,7 @@ export default function ComprendreScreen() {
                   height: Spacing.video.characterHeight * welcomeMediaScale,
                 },
               ]}
-              source={require('@/assets/gifs/comprendre-welcome.gif')}
+              source={require('@/assets/webp/comprendre-welcome.webp')}
               resizeMode="cover"
             />
             <View style={styles.welcomeTextContainer}>

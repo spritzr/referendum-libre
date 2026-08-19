@@ -28,7 +28,7 @@ const Step3: React.FC<Step3Props> = ({ containerWidth, slideAreaHeight, onLayout
       >
         <View style={modalStyles.mediaContainer}>
           <Image
-            source={require('@/assets/gifs/step3-ballot.gif')}
+            source={require('@/assets/webp/step3-ballot.webp')}
             style={stepSpecificStyles.ballotImage}
             resizeMode="contain"
           />

@@ -35,7 +35,7 @@ const Step2: React.FC<Step2Props> = ({
       >
         <View style={modalStyles.mediaContainer}>
           <Image
-            source={require('@/assets/gifs/step2-phone.gif')}
+            source={require('@/assets/webp/step2-phone.webp')}
             style={stepSpecificStyles.phoneImage}
             resizeMode="contain"
           />

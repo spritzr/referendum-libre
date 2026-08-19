@@ -42,7 +42,7 @@ const Step10: React.FC<Step10Props> = ({ containerWidth, onCancel, onConfirm, on
           </Text>
 
           <Image
-            source={require('@/assets/gifs/step3-ballot.gif')}
+            source={require('@/assets/webp/step3-ballot.webp')}
             style={stepSpecificStyles.step10BallotVideo}
             resizeMode="cover"
           />

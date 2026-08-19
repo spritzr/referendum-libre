@@ -390,7 +390,7 @@ const Step6: React.FC<Step6Props> = ({ containerWidth, mrzData, onAnalyze, onNFC
 
         <View style={stepSpecificStyles.step6ImageContainer}>
           <Image
-            source={require('@/assets/gifs/step6-nfc.gif')}
+            source={require('@/assets/webp/step6-nfc.webp')}
             style={stepSpecificStyles.step6Image}
             resizeMode="contain"
           />

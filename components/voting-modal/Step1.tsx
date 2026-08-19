@@ -35,7 +35,7 @@ const Step1: React.FC<Step1Props> = ({
       >
         <View style={modalStyles.mediaContainer}>
           <Image
-            source={require('@/assets/gifs/step1-card.gif')}
+            source={require('@/assets/webp/step1-card.webp')}
             style={stepSpecificStyles.cardVideo}
             resizeMode="cover"
           />

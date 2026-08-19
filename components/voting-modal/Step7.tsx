@@ -572,7 +572,7 @@ const Step7: React.FC<Step7Props> = ({
             vertical budget it needs to fully render. */}
         {!errorMessage && (
           <Image
-            source={require('@/assets/gifs/step7-verify.gif')}
+            source={require('@/assets/webp/step7-verify.webp')}
             style={stepSpecificStyles.step7Image}
             resizeMode="contain"
           />
