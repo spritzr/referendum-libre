@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, LayoutChangeEvent, Platform, Image } from 'react-native';
+import { View, Text, TouchableOpacity, LayoutChangeEvent, Platform } from 'react-native';
+import { Image } from 'expo-image';
 import { VideoView } from 'expo-video';
 import { createModalStyles, createStepSpecificStyles } from './styles';
 import { useColors } from '@/constants/theme';
@@ -68,7 +69,7 @@ const Step4: React.FC<Step4Props> = ({ introPlayer, containerWidth, onStartAnaly
         <Image
           source={require('@/assets/webp/step1-card.webp')}
           style={stepSpecificStyles.step4Video}
-          resizeMode="cover"
+          contentFit="cover"
         />
         <TouchableOpacity
           style={stepSpecificStyles.step4Button}

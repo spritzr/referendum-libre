@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, LayoutChangeEvent, Platform, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, LayoutChangeEvent, Platform, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { Image } from 'expo-image';
 import { createStepSpecificStyles } from './styles';
 import { useColors, Typography } from '@/constants/theme';
 import {
@@ -574,7 +575,7 @@ const Step7: React.FC<Step7Props> = ({
           <Image
             source={require('@/assets/webp/step7-verify.webp')}
             style={stepSpecificStyles.step7Image}
-            resizeMode="contain"
+            contentFit="contain"
           />
         )}
 

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, LayoutChangeEvent, Image, ScrollView, Keyboard, Platform } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, LayoutChangeEvent, ScrollView, Keyboard, Platform } from 'react-native';
+import { Image } from 'expo-image';
 import { createStepSpecificStyles } from './styles';
 import { useColors } from '@/constants/theme';
 import { useTranslation } from 'react-i18next';
@@ -75,7 +76,7 @@ const Step5Can: React.FC<Step5CanProps> = ({ containerWidth, slideAreaHeight, is
         <Image
           source={require('@/assets/webp/step6-nfc.webp')}
           style={{ width: '70%', height: 120 }}
-          resizeMode="contain"
+          contentFit="contain"
         />
 
         <Text

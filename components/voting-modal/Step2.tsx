@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, ScrollView, LayoutChangeEvent, Platform, Image } from 'react-native';
+import { View, Text, ScrollView, LayoutChangeEvent, Platform } from 'react-native';
+import { Image } from 'expo-image';
 import { createModalStyles, createStepSpecificStyles } from './styles';
 import { useColors } from '@/constants/theme';
 import { useTranslation } from 'react-i18next';
@@ -37,7 +38,7 @@ const Step2: React.FC<Step2Props> = ({
           <Image
             source={require('@/assets/webp/step2-phone.webp')}
             style={stepSpecificStyles.phoneImage}
-            resizeMode="contain"
+            contentFit="contain"
           />
         </View>
         <View style={modalStyles.contentSection}>

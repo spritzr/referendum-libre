@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
-import { View, Text, TouchableOpacity, LayoutChangeEvent, Image } from 'react-native';
+import { View, Text, TouchableOpacity, LayoutChangeEvent } from 'react-native';
+import { Image } from 'expo-image';
 import { createModalStyles, createStepSpecificStyles } from './styles';
 import { useColors } from '@/constants/theme';
 import type { ProposalInfo } from '@rarimo/rarime-rn-sdk';
@@ -44,7 +45,7 @@ const Step10: React.FC<Step10Props> = ({ containerWidth, onCancel, onConfirm, on
           <Image
             source={require('@/assets/webp/step3-ballot.webp')}
             style={stepSpecificStyles.step10BallotVideo}
-            resizeMode="cover"
+            contentFit="cover"
           />
         </View>
 

@@ -1,5 +1,6 @@
 import React from 'react';
-import { StyleSheet, ScrollView, View, Text, Image, useWindowDimensions } from 'react-native';
+import { StyleSheet, ScrollView, View, Text, useWindowDimensions } from 'react-native';
+import { Image } from 'expo-image';
 import Accordion from '@/components/Accordion';
 import { useColors, Typography, Spacing } from '@/constants/theme';
 import { useTranslation } from 'react-i18next';
@@ -42,7 +43,7 @@ export default function ComprendreScreen() {
                 },
               ]}
               source={require('@/assets/webp/comprendre-welcome.webp')}
-              resizeMode="cover"
+              contentFit="cover"
             />
             <View style={styles.welcomeTextContainer}>
               <Text style={styles.welcomeText} maxFontSizeMultiplier={CAP_BIG}>

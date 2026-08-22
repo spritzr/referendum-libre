@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Image, LayoutChangeEvent, Modal } from 'react-native';
+import { View, Text, TouchableOpacity, LayoutChangeEvent, Modal } from 'react-native';
+import { Image } from 'expo-image';
 import { createStepSpecificStyles } from './styles';
 import { useColors } from '@/constants/theme';
 import type { ProposalInfo } from '@rarimo/rarime-rn-sdk';
@@ -107,7 +108,7 @@ const Step9Vote: React.FC<Step9VoteProps> = ({ containerWidth, onVoteSubmit, onC
           <Image
             source={require('@/assets/webp/step3-ballot.webp')}
             style={stepSpecificStyles.step9VoteImage}
-            resizeMode="contain"
+            contentFit="contain"
           />
 
           <View style={stepSpecificStyles.step9VoteButtonRow}>

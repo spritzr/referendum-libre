@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, ScrollView, LayoutChangeEvent, Platform, Image } from 'react-native';
+import { View, Text, ScrollView, LayoutChangeEvent, Platform } from 'react-native';
+import { Image } from 'expo-image';
 import { createModalStyles, createStepSpecificStyles } from './styles';
 import { useColors } from '@/constants/theme';
 import { useTranslation } from 'react-i18next';
@@ -37,7 +38,7 @@ const Step1: React.FC<Step1Props> = ({
           <Image
             source={require('@/assets/webp/step1-card.webp')}
             style={stepSpecificStyles.cardVideo}
-            resizeMode="cover"
+            contentFit="cover"
           />
         </View>
         <View style={modalStyles.contentSection}>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, TouchableOpacity, LayoutChangeEvent, Platform, Image, ScrollView, Alert, Linking, AppState } from 'react-native';
+import { View, Text, TouchableOpacity, LayoutChangeEvent, Platform, ScrollView, Alert, Linking, AppState } from 'react-native';
+import { Image } from 'expo-image';
 import NfcManager from 'react-native-nfc-manager';
 import { createModalStyles, createStepSpecificStyles } from './styles';
 import { useColors, Typography } from '@/constants/theme';
@@ -408,7 +409,7 @@ const Step6: React.FC<Step6Props> = ({ containerWidth, mrzData, canData, onAnaly
           <Image
             source={require('@/assets/webp/step6-nfc.webp')}
             style={stepSpecificStyles.step6Image}
-            resizeMode="contain"
+            contentFit="contain"
           />
         </View>
 

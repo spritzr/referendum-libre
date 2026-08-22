@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, ScrollView, LayoutChangeEvent, Platform, Image } from 'react-native';
+import { View, Text, ScrollView, LayoutChangeEvent, Platform } from 'react-native';
+import { Image } from 'expo-image';
 import { createModalStyles, createStepSpecificStyles } from './styles';
 import { useColors } from '@/constants/theme';
 import { useTranslation } from 'react-i18next';
@@ -30,7 +31,7 @@ const Step3: React.FC<Step3Props> = ({ containerWidth, slideAreaHeight, onLayout
           <Image
             source={require('@/assets/webp/step3-ballot.webp')}
             style={stepSpecificStyles.ballotImage}
-            resizeMode="contain"
+            contentFit="contain"
           />
         </View>
         <View style={modalStyles.contentSection}>
